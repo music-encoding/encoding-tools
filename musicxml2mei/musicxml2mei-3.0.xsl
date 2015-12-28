@@ -2030,7 +2030,7 @@
             <xsl:if test="part/attributes[1]/time/senza-misura">
               <xsl:attribute name="meter.rend">invis</xsl:attribute>
             </xsl:if>
-            <xsl:if test="count(part/attributes/time/beats) = 1">
+            <xsl:if test="count(part[attributes/time/beats][1]/attributes[1]/time/beats) = 1">
               <!-- simple time signature -->
               <xsl:attribute name="meter.count">
                 <xsl:value-of
