@@ -2322,7 +2322,7 @@
 
     <xsl:if test="$rng_model_path != ''">
       <xsl:processing-instruction name="xml-model">
-        <xsl:value-of select="concat('&amp;#32;href=&quot;', $rng_model_path, '&quot;')"/>
+        <xsl:value-of select="concat('&#32;href=&quot;', $rng_model_path, '&quot;')"/>
         <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
       </xsl:processing-instruction>
       <xsl:value-of select="$nl"/>
@@ -2330,7 +2330,7 @@
 
     <xsl:if test="$sch_model_path != ''">
       <xsl:processing-instruction name="xml-model">
-        <xsl:value-of select="concat('&amp;#32;href=&quot;', $sch_model_path, '&quot;')"/>
+        <xsl:value-of select="concat('&#32;href=&quot;', $sch_model_path, '&quot;')"/>
         <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
       </xsl:processing-instruction>
       <xsl:value-of select="$nl"/>
@@ -2382,20 +2382,17 @@
 
         <!-- file publication statement -->
         <pubStmt>
-          <!-- use <publisher> element? -->
-          <respStmt>
-            <corpName>
-              <xsl:value-of select="$agency"/>
-              <xsl:if test="$agency_code != ''">
-                <xsl:text>&#32;</xsl:text>
-                <xsl:text>(</xsl:text>
-                <identifier authority="MARC Code List for Organizations">
-                  <xsl:value-of select="$agency_code"/>
-                </identifier>
-                <xsl:text>)</xsl:text>
-              </xsl:if>
-            </corpName>
-          </respStmt>
+          <publisher>
+            <xsl:value-of select="$agency"/>
+            <xsl:if test="$agency_code != ''">
+              <xsl:text>&#32;</xsl:text>
+              <xsl:text>(</xsl:text>
+              <identifier authority="MARC Code List for Organizations">
+                <xsl:value-of select="$agency_code"/>
+              </identifier>
+              <xsl:text>)</xsl:text>
+            </xsl:if>
+          </publisher>
           <date>
             <xsl:value-of select="concat('[', format-date(current-date(), '[Y]'), ']')"/>
           </date>
@@ -2598,7 +2595,7 @@
                                   <!-- basic contents -->
                                   <p>
                                     <xsl:for-each select="marc:datafield[@tag = '505']">
-                                      <xsl:value-of select="."/>
+                                      <xsl:value-of select="normalize-space(.)"/>
                                     </xsl:for-each>
                                   </p>
                                 </xsl:otherwise>
@@ -3099,9 +3096,9 @@
                 </castList>
               </xsl:if>
               <xsl:if test="$instrumentation">
-                <instrumentation>
+                <perfResList>
                   <xsl:apply-templates select="$instrumentation"/>
-                </instrumentation>
+                </perfResList>
               </xsl:if>
             </perfMedium>
           </xsl:if>
@@ -3527,7 +3524,7 @@
 
   <!-- scoring -->
   <xsl:template match="marc:datafield[@tag = '048']">
-    <instrVoiceList>
+    <perfResList>
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
           <xsl:value-of select="'048'"/>
@@ -3540,13 +3537,13 @@
           <xsl:attribute name="authURI"
             >http://www.iaml.info/en/activities/cataloguing/unimarc/medium</xsl:attribute>
           <xsl:for-each select="marc:subfield[@code = 'a' or @code = 'b']">
-            <instrVoice>
+            <perfRes>
               <xsl:if test="@code = 'b'">
                 <xsl:attribute name="solo">true</xsl:attribute>
               </xsl:if>
               <xsl:variable name="code048" select="substring(., 1, 3)"/>
               <xsl:variable name="num048" select="substring(., 4, 2)"/>
-              <xsl:attribute name="code">
+              <xsl:attribute name="codedval">
                 <xsl:value-of select="$code048"/>
               </xsl:attribute>
               <xsl:if test="number($num048)">
@@ -3555,7 +3552,7 @@
                 </xsl:attribute>
               </xsl:if>
               <xsl:value-of select="$iamlMusPerfList/mei:instr[@code = $code048]"/>
-            </instrVoice>
+            </perfRes>
           </xsl:for-each>
         </xsl:when>
         <xsl:otherwise>
@@ -3564,13 +3561,13 @@
           <xsl:attribute name="authURI"
             >http://www.loc.gov/standards/valuelist/marcmusperf.html</xsl:attribute>
           <xsl:for-each select="marc:subfield[@code = 'a' or @code = 'b']">
-            <instrVoice>
+            <perfRes>
               <xsl:if test="@code = 'b'">
                 <xsl:attribute name="solo">true</xsl:attribute>
               </xsl:if>
               <xsl:variable name="code048" select="substring(., 1, 2)"/>
               <xsl:variable name="num048" select="substring(., 3, 2)"/>
-              <xsl:attribute name="code">
+              <xsl:attribute name="codedval">
                 <xsl:value-of select="$code048"/>
               </xsl:attribute>
               <xsl:if test="number($num048)">
@@ -3579,11 +3576,11 @@
                 </xsl:attribute>
               </xsl:if>
               <xsl:value-of select="$marcMusPerfList/mei:instr[@code = $code048]"/>
-            </instrVoice>
+            </perfRes>
           </xsl:for-each>
         </xsl:otherwise>
       </xsl:choose>
-    </instrVoiceList>
+    </perfResList>
   </xsl:template>
 
   <!-- classification -->
@@ -4444,6 +4441,14 @@
     </xsl:variable>
     <respStmt>
       <xsl:choose>
+        <xsl:when test="marc:subfield[@code = '4']">
+          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="respStmt"/>
+        </xsl:when>
+        <xsl:when test="marc:subfield[@code = 'e']">
+          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="respStmt"/>
+        </xsl:when>
+      </xsl:choose>
+      <xsl:choose>
         <xsl:when test="$tag = '710'">
           <!-- corporate name; use subfield a (non-repeatable) -->
           <corpName>
@@ -4502,14 +4507,6 @@
             </xsl:choose>
           </persName>
         </xsl:otherwise>
-      </xsl:choose>
-      <xsl:choose>
-        <xsl:when test="marc:subfield[@code = '4']">
-          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="respStmt"/>
-        </xsl:when>
-        <xsl:when test="marc:subfield[@code = 'e']">
-          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="respStmt"/>
-        </xsl:when>
       </xsl:choose>
     </respStmt>
   </xsl:template>
@@ -4693,7 +4690,7 @@
     <xsl:variable name="code">
       <xsl:value-of select="."/>
     </xsl:variable>
-    <resp code="{$code}">
+    <resp codedval="{$code}">
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
           <xsl:value-of select="concat(./@tag, '|4')"/>
@@ -4720,7 +4717,7 @@
       </xsl:call-template>
     </xsl:variable>
     <resp>
-      <xsl:attribute name="code">
+      <xsl:attribute name="codedval">
         <xsl:value-of select="$marcRelList/mei:relator[. = $term]/@code"/>
       </xsl:attribute>
       <xsl:call-template name="analog">
@@ -4737,8 +4734,7 @@
   <xsl:template match="marc:datafield[starts-with(@tag, '9')]">
     <xsl:comment>
       <xsl:value-of select="$nl"/>
-      <xsl:value-of
-        select="
+      <xsl:value-of select="
           concat('&lt;marc:datafield tag=&quot;', @tag, '&quot; ind1=&quot;',
           @ind1, '&quot; ind2=&quot;', @ind2, '&quot;>')"/>
       <xsl:apply-templates select="marc:subfield"/>
