@@ -18,11 +18,11 @@
   <!-- PARAM:rng_model_path -->
   <!-- This points to the 2.1.1 bugfix release tag -->
   <xsl:param name="rng_model_path"
-    >https://raw.githubusercontent.com/music-encoding/music-encoding/b9dff53ad25203cfe43fa6b68eab6fad6d2a088e/schemata/mei-all.rng</xsl:param>
+    >https://raw.githubusercontent.com/music-encoding/music-encoding/master/schemata/mei-all.rng</xsl:param>
 
   <!-- PARAM:sch_model_path -->
   <xsl:param name="sch_model_path"
-    >https://raw.githubusercontent.com/music-encoding/music-encoding/b9dff53ad25203cfe43fa6b68eab6fad6d2a088e/schemata/mei-all.rng</xsl:param>
+    >https://raw.githubusercontent.com/music-encoding/music-encoding/master/schemata/mei-all.rng</xsl:param>
 
   <!-- PARAM:layout
       This parameter defines the degree of layout information transformed into MEI. Possible values are:
@@ -367,7 +367,7 @@
     </xsl:if>
 
     <xsl:variable name="firstRun">
-      <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="2013">
+      <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="3.0.0">
         <xsl:apply-templates select="score-timewise" mode="header"/>
         <xsl:apply-templates select="score-timewise" mode="music"/>
       </mei>
