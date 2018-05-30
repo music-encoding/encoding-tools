@@ -2032,7 +2032,9 @@
   <!-- ======================================================================= -->
 
   <xsl:template name="analog">
-    <xsl:param name="tag"/>
+    <xsl:param name="tag">
+      <xsl:value-of select="@tag"/>
+    </xsl:param>
     <xsl:if test="$analog = 'true'">
       <xsl:attribute name="analog">
         <xsl:value-of select="concat('marc:', $tag)"/>
@@ -3141,11 +3143,7 @@
   <!-- ISBN -->
   <xsl:template match="marc:datafield[@tag = '020']">
     <identifier type="isbn">
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="@tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <xsl:call-template name="subfieldSelect">
         <xsl:with-param name="codes">a</xsl:with-param>
       </xsl:call-template>
@@ -3155,11 +3153,7 @@
   <!-- ISSN -->
   <xsl:template match="marc:datafield[@tag = '022']">
     <identifier type="issn">
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="@tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <xsl:call-template name="subfieldSelect">
         <xsl:with-param name="codes">a</xsl:with-param>
       </xsl:call-template>
@@ -3199,11 +3193,7 @@
       <!--<xsl:attribute name="label">
         <xsl:value-of select="$identifierLabel"/>
       </xsl:attribute>-->
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="@tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <xsl:call-template name="subfieldSelect">
         <xsl:with-param name="codes">a</xsl:with-param>
       </xsl:call-template>
@@ -3234,11 +3224,7 @@
           <xsl:value-of select="concat($identifierType, 'Number')"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="@tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <xsl:call-template name="subfieldSelect">
         <xsl:with-param name="codes">a</xsl:with-param>
       </xsl:call-template>
@@ -3369,11 +3355,7 @@
   <xsl:template match="marc:datafield[@tag = '035']">
     <xsl:variable name="tag" select="@tag"/>
     <identifier>
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="$tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <xsl:call-template name="subfieldSelect">
         <xsl:with-param name="codes">a</xsl:with-param>
       </xsl:call-template>
@@ -4145,11 +4127,7 @@
   <!-- series title -->
   <xsl:template match="marc:datafield[@tag = '490']">
     <seriesStmt>
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="@tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <title>
         <xsl:call-template name="chopPunctuation">
           <xsl:with-param name="chopString">
@@ -4296,11 +4274,7 @@
   <!-- contents note -->
   <!--<xsl:template match="marc:datafield[@tag='505']">
     <contents>
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="@tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <xsl:if test="not(@ind1='8')">
         <xsl:attribute name="label">
           <xsl:choose>
@@ -4405,11 +4379,7 @@
   <!-- 59x (local notes) -->
   <xsl:template match="marc:datafield[starts-with(@tag, '59')]" priority="1">
     <annot type="local">
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="@tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <xsl:value-of select="normalize-space(.)"/>
     </annot>
   </xsl:template>
