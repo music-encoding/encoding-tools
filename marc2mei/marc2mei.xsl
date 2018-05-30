@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-	
+
 	marc2mei.xsl - XSLT (2.0) stylesheet for transformation of MARC XML to MEI header XML
-	
+
 	Perry Roland <pdr4h@virginia.edu>
 	Music Library
 	University of Virginia
-	
+
 	For info on MARC XML, see http://www.loc.gov/marc/marcxml.html
 	For info on the MEI header, see http://music-encoding.org
 	For info on RISM, see http://www.rism-ch.org
-	
+
 	Based on:
 	1. https://code.google.com/p/mei-incubator/source/browse/rism2mei/rism2mei-2012.xsl
 	by Laurent Pugin <laurent.pugin@rism-ch.org> / Swiss RISM Office
 	2. http://oreo.grainger.uiuc.edu/stylesheets/MARC_TEI-twc.xsl
-	3. marc2tei.xsl - XSLT (1.0) stylesheet for transformation of MARC XML to TEI header 
-	XML (TEI P4) by Greg Murray <gpm2a@virginia.edu> / Digital Library Production Services, 
+	3. marc2tei.xsl - XSLT (1.0) stylesheet for transformation of MARC XML to TEI header
+	XML (TEI P4) by Greg Murray <gpm2a@virginia.edu> / Digital Library Production Services,
 	University of Virginia Library
-	
+
 -->
 
 <xsl:stylesheet version="2.0" xmlns="http://www.music-encoding.org/ns/mei"
@@ -3687,7 +3687,7 @@
           <!-- corporate name; use subfield a (non-repeatable) -->
           <corpName role="creator">
             <xsl:if test="marc:subfield[@code = '0']">
-              <xsl:attribute name="dbkey">
+              <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
             </xsl:if>
@@ -3705,7 +3705,7 @@
           <!-- personal name; use subfields a and d -->
           <persName role="creator">
             <xsl:if test="marc:subfield[@code = '0']">
-              <xsl:attribute name="dbkey">
+              <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
             </xsl:if>
@@ -3813,7 +3813,7 @@
     </title>
   </xsl:template>
 
-  <!-- Traditionally, "title proper" is the chief name of an item, including any 
+  <!-- Traditionally, "title proper" is the chief name of an item, including any
     alternative title but excluding parallel titles and other title information.
     This template includes parallel titles, but ignores the statement of responsibility,
     inclusive or bulk dates, and physical medium, which are recorded elsewhere. -->
@@ -4400,7 +4400,7 @@
     </provenance>
   </xsl:template>
 
-  <!-- If the marc2mei59x.xsl module is unavailable, 59x fields are 
+  <!-- If the marc2mei59x.xsl module is unavailable, 59x fields are
     output as MEI annotations. -->
   <!-- 59x (local notes) -->
   <xsl:template match="marc:datafield[starts-with(@tag, '59')]" priority="1">
@@ -4453,7 +4453,7 @@
           <!-- corporate name; use subfield a (non-repeatable) -->
           <corpName>
             <xsl:if test="marc:subfield[@code = '0']">
-              <xsl:attribute name="dbkey">
+              <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
             </xsl:if>
@@ -4471,7 +4471,7 @@
           <!-- personal name -->
           <persName>
             <xsl:if test="marc:subfield[@code = '0']">
-              <xsl:attribute name="dbkey">
+              <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
             </xsl:if>
@@ -4523,9 +4523,9 @@
           <xsl:value-of select="concat('#', upper-case(marc:subfield[@code = '2']))"/>
         </xsl:attribute>
       </xsl:if>
-      <!-- @dbkey not permitted, but should be -->
+      <!-- @codedval not permitted, but should be -->
       <!--<xsl:if test="marc:subfield[@code='0']">
-        <xsl:attribute name="dbkey">
+        <xsl:attribute name="codedval">
           <xsl:value-of select="marc:subfield[@code='0']"/>
         </xsl:attribute>
       </xsl:if>-->
