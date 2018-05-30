@@ -2337,7 +2337,7 @@
     </xsl:if>
 
     <meiHead>
-      <xsl:attribute name="meiversion">3.0.0</xsl:attribute>
+      <xsl:attribute name="meiversion">4.0.0</xsl:attribute>
       <xsl:if test="marc:datafield[@tag = '040']/marc:subfield[@code = 'b']">
         <xsl:attribute name="xml:lang">
           <xsl:value-of select="marc:datafield[@tag = '040']/marc:subfield[@code = 'b']"/>
