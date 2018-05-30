@@ -3249,6 +3249,7 @@
             marc:subfield[@code = 'b'], '&#32;', marc:subfield[@code = 'c']))"
         />
       </xsl:attribute>
+      <xsl:call-template name="analog"/>
       <xsl:attribute name="label">
         <xsl:choose>
           <xsl:when test="marc:subfield[@code = 'd']">
@@ -3319,7 +3320,7 @@
         </tempo>
       </xsl:if> -->
 
-      <xsl:if test="marc:subfield[@code = 'p']">
+      <xsl:if test="marc:subfield[@code = 'g' or @code = 'n' or @code = 'o' or @code = 'p']">
         <incipCode>
           <xsl:attribute name="form">
             <xsl:choose>
@@ -3328,12 +3329,22 @@
               </xsl:when>
             </xsl:choose>
           </xsl:attribute>
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, '|p')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:value-of select="marc:subfield[@code = 'p']"/>
+          <!-- clef -->
+          <xsl:if test="marc:subfield[@code = 'g']">
+            <xsl:value-of select="concat('%', marc:subfield[@code = 'g'])"/>
+          </xsl:if>
+          <!-- key signature -->
+          <xsl:if test="marc:subfield[@code = 'n']">
+            <xsl:value-of select="concat('$', marc:subfield[@code = 'n'])"/>
+          </xsl:if>
+          <!-- time signature -->
+          <xsl:if test="marc:subfield[@code = 'o']">
+            <xsl:value-of select="concat('@', marc:subfield[@code = 'o'])"/>
+          </xsl:if>
+          <!-- music -->
+          <xsl:if test="marc:subfield[@code = 'p']">
+            <xsl:value-of select="concat(' ', marc:subfield[@code = 'p'])"/>
+          </xsl:if>
         </incipCode>
       </xsl:if>
       <xsl:if test="marc:subfield[@code = 't']">
