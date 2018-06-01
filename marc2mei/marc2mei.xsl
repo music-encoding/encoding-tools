@@ -3442,10 +3442,9 @@
     </xsl:for-each>
   </xsl:template>
 
-  <!-- date of composition -->
+  <!-- 045 - Time Period of Content (NR) -->
   <xsl:template match="marc:datafield[@tag = '045']">
     <!-- dates in 045 are assumed to be C.E. -->
-    <!--<xsl:text>Date of composition:&#32;</xsl:text>-->
     <xsl:choose>
       <xsl:when test="@ind1 = ' ' and @ind2 = ' '">
         <!-- Not yet dealt with. -->
@@ -3496,7 +3495,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <!-- musical form -->
+  <!-- 047 - Form of Musical Composition Code (R) -->
   <xsl:template match="marc:datafield[@tag = '047']">
     <xsl:variable name="ind2" select="@ind2"/>
     <xsl:variable name="classcode">
@@ -3537,7 +3536,7 @@
     </xsl:for-each>
   </xsl:template>
 
-  <!-- scoring -->
+  <!-- 048 - Number of Musical Instruments or Voices Code (R) -->
   <xsl:template match="marc:datafield[@tag = '048']">
     <perfResList>
       <xsl:call-template name="analog">
@@ -3768,15 +3767,12 @@
     </respStmt>
   </xsl:template>
 
-  <!-- uniform title -->
+  <!-- 130 - Main Entry-Uniform Title (NR) -->
+  <!-- 240 - Uniform Title (NR) -->
   <xsl:template match="marc:datafield[@tag = '130' or @tag = '240']" mode="titleProper">
     <xsl:variable name="tag" select="@tag"/>
     <title type="uniform">
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="$tag"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:call-template name="analog"/>
       <xsl:call-template name="chopPunctuation">
         <xsl:with-param name="chopString">
           <xsl:call-template name="subfieldSelect">
