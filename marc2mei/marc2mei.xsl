@@ -2,7 +2,7 @@
 
 <!--
 
-	marc2mei.xsl - XSLT (2.0) stylesheet for transformation of MARC XML to MEI header XML
+	marc2mei.xsl - XSLT (2.0) stylesheet for transformation of MARC21 XML to MEI header XML
 
 	Perry Roland <pdr4h@virginia.edu>
 	Music Library
@@ -2987,7 +2987,7 @@
       <workDesc>
         <work>
           <!-- work title(s) -->
-          <titleStmt>
+          <title>
             <xsl:apply-templates
               select="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245']"
               mode="titleProper"/>
@@ -3014,7 +3014,7 @@
                 <xsl:copy-of select="."/>
               </xsl:if>
             </xsl:for-each>
-          </titleStmt>
+          </title>
 
           <!-- work creation -->
           <xsl:variable name="creation_note"
@@ -3200,7 +3200,7 @@
     </identifier>
   </xsl:template>
 
-  <!-- plate number (028) -->
+  <!-- 028 - Publisher or Distributor Number (R) -->
   <xsl:template match="marc:datafield[@tag = '028']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:variable name="elementName">
@@ -3239,15 +3239,17 @@
     </xsl:element>
   </xsl:template>
 
-  <!-- music incipit -->
+  <!-- 031 - Musical Incipits Information (R) -->
   <xsl:template match="marc:datafield[@tag = '031']">
     <incip>
       <xsl:attribute name="n">
-        <xsl:value-of
-          select="
-            normalize-space(concat(marc:subfield[@code = 'a'], '&#32;',
-            marc:subfield[@code = 'b'], '&#32;', marc:subfield[@code = 'c']))"
-        />
+        <xsl:value-of select="marc:subfield[@code = 'a']"/>
+        <xsl:if test="marc:subfield[@code = 'b']">
+          <xsl:value-of select="concat('.',  marc:subfield[@code = 'b'])"/>
+        </xsl:if>
+        <xsl:if test="marc:subfield[@code = 'c']">
+          <xsl:value-of select="concat('.',  marc:subfield[@code = 'c'])"/>
+        </xsl:if>
       </xsl:attribute>
       <xsl:call-template name="analog"/>
       <xsl:attribute name="label">
@@ -3277,31 +3279,39 @@
           </xsl:when>
         </xsl:choose>
       </label>
+      -->
+
+      <!-- key or mode -->
       <xsl:if test="marc:subfield[@code='r']">
         <key>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, '|r')"/>
+            </xsl:with-param>
+          </xsl:call-template>
           <xsl:variable name="key" select="marc:subfield[@code='r']"/>
-          <xsl:choose>
-            <!-\- minor key -\->
-            <xsl:when test="matches(substring($key, 1, 1), '[a-g]')">
-              <xsl:value-of select="translate(substring($key, 1, 1), 'abcdefg',
-                'ABCDEFG')"/>
-              <xsl:value-of select="normalize-space(substring($key, 2, 1))"/>
-              <xsl:text> minor</xsl:text>
-            </xsl:when>
-            <!-\- major key -\->
-            <xsl:when test="matches(substring($key, 1, 1), '[A-G]')">
-              <xsl:value-of select="substring($key, 1, 1)"/>
-              <xsl:value-of select="normalize-space(substring($key, 2, 1))"/>
-              <xsl:text> major</xsl:text>
-            </xsl:when>
-            <!-\- coding error -\->
-            <xsl:otherwise>
-              <xsl:value-of select="$key"/>
-              <xsl:comment>potential coding error?</xsl:comment>
-            </xsl:otherwise>
-          </xsl:choose>
+          <xsl:attribute name="mode">
+            <xsl:choose>
+              <xsl:when test="matches(substring($key, 1, 1), '[A-G]')">
+                <xsl:text>major</xsl:text>
+              </xsl:when>
+              <!-- minor key -->
+              <xsl:when test="matches(substring($key, 1, 1), '[a-g]')">
+                <xsl:text>minor</xsl:text>
+              </xsl:when>
+            </xsl:choose>
+          </xsl:attribute>
+          <xsl:attribute name="pname">
+            <xsl:value-of select="lower-case(substring($key, 1, 1))"/>
+          </xsl:attribute>
+          <xsl:value-of select="$key"/>
+          <xsl:if test="contains($key, '[0-9]')">
+            <xsl:comment>Gregorian modes not parsed</xsl:comment>
+          </xsl:if>
         </key>
       </xsl:if>
+
+      <!--
       <xsl:if test="marc:subfield[@code='o']">
         <meter>
           <xsl:value-of select="upper-case(marc:subfield[@code='o'])"/>
@@ -3319,7 +3329,8 @@
           </xsl:variable>
           <xsl:value-of select="normalize-space($tempo)"/>
         </tempo>
-      </xsl:if> -->
+      </xsl:if>
+      -->
 
       <xsl:if test="marc:subfield[@code = 'g' or @code = 'n' or @code = 'o' or @code = 'p']">
         <incipCode>
@@ -3333,9 +3344,6 @@
               </xsl:when>
             </xsl:choose>
           </xsl:attribute>
-          <!-- key or mode -->
-          <xsl:if test="marc:subfield[@code = 'g']">
-          </xsl:if>
           <!-- clef -->
           <xsl:if test="marc:subfield[@code = 'g']">
             <xsl:value-of select="concat('%', marc:subfield[@code = 'g'])"/>
@@ -3351,6 +3359,10 @@
           <!-- musical notation -->
           <xsl:if test="marc:subfield[@code = 'p']">
             <xsl:value-of select="concat(' ', marc:subfield[@code = 'p'])"/>
+          </xsl:if>
+          <!-- coded validity note -->
+          <xsl:if test="marc:subfield[@code = 's']">
+            <xsl:value-of select="concat('~', marc:subfield[@code = 's'])"/>
           </xsl:if>
         </incipCode>
       </xsl:if>
@@ -4173,7 +4185,7 @@
     </seriesStmt>
   </xsl:template>
 
-  <!-- notes (5XX) -->
+  <!-- 5XX - Note Fields - General Information -->
   <xsl:template
     match="
       marc:datafield[@tag = '500' or @tag = '504' or @tag = '506' or @tag = '510' or
