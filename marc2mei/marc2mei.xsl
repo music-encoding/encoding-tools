@@ -3548,8 +3548,8 @@
       <xsl:choose>
         <xsl:when test="@ind2 = '7' and matches(marc:subfield[@code = '2'], 'iamlmp', 'i')">
           <!-- Use IAML Medium of Performance codes -->
-          <xsl:attribute name="authority">iamlmp</xsl:attribute>
-          <xsl:attribute name="authURI"
+          <xsl:attribute name="auth">iamlmp</xsl:attribute>
+          <xsl:attribute name="auth.uri"
             >http://www.iaml.info/en/activities/cataloguing/unimarc/medium</xsl:attribute>
           <xsl:for-each select="marc:subfield[@code = 'a' or @code = 'b']">
             <perfRes>
@@ -3572,8 +3572,8 @@
         </xsl:when>
         <xsl:otherwise>
           <!-- Use MARC Instruments and Voices Code List -->
-          <xsl:attribute name="authority">marcmusperf</xsl:attribute>
-          <xsl:attribute name="authURI"
+          <xsl:attribute name="auth">marcmusperf</xsl:attribute>
+          <xsl:attribute name="auth.uri"
             >http://www.loc.gov/standards/valuelist/marcmusperf.html</xsl:attribute>
           <xsl:for-each select="marc:subfield[@code = 'a' or @code = 'b']">
             <perfRes>
