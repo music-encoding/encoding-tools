@@ -3243,10 +3243,13 @@
   <xsl:template match="marc:datafield[@tag = '031']">
     <incip>
       <xsl:attribute name="n">
+        <!-- number of work -->
         <xsl:value-of select="marc:subfield[@code = 'a']"/>
+        <!-- number of movement -->
         <xsl:if test="marc:subfield[@code = 'b']">
           <xsl:value-of select="concat('.',  marc:subfield[@code = 'b'])"/>
         </xsl:if>
+        <!-- number of excerpt -->
         <xsl:if test="marc:subfield[@code = 'c']">
           <xsl:value-of select="concat('.',  marc:subfield[@code = 'c'])"/>
         </xsl:if>
@@ -3292,6 +3295,7 @@
           <xsl:variable name="key" select="marc:subfield[@code='r']"/>
           <xsl:attribute name="mode">
             <xsl:choose>
+              <!-- major key -->
               <xsl:when test="matches(substring($key, 1, 1), '[A-G]')">
                 <xsl:text>major</xsl:text>
               </xsl:when>
@@ -3334,16 +3338,19 @@
 
       <xsl:if test="marc:subfield[@code = 'g' or @code = 'n' or @code = 'o' or @code = 'p']">
         <incipCode>
-          <xsl:attribute name="form">
-            <xsl:choose>
-              <xsl:when test="marc:subfield[@code = '2'] = 'da'">
-                <xsl:text>darms</xsl:text>
-              </xsl:when>
-              <xsl:when test="marc:subfield[@code = '2'] = 'pe'">
-                <xsl:text>plaineAndEasie</xsl:text>
-              </xsl:when>
-            </xsl:choose>
-          </xsl:attribute>
+          <!-- system code -->
+          <xsl:if test="marc:subfield[@code = '2']">
+            <xsl:attribute name="form">
+              <xsl:choose>
+                <xsl:when test="marc:subfield[@code = '2'] = 'da'">
+                  <xsl:text>darms</xsl:text>
+                </xsl:when>
+                <xsl:when test="marc:subfield[@code = '2'] = 'pe'">
+                  <xsl:text>plaineAndEasie</xsl:text>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:attribute>
+          </xsl:if>
           <!-- clef -->
           <xsl:if test="marc:subfield[@code = 'g']">
             <xsl:value-of select="concat('%', marc:subfield[@code = 'g'])"/>
