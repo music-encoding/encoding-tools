@@ -3016,12 +3016,6 @@
             </xsl:for-each>
           </title>
 
-          <!-- work creation -->
-          <xsl:variable name="creation_note"
-            select="
-              marc:datafield[(@tag = '045' and
-              marc:subfield[@code = 'b']) or @tag = '508']"/>
-
           <!-- work incipits -->
           <xsl:apply-templates select="marc:datafield[@tag = '031']"/>
           <xsl:apply-templates
@@ -3029,41 +3023,42 @@
               marc:datafield[@tag = '246' and
               matches(marc:subfield[@code = 'i'], 'First\s+line\s+of\s+text', 'i')]"/>
 
+          <!-- work creation -->
+          <xsl:if test="marc:datafield[(@tag = '045' and
+          marc:subfield[@code = 'b']) or @tag = '508']">
+            <creation>
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:choose>
+                    <xsl:when test="marc:datafield[@tag = '508']">
+                      <xsl:value-of select="'508'"/>
+                    </xsl:when>
+                    <xsl:when test="marc:datafield[@tag = '045']">
+                      <xsl:value-of select="'045'"/>
+                    </xsl:when>
+                  </xsl:choose>
+                </xsl:with-param>
+              </xsl:call-template>
+              <xsl:for-each select="marc:datafield[@tag = '508']">
+                <xsl:apply-templates select="."/>
+                <xsl:if test="position() != last()">
+                  <xsl:text>;&#32;</xsl:text>
+                </xsl:if>
+              </xsl:for-each>
+              <xsl:if test="marc:datafield[@tag = '508'] and marc:datafield[@tag = '045']">
+                <xsl:text>&#32;</xsl:text>
+              </xsl:if>
+              <xsl:apply-templates select="marc:datafield[@tag = '045']"/>
+            </creation>
+          </xsl:if>
+
           <!-- work eventList -->
           <xsl:variable name="events" select="marc:datafield[@tag = '511' or @tag = '518']"/>
-          <xsl:if test="$creation_note or $events">
+          <xsl:if test="$events">
             <history>
-              <xsl:if test="$creation_note">
-                <creation>
-                  <xsl:call-template name="analog">
-                    <xsl:with-param name="tag">
-                      <xsl:choose>
-                        <xsl:when test="marc:datafield[@tag = '508']">
-                          <xsl:value-of select="'508'"/>
-                        </xsl:when>
-                        <xsl:when test="marc:datafield[@tag = '045']">
-                          <xsl:value-of select="'045'"/>
-                        </xsl:when>
-                      </xsl:choose>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                  <xsl:for-each select="marc:datafield[@tag = '508']">
-                    <xsl:apply-templates select="."/>
-                    <xsl:if test="position() != last()">
-                      <xsl:text>;&#32;</xsl:text>
-                    </xsl:if>
-                  </xsl:for-each>
-                  <xsl:if test="marc:datafield[@tag = '508'] and marc:datafield[@tag = '045']">
-                    <xsl:text>&#32;</xsl:text>
-                  </xsl:if>
-                  <xsl:apply-templates select="marc:datafield[@tag = '045']"/>
-                </creation>
-              </xsl:if>
-              <xsl:if test="$events">
                 <eventList>
                   <xsl:apply-templates select="$events"/>
                 </eventList>
-              </xsl:if>
             </history>
           </xsl:if>
 
@@ -4352,7 +4347,7 @@
     </contents>
   </xsl:template>-->
 
-  <!-- creation note -->
+  <!-- 508 - Creation/Production Credits Note (R) -->
   <xsl:template match="marc:datafield[@tag = '508']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:call-template name="subfieldSelect">
