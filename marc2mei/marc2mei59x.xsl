@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-	
-	marc2mei59x.xsl - XSLT (2.0) stylesheet component for transformation 
+
+	marc2mei59x.xsl - XSLT (2.0) stylesheet component for transformation
 	of MARC XML to MEI header XML
-	
+
 	Perry Roland <pdr4h@virginia.edu>
 	Music Library
 	University of Virginia
-	
+
+  Klaus Rettinghaus <rettinghaus@bach-leipzig.de>
+  Saxon Academy of Sciences and Humanities in Leipzig
+
 	For info on MARC XML, see http://www.loc.gov/marc/marcxml.html
 	For info on the MEI header, see http://music-encoding.org
 	For info on RISM, see http://www.rism-ch.org
-	
+
 	This stylesheet is a component of the marc2mei.xsl stylesheet. The
 	templates defined here override those in the including file. The
 	analog and subfieldSelect templates are defined in marc2mei.xsl.
-	
+
 -->
 
 <xsl:stylesheet version="2.0" xmlns="http://www.music-encoding.org/ns/mei"
