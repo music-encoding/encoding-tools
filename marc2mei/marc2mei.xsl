@@ -2412,7 +2412,7 @@
       </encodingDesc>
 
       <!-- work description -->
-      <workDesc>
+      <workList>
         <work>
           <!-- work title(s) -->
           <title>
@@ -2528,7 +2528,7 @@
             </perfMedium>
           </xsl:if>
         </work>
-      </workDesc>
+      </workList>
 
       <!-- manifestation list -->
       <manifestationList>
