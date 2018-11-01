@@ -2446,16 +2446,16 @@
                     mode="diplomatic"/>
 
                   <!-- source statements of responsibility -->
-                  <xsl:variable name="respStmts">
+                  <xsl:variable name="contributers">
                     <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
                     <xsl:apply-templates
                       select="
                         marc:datafield[@tag = '700' or
                         @tag = '710'][not(@ind2 = '2')]"
-                      mode="respStmt"/>
+                      mode="contributer"/>
                   </xsl:variable>
                   <xsl:variable name="sortedRespStmts">
-                    <xsl:for-each select="$respStmts/mei:respStmt">
+                    <xsl:for-each select="$contributers/mei:contributer">
                       <xsl:sort
                         select="
                           mei:*[local-name() = 'persName' or
@@ -2464,8 +2464,8 @@
                       <xsl:copy-of select="."/>
                     </xsl:for-each>
                   </xsl:variable>
-                  <xsl:for-each select="$sortedRespStmts/mei:respStmt">
-                    <xsl:if test="not(preceding-sibling::mei:respStmt = .)">
+                  <xsl:for-each select="$sortedRespStmts/mei:contributer">
+                    <xsl:if test="not(preceding-sibling::mei:contributer = .)">
                       <xsl:copy-of select="."/>
                     </xsl:if>
                   </xsl:for-each>
@@ -2731,16 +2731,16 @@
                     mode="diplomatic"/>
 
                   <!-- source statements of responsibility -->
-                  <xsl:variable name="respStmts">
+                  <xsl:variable name="contributers">
                     <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
                     <xsl:apply-templates
                       select="
                         marc:datafield[@tag = '700' or
                         @tag = '710'][not(@ind2 = '2')]"
-                      mode="respStmt"/>
+                      mode="contributer"/>
                   </xsl:variable>
                   <xsl:variable name="sortedRespStmts">
-                    <xsl:for-each select="$respStmts/mei:respStmt">
+                    <xsl:for-each select="$contributers/mei:contributer">
                       <xsl:sort
                         select="
                           mei:*[local-name() = 'persName' or
@@ -2749,8 +2749,8 @@
                       <xsl:copy-of select="."/>
                     </xsl:for-each>
                   </xsl:variable>
-                  <xsl:for-each select="$sortedRespStmts/mei:respStmt">
-                    <xsl:if test="not(preceding-sibling::mei:respStmt = .)">
+                  <xsl:for-each select="$sortedRespStmts/mei:contributer">
+                    <xsl:if test="not(preceding-sibling::mei:contributer = .)">
                       <xsl:copy-of select="."/>
                     </xsl:if>
                   </xsl:for-each>
@@ -2992,15 +2992,15 @@
               select="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245']"
               mode="titleProper"/>
             <!-- work statements of responsibility -->
-            <xsl:variable name="respStmts">
+            <xsl:variable name="contributers">
               <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
               <xsl:if test="not($workMainEntryOnly = 'true')">
                 <xsl:apply-templates select="marc:datafield[@tag = '700' or @tag = '710']"
-                  mode="respStmt"/>
+                  mode="contributer"/>
               </xsl:if>
             </xsl:variable>
             <xsl:variable name="sortedRespStmts">
-              <xsl:for-each select="$respStmts/mei:respStmt">
+              <xsl:for-each select="$contributers/mei:contributer">
                 <xsl:sort
                   select="
                     mei:*[local-name() = 'persName' or
@@ -3009,8 +3009,8 @@
                 <xsl:copy-of select="."/>
               </xsl:for-each>
             </xsl:variable>
-            <xsl:for-each select="$sortedRespStmts/mei:respStmt">
-              <xsl:if test="not(preceding-sibling::mei:respStmt = .)">
+            <xsl:for-each select="$sortedRespStmts/mei:contributer">
+              <xsl:if test="not(preceding-sibling::mei:contributer = .)">
                 <xsl:copy-of select="."/>
               </xsl:if>
             </xsl:for-each>
@@ -3105,7 +3105,7 @@
       <!-- file revision history -->
       <revisionDesc>
         <change>
-          <respStmt/>
+          <contributer/>
           <changeDesc>
             <p>Header generated using <xsl:value-of select="$progname"/>, version <xsl:value-of
                 select="$version"/></p>
@@ -3693,9 +3693,9 @@
     <xsl:variable name="tag">
       <xsl:value-of select="@tag"/>
     </xsl:variable>
-    <!-- each name is contained within a <respStmt> to account for possible <resp>
+    <!-- each name is contained within a <contributer> to account for possible <resp>
       elements -->
-    <respStmt>
+    <contributer>
       <xsl:choose>
         <xsl:when test="$tag = '110'">
           <!-- corporate name; use subfield a (non-repeatable) -->
@@ -3758,13 +3758,13 @@
       </xsl:choose>
       <xsl:choose>
         <xsl:when test="marc:subfield[@code = '4']">
-          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="respStmt"/>
+          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="contributer"/>
         </xsl:when>
         <xsl:when test="marc:subfield[@code = 'e']">
-          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="respStmt"/>
+          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="contributer"/>
         </xsl:when>
       </xsl:choose>
-    </respStmt>
+    </contributer>
   </xsl:template>
 
   <!-- 130 - Main Entry-Uniform Title (NR) -->
@@ -4434,17 +4434,17 @@
   </xsl:template>
 
   <!-- responsibility statement; added entry -->
-  <xsl:template match="marc:datafield[@tag = '700' or @tag = '710']" mode="respStmt">
+  <xsl:template match="marc:datafield[@tag = '700' or @tag = '710']" mode="contributer">
     <xsl:variable name="tag">
       <xsl:value-of select="@tag"/>
     </xsl:variable>
-    <respStmt>
+    <contributer>
       <xsl:choose>
         <xsl:when test="marc:subfield[@code = '4']">
-          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="respStmt"/>
+          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="contributer"/>
         </xsl:when>
         <xsl:when test="marc:subfield[@code = 'e']">
-          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="respStmt"/>
+          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="contributer"/>
         </xsl:when>
       </xsl:choose>
       <xsl:choose>
@@ -4507,7 +4507,7 @@
           </persName>
         </xsl:otherwise>
       </xsl:choose>
-    </respStmt>
+    </contributer>
   </xsl:template>
 
   <!-- associated place -->
@@ -4685,7 +4685,7 @@
   </xsl:template>
 
   <!-- relator codes -->
-  <xsl:template match="marc:subfield[@code = '4']" mode="respStmt">
+  <xsl:template match="marc:subfield[@code = '4']" mode="contributer">
     <xsl:variable name="code">
       <xsl:value-of select="."/>
     </xsl:variable>
@@ -4707,7 +4707,7 @@
   </xsl:template>
 
   <!-- relator terms -->
-  <xsl:template match="marc:subfield[@code = 'e']" mode="respStmt">
+  <xsl:template match="marc:subfield[@code = 'e']" mode="contributer">
     <xsl:variable name="term">
       <xsl:call-template name="chopPunctuation">
         <xsl:with-param name="chopString">
