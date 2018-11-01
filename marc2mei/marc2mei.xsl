@@ -2397,10 +2397,8 @@
       <encodingDesc>
         <appInfo>
           <application>
-            <xsl:attribute name="date">
-              <xsl:attribute name="isodate">
-                <xsl:value-of select="format-date(current-date(), '[Y]-[M02]-[D02]')"/>
-              </xsl:attribute>
+            <xsl:attribute name="isodate">
+              <xsl:value-of select="format-date(current-date(), '[Y]-[M02]-[D02]')"/>
             </xsl:attribute>
             <xsl:attribute name="version">
               <xsl:value-of select="replace($version, '\s+', '_')"/>
