@@ -3606,7 +3606,7 @@
       @tag = '650' or @tag = '651' or @tag = '653' or @tag = '654' or @tag = '655' or @tag = '656' or
       @tag = '657' or @tag = '658' or (number(@tag) >= 90 and number(@tag) &lt;= 99)]">
     <xsl:variable name="tag" select="@tag"/>
-    <xsl:variable name="label">
+    <xsl:variable name="type">
       <xsl:choose>
         <xsl:when test="$tag = '050'">callNum</xsl:when>
         <xsl:when test="$tag = '082'">callNum</xsl:when>
@@ -3622,7 +3622,7 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:variable name="ind2" select="@ind2"/>
-    <xsl:variable name="classcode">
+    <xsl:variable name="resp">
       <xsl:choose>
         <xsl:when test="$tag = '050'">LCCN</xsl:when>
         <xsl:when test="$tag = '082'">DDC</xsl:when>
@@ -3641,13 +3641,13 @@
       </xsl:choose>
     </xsl:variable>
     <term>
-      <xsl:if test="not($label = '')">
-        <xsl:attribute name="label">
-          <xsl:value-of select="$label"/>
+      <xsl:if test="not($type = '')">
+        <xsl:attribute name="type">
+          <xsl:value-of select="$type"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:if test="not($classcode = '')">
-        <xsl:attribute name="classcode" select="concat('#', $classcode)"/>
+      <xsl:if test="not($resp = '')">
+        <xsl:attribute name="resp" select="concat('#', $resp)"/>
       </xsl:if>
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
