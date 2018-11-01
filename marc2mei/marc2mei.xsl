@@ -2415,34 +2415,33 @@
       <workList>
         <work>
           <!-- work title(s) -->
-          <title>
-            <xsl:apply-templates
-              select="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245']"
-              mode="titleProper"/>
+          <xsl:apply-templates
+            select="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245']"
+            mode="titleProper"/>
+
             <!-- work statements of responsibility -->
             <xsl:variable name="contributors">
               <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
               <xsl:if test="not($workMainEntryOnly = 'true')">
                 <xsl:apply-templates select="marc:datafield[@tag = '700' or @tag = '710']"
                   mode="contributor"/>
-              </xsl:if>
-            </xsl:variable>
-            <xsl:variable name="sortedContributors">
-              <xsl:for-each select="$contributors/mei:contributor">
-                <xsl:sort
-                  select="
+                </xsl:if>
+              </xsl:variable>
+              <xsl:variable name="sortedContributors">
+                <xsl:for-each select="$contributors/mei:contributor">
+                  <xsl:sort
+                    select="
                     mei:*[local-name() = 'persName' or
                     local-name() = 'corpName']/@analog"/>
-                <xsl:sort/>
-                <xsl:copy-of select="."/>
-              </xsl:for-each>
-            </xsl:variable>
-            <xsl:for-each select="$sortedContributors/mei:contributor">
-              <xsl:if test="not(preceding-sibling::mei:contributor = .)">
-                <xsl:copy-of select="."/>
-              </xsl:if>
-            </xsl:for-each>
-          </title>
+                    <xsl:sort/>
+                    <xsl:copy-of select="."/>
+                  </xsl:for-each>
+                </xsl:variable>
+                <xsl:for-each select="$sortedContributors/mei:contributor">
+                  <xsl:if test="not(preceding-sibling::mei:contributor = .)">
+                    <xsl:copy-of select="."/>
+                  </xsl:if>
+                </xsl:for-each>
 
           <!-- work incipits -->
           <xsl:apply-templates select="marc:datafield[@tag = '031']"/>
