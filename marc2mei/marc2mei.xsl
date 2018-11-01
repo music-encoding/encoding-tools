@@ -4421,17 +4421,17 @@
     </xsl:variable>
     <contributor>
       <xsl:choose>
-        <xsl:when test="marc:subfield[@code = '4']">
-          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="contributor"/>
-        </xsl:when>
-        <xsl:when test="marc:subfield[@code = 'e']">
-          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="contributor"/>
-        </xsl:when>
-      </xsl:choose>
-      <xsl:choose>
         <xsl:when test="$tag = '710'">
           <!-- corporate name; use subfield a (non-repeatable) -->
           <corpName>
+            <xsl:choose>
+              <xsl:when test="marc:subfield[@code = '4']">
+                <xsl:apply-templates select="marc:subfield[@code = '4']" mode="contributor"/>
+              </xsl:when>
+              <xsl:when test="marc:subfield[@code = 'e']">
+                <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="contributor"/>
+              </xsl:when>
+            </xsl:choose>
             <xsl:if test="marc:subfield[@code = '0']">
               <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
@@ -4450,6 +4450,14 @@
         <xsl:otherwise>
           <!-- personal name -->
           <persName>
+            <xsl:choose>
+              <xsl:when test="marc:subfield[@code = '4']">
+                <xsl:apply-templates select="marc:subfield[@code = '4']" mode="contributor"/>
+              </xsl:when>
+              <xsl:when test="marc:subfield[@code = 'e']">
+                <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="contributor"/>
+              </xsl:when>
+            </xsl:choose>
             <xsl:if test="marc:subfield[@code = '0']">
               <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
@@ -4670,12 +4678,7 @@
     <xsl:variable name="code">
       <xsl:value-of select="."/>
     </xsl:variable>
-    <resp codedval="{$code}">
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="concat(./@tag, '|4')"/>
-        </xsl:with-param>
-      </xsl:call-template>
+    <xsl:attribute name="role">
       <xsl:choose>
         <xsl:when test="$marcRelList/mei:relator[@code = $code]">
           <xsl:value-of select="$marcRelList/mei:relator[@code = $code]"/>
@@ -4684,7 +4687,7 @@
           <xsl:text>[unknown]</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
-    </resp>
+    </xsl:attribute>
   </xsl:template>
 
   <!-- relator terms -->
@@ -4696,17 +4699,9 @@
         </xsl:with-param>
       </xsl:call-template>
     </xsl:variable>
-    <resp>
-      <xsl:attribute name="codedval">
-        <xsl:value-of select="$marcRelList/mei:relator[. = $term]/@code"/>
-      </xsl:attribute>
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="concat(../@tag, '|4')"/>
-        </xsl:with-param>
-      </xsl:call-template>
+    <xsl:attribute name="role">
       <xsl:value-of select="$term"/>
-    </resp>
+    </xsl:attribute>
   </xsl:template>
 
   <!-- The default behavior for 9xx datafields is to serialize them
