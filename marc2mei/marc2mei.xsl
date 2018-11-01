@@ -9,8 +9,8 @@
 	University of Virginia
 
 	For info on MARC XML, see http://www.loc.gov/marc/marcxml.html
-	For info on the MEI header, see http://music-encoding.org
-	For info on RISM, see http://www.rism-ch.org
+	For info on the MEI header, see http://music-encoding.org/
+	For info on RISM, see http://www.rism.info/
 
 	Based on:
 	1. https://code.google.com/p/mei-incubator/source/browse/rism2mei/rism2mei-2012.xsl
