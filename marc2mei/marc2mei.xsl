@@ -3288,18 +3288,20 @@
             </xsl:with-param>
           </xsl:call-template>
           <xsl:variable name="key" select="marc:subfield[@code='r']"/>
-          <xsl:attribute name="mode">
-            <xsl:choose>
-              <!-- major key -->
-              <xsl:when test="matches(substring($key, 1, 1), '[A-G]')">
+          <xsl:choose>
+            <!-- major key -->
+            <xsl:when test="matches(substring($key, 1, 1), '[A-G]')">
+              <xsl:attribute name="mode">
                 <xsl:text>major</xsl:text>
-              </xsl:when>
-              <!-- minor key -->
-              <xsl:when test="matches(substring($key, 1, 1), '[a-g]')">
+              </xsl:attribute>
+            </xsl:when>
+            <!-- minor key -->
+            <xsl:when test="matches(substring($key, 1, 1), '[a-g]')">
+              <xsl:attribute name="mode">
                 <xsl:text>minor</xsl:text>
-              </xsl:when>
-            </xsl:choose>
-          </xsl:attribute>
+              </xsl:attribute>
+            </xsl:when>
+          </xsl:choose>
           <xsl:attribute name="pname">
             <xsl:value-of select="lower-case(substring($key, 1, 1))"/>
           </xsl:attribute>
