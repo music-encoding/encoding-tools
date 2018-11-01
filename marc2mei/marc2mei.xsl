@@ -2819,7 +2819,7 @@
 
           <xsl:otherwise>
             <!-- manifestation has multiple components; manifestation contains data common to all
-            components, componentGrp/manifestation contains manifestation-specific data -->
+            components, componentList/manifestation contains manifestation-specific data -->
             <manifestation>
               <xsl:if test="$analog = 'true'">
                 <xsl:attribute name="xml:id">
@@ -3003,7 +3003,7 @@
                   />
                 </xsl:if>
               </xsl:variable>
-              <componentGrp>
+              <componentList>
                 <xsl:for-each-group select="$componentContent/*"
                   group-by="marc:subfield[@code = '3']">
                   <xsl:sort select="current-grouping-key()"/>
@@ -3088,7 +3088,7 @@
                     </xsl:if>
                   </manifestation>
                 </xsl:for-each-group>
-              </componentGrp>
+              </componentList>
             </manifestation>
           </xsl:otherwise>
         </xsl:choose>
