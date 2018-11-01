@@ -3735,6 +3735,7 @@
           </persName>
         </xsl:otherwise>
       </xsl:choose>
+      <!--
       <xsl:choose>
         <xsl:when test="marc:subfield[@code = '4']">
           <xsl:apply-templates select="marc:subfield[@code = '4']" mode="contributor"/>
@@ -3743,6 +3744,7 @@
           <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="contributor"/>
         </xsl:when>
       </xsl:choose>
+      -->
     </contributor>
   </xsl:template>
 
