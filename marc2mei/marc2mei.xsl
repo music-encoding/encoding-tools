@@ -3624,9 +3624,11 @@
           <xsl:value-of select="$type"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:if test="not($resp = '')">
-        <xsl:attribute name="resp" select="concat('#', $resp)"/>
-      </xsl:if>
+      <!--
+        <xsl:if test="not($resp = '')">
+          <xsl:attribute name="resp" select="concat('#', $resp)"/>
+        </xsl:if>
+      -->
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
           <xsl:value-of select="$tag"/>
