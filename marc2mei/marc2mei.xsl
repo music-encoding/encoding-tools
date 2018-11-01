@@ -3492,10 +3492,12 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:for-each select="marc:subfield[@code = 'a']">
-      <term label="musForm">
+      <term type="musForm">
+        <!--
         <xsl:if test="not($classcode = '')">
           <xsl:attribute name="classcode" select="concat('#', $classcode)"/>
         </xsl:if>
+        -->
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
             <xsl:value-of select="'047'"/>
