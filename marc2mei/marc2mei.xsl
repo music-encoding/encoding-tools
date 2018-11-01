@@ -60,7 +60,7 @@
 
   <!-- program version -->
   <xsl:variable name="version">
-    <xsl:text>1.1 beta</xsl:text>
+    <xsl:text>2.0.0</xsl:text>
   </xsl:variable>
 
   <!-- MARC Instruments or Voices Codes -->
