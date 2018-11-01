@@ -3853,14 +3853,14 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:for-each select="marc:subfield[not(@code = '0' or @code = '6' or @code = '8')]">
-        <title>
+        <titlePart>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
               <xsl:value-of select="concat(../@tag, '|', @code)"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:value-of select="."/>
-        </title>
+        </titlePart>
       </xsl:for-each>
     </title>
   </xsl:template>
