@@ -2167,17 +2167,6 @@
           </xsl:for-each>
         </xsl:variable>
 
-        <!-- unique schemes -->
-        <xsl:variable name="uniqueClassCodes">
-          <xsl:for-each select="$classCodes/mei:classCode">
-            <xsl:sort/>
-            <xsl:if test="not(preceding-sibling::mei:classCode = .)">
-              <xsl:copy-of select="."/>
-            </xsl:if>
-          </xsl:for-each>
-        </xsl:variable>
-        <xsl:copy-of select="$uniqueClassCodes"/>
-
         <termList>
           <xsl:variable name="sortedTerms">
             <xsl:apply-templates select="$classification"/>
