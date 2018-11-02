@@ -1408,6 +1408,24 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- Rename @barplace to @bar.method -->
+  <xsl:template match="@barplace" mode="copy">
+    <xsl:choose>
+      <xsl:when test="not(. eq 'mensur')">
+        <xsl:attribute name="bar.method">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:if test="not(parent::*[matches(local-name(), '(staffDef|measure)')])">
+          <xsl:attribute name="bar.method">
+            <xsl:value-of select="."/>
+          </xsl:attribute>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <!-- Remove @def -->
   <xsl:template match="@def" mode="copy">
     <xsl:if test="$verbose">
