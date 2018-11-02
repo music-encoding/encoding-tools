@@ -3812,33 +3812,21 @@
 
   <!-- Traditionally, "title proper" is the chief name of an item, including any
     alternative title but excluding parallel titles and other title information.
-    This template includes parallel titles, but ignores the statement of responsibility,
-    inclusive or bulk dates, and physical medium, which are recorded elsewhere. -->
-  <xsl:template match="marc:datafield[@tag = '245']" mode="titleProper">
-    <title type="proper">
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="concat(@tag, '|a-b')"/>
-        </xsl:with-param>
-      </xsl:call-template>
-      <xsl:variable name="titleProper">
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">ab</xsl:with-param>
-        </xsl:call-template>
-      </xsl:variable>
-      <xsl:value-of select="replace($titleProper, '\s*/\s*$', '')"/>
-      <!-- test for certain other subfields to append to main value -->
-      <!-- some subfields are repeatable, so loop through all -->
-      <xsl:for-each select="marc:subfield[@code = 'n' or @code = 'p']">
-        <xsl:text>, </xsl:text>
-        <xsl:call-template name="chopPunctuation">
-          <xsl:with-param name="chopString">
-            <xsl:value-of select="."/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:for-each>
-    </title>
-  </xsl:template>
+    This template puts every subfield into a separate titlePart element -->
+    <xsl:template match="marc:datafield[@tag = '245']" mode="titleProper">
+      <title type="proper">
+        <xsl:for-each select="marc:subfield">
+          <titlePart>
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="concat(../@tag, '|', @code)"/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:value-of select="text()"/>
+          </titlePart>
+        </xsl:for-each>
+      </title>
+    </xsl:template>
 
   <!-- diplomatic title -->
   <xsl:template match="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245']"
