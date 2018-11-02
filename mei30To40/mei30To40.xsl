@@ -1658,6 +1658,21 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- Map beatRpt/@slash values to new ones -->
+  <xsl:template match="mei:beatRpt/@slash" mode="copy">
+    <xsl:attribute name="slash">
+      <xsl:choose>
+        <xsl:when test="matches(., '4')">1</xsl:when>
+        <xsl:when test="matches(., '8')">2</xsl:when>
+        <xsl:when test="matches(., '16')">3</xsl:when>
+        <xsl:when test="matches(., '32')">4</xsl:when>
+        <xsl:when test="matches(., '64')">5</xsl:when>
+        <!-- The value "128" IS NOT mapped! -->
+        <xsl:when test="matches(., 'mixed')">mixed</xsl:when>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+
   <!-- Correct common error in @xlink:show -->
   <xsl:template match="@xlink:show" mode="copy">
     <xsl:attribute name="xlink:show">
