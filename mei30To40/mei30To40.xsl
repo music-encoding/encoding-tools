@@ -1712,6 +1712,17 @@
     </xsl:attribute>
   </xsl:template>
 
+  <!-- Remove @subtype -->
+  <xsl:template match="@subtype" mode="copy"/>
+
+  <!-- Add values in @subtype to @type -->
+  <xsl:template match="@type" mode="copy">
+    <xsl:attribute name="type">
+      <xsl:value-of select="concat(., ' ')"/>
+      <xsl:value-of select="../@subtype"/>
+    </xsl:attribute>
+  </xsl:template>
+
   <!-- Identity template -->
   <xsl:template match="@* | node()" mode="#all">
     <xsl:copy>
