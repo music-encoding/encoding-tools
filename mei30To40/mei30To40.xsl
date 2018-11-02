@@ -1426,6 +1426,13 @@
     </xsl:choose>
   </xsl:template>
 
+  <!-- Rename @barthru to @bar.thru -->
+  <xsl:template match="@barthru" mode="copy">
+    <xsl:attribute name="bar.thru">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+  </xsl:template>
+
   <!-- Remove @def -->
   <xsl:template match="@def" mode="copy">
     <xsl:if test="$verbose">
