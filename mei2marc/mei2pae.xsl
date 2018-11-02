@@ -50,6 +50,63 @@
     </xsl:for-each>
   </xsl:template>
 
+  <!-- MEI key signature -->
+  <xsl:template name="setKey" match="mei:keySig|@*[starts-with(name(),'key')]">
+    <xsl:param name="keyTonic" select="(@pname|ancestor-or-self::*/@key.pname)[1]" />
+    <xsl:param name="keyAccid" select="(@accid|ancestor-or-self::*/@key.accid)[1]" />
+    <xsl:param name="keyMode" select="(@mode|ancestor-or-self::*/@key.mode)[1]" />
+    <xsl:param name="keySig" select="(@sig|ancestor-or-self::*/@key.sig)[1]" />
+    <xsl:param name="keySigMixed" select="(@sig.mixed|ancestor-or-self::*/@key.sig.mixed)[1]" />
+    <xsl:if test="$keySig != 'mixed'">
+      <xsl:choose>
+        <xsl:when test="$keySig='1s'">
+          <xsl:text>xF</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='2s'">
+          <xsl:text>xFC</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='3s'">
+          <xsl:text>xFCG</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='4s'">
+          <xsl:text>xFCGD</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='5s'">
+          <xsl:text>xFCGDA</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='6s'">
+          <xsl:text>xFCGDAE</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='7s'">
+          <xsl:text>xFCGDAEB</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='1f'">
+          <xsl:text>bB</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='2f'">
+          <xsl:text>bBE</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='3f'">
+          <xsl:text>bBEA</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='4f'">
+          <xsl:text>bBEAD</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='5f'">
+          <xsl:text>bBEADG</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='6f'">
+          <xsl:text>bBEADGC</xsl:text>
+        </xsl:when>
+        <xsl:when test="$keySig='7f'">
+          <xsl:text>bBEADGCF</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match="mei:layer">
     <xsl:apply-templates/>
   </xsl:template>
@@ -123,15 +180,25 @@
   </xsl:template>
 
   <xsl:template match="mei:staffDef[@n = $staff]">
-    <xsl:value-of select="concat('%', .//@clef.shape, '-', .//@clef.line)"/>
-
-    <xsl:value-of select="'@'"/>
-    <xsl:call-template name="meterSig">
-      <xsl:with-param name="meterSymbol" select="@meter.sym|../@meter.sym" />
-      <xsl:with-param name="meterCount" select="@meter.count|../@meter.count" />
-      <xsl:with-param name="meterUnit" select="@meter.unit|../@meter.unit" />
-      <xsl:with-param name="meterRend" select="@meter.form|../@meter.form" />
-    </xsl:call-template>
+    <xsl:variable name="accidental" select="ancestor-or-self::*/@key.sig"/>
+    <!-- clef -->
+    <xsl:value-of select="'%'"/>
+    <xsl:value-of select="concat(.//@clef.shape, '-', .//@clef.line)"/>
+    <!-- key -->
+    <xsl:if test="(substring($accidental, string-length($accidental), 1) = 'f') or (substring($accidental, string-length($accidental), 1) = 's')">
+      <xsl:value-of select="'$'"/>
+      <xsl:call-template name="setKey"/>
+    </xsl:if>
+    <!-- meter -->
+    <xsl:if test="ancestor-or-self::*/@*[starts-with(name(),'meter')]">
+      <xsl:value-of select="'@'"/>
+      <xsl:call-template name="meterSig">
+        <xsl:with-param name="meterSymbol" select="ancestor-or-self::*/@meter.sym[1]" />
+        <xsl:with-param name="meterCount" select="ancestor-or-self::*/@meter.count[1]" />
+        <xsl:with-param name="meterUnit" select="ancestor-or-self::*/@meter.unit[1]" />
+        <xsl:with-param name="meterRend" select="ancestor-or-self::*/@meter.form[1]" />
+      </xsl:call-template>
+    </xsl:if>
     <xsl:text> </xsl:text>
   </xsl:template>
 
