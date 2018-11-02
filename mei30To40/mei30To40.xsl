@@ -1346,8 +1346,9 @@
   <!-- ======================================================================= -->
 
   <!-- Replace deprecated "ten-stacc" value with "ten" and "stac" values -->
-  <xsl:template match="@artic[matches(., 'ten-stacc')]" mode="copy">
-    <xsl:attribute name="artic">
+  <xsl:template match="@artic[matches(., 'ten-stacc')] | @artic.ges[matches(., 'ten-stacc')]"
+    mode="copy">
+    <xsl:attribute name="{local-name()}">
       <xsl:value-of select="replace(., 'ten-stacc', 'ten stacc')"/>
     </xsl:attribute>
     <xsl:if test="$verbose">
@@ -1541,6 +1542,20 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- Fix up half-step values in @intm -->
+  <xsl:template match="@intm" mode="copy">
+    <xsl:attribute name="intm">
+      <xsl:choose>
+        <xsl:when test="matches(., '^[0-9\.\+\-]+$')">
+          <xsl:value-of select="concat(normalize-space(.), 'hs')"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="normalize-space(.)"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+
   <!-- Rename @key.sig.show to @keysig.show -->
   <xsl:template match="@key.sig.show" mode="copy">
     <xsl:attribute name="keysig.show">
@@ -1666,6 +1681,20 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- Correct common error in @xlink:show -->
+  <xsl:template match="@xlink:show" mode="copy">
+    <xsl:attribute name="xlink:show">
+      <xsl:choose>
+        <xsl:when test="matches(., '_?self')">
+          <xsl:text>replace</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+
   <!-- Map beatRpt/@slash values to new ones -->
   <xsl:template match="mei:beatRpt/@slash" mode="copy">
     <xsl:attribute name="slash">
@@ -1677,20 +1706,6 @@
         <xsl:when test="matches(., '64')">5</xsl:when>
         <!-- The value "128" IS NOT mapped! -->
         <xsl:when test="matches(., 'mixed')">mixed</xsl:when>
-      </xsl:choose>
-    </xsl:attribute>
-  </xsl:template>
-
-  <!-- Correct common error in @xlink:show -->
-  <xsl:template match="@xlink:show" mode="copy">
-    <xsl:attribute name="xlink:show">
-      <xsl:choose>
-        <xsl:when test="matches(., '_?self')">
-          <xsl:text>replace</xsl:text>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="."/>
-        </xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
   </xsl:template>
