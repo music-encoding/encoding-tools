@@ -1447,12 +1447,16 @@
   </xsl:template>
 
   <!-- Replace 'cue' with 'small' in @fontsize; rename @size to @fontsize -->
-  <xsl:template match="
-      @fontsize[matches(., 'cue')] |
-      @size[matches(., 'cue')]"
-    mode="copy">
+  <xsl:template match="@fontsize | @size" mode="copy">
     <xsl:attribute name="fontsize">
-      <xsl:text>small</xsl:text>
+      <xsl:choose>
+        <xsl:when test="matches(., 'cue')">
+          <xsl:text>small</xsl:text>
+        </xsl:when>
+        <xsl:when test="matches(., 'medium')">
+          <xsl:text>normal</xsl:text>
+        </xsl:when>
+      </xsl:choose>
     </xsl:attribute>
     <xsl:if test="$verbose">
       <xsl:variable name="thisID">
@@ -1557,7 +1561,8 @@
     </xsl:if>
   </xsl:template>
 
-  <!-- Add 'pt' to numeric values without specified units; replace 'cue' with 'small' -->
+  <!-- Add 'pt' to numeric values without specified units; replace 'cue' with 'small';
+    replace 'medium' with 'normal'. -->
   <xsl:template match="@lyric.size | @mensur.size | @music.size | @text.size" mode="copy">
     <xsl:attribute name="{local-name()}">
       <xsl:choose>
@@ -1568,6 +1573,9 @@
           <xsl:choose>
             <xsl:when test="matches(., 'cue')">
               <xsl:text>small</xsl:text>
+            </xsl:when>
+            <xsl:when test="matches(., 'medium')">
+              <xsl:text>normal</xsl:text>
             </xsl:when>
             <xsl:otherwise>
               <xsl:value-of select="."/>
