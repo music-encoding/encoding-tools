@@ -1345,11 +1345,13 @@
   <!-- MATCH TEMPLATES FOR ATTRIBUTES                                          -->
   <!-- ======================================================================= -->
 
-  <!-- Replace deprecated "ten-stacc" value with "ten" and "stac" values -->
-  <xsl:template match="@artic[matches(., 'ten-stacc')] | @artic.ges[matches(., 'ten-stacc')]"
-    mode="copy">
+  <!-- Replace deprecated "marc-stacc" and "ten-stacc" values with "marc" and "stacc" 
+    and "ten" and "stac" values, respectively -->
+  <xsl:template match="@artic | @artic.ges" mode="copy">
     <xsl:attribute name="{local-name()}">
-      <xsl:value-of select="replace(., 'ten-stacc', 'ten stacc')"/>
+      <xsl:value-of
+        select="distinct-values(tokenize(replace(replace(normalize-space(.), 'ten-stacc', 'ten stacc'), 'marc-stacc', 'marc stacc'), ' '))"
+      />
     </xsl:attribute>
     <xsl:if test="$verbose">
       <xsl:variable name="thisID">
