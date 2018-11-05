@@ -1451,6 +1451,34 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- Rename @dur.ges -->
+  <xsl:template match="@dur.ges" mode="copy">
+    <xsl:variable name="durType">
+      <xsl:choose>
+        <xsl:when test="matches(., 'b')">dur.metrical</xsl:when>
+        <xsl:when test="matches(., 'p')">dur.ppq</xsl:when>
+        <xsl:when test="matches(., 'r')">dur.recip</xsl:when>
+        <xsl:when test="matches(., 's')">dur.real</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:attribute name="{$durType}">
+      <xsl:value-of select="replace(., '[bprs]', '')"/>
+    </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
   <!-- Add 'pt' to @fontsize without specified units; rename @size to @fontsize -->
   <xsl:template
     match="
