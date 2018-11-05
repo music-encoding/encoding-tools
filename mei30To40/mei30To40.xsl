@@ -1185,6 +1185,7 @@
   <xsl:template match="mei:title[ancestor::mei:title and not(ancestor::mei:titleStmt)]" mode="copy">
     <xsl:choose>
       <xsl:when test="count(ancestor::mei:title) mod 2 != 0">
+        <xsl:text>&#32;</xsl:text>
         <titlePart xmlns:mei="http://www.music-encoding.org/ns/mei"
           xsl:exclude-result-prefixes="mei xlink">
           <xsl:apply-templates select="@*" mode="copy"/>
@@ -1216,9 +1217,9 @@
 
   <!-- Use titlePart for title/title -->
   <xsl:template match="mei:title[ancestor::mei:title]" mode="titleReorg">
-    <xsl:text>&#32;</xsl:text>
     <xsl:choose>
       <xsl:when test="count(ancestor::mei:title) mod 2 != 0">
+        <xsl:text>&#32;</xsl:text>
         <titlePart xmlns:mei="http://www.music-encoding.org/ns/mei"
           xsl:exclude-result-prefixes="mei xlink">
           <xsl:apply-templates select="@*" mode="copy"/>
@@ -1743,8 +1744,10 @@
   <!-- Add values in @subtype to @type -->
   <xsl:template match="@type" mode="copy">
     <xsl:attribute name="type">
-      <xsl:value-of select="concat(., ' ')"/>
-      <xsl:value-of select="../@subtype"/>
+      <xsl:value-of select="."/>
+      <xsl:if test="../@subtype">
+        <xsl:value-of select="concat(' ', ../@subtype)"/>
+      </xsl:if>
     </xsl:attribute>
   </xsl:template>
 
