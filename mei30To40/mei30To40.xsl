@@ -312,6 +312,35 @@
     </xsl:copy>
   </xsl:template>
 
+  <!-- Map bend/@dots to multiple durations -->
+  <xsl:template match="mei:bend[@dots]" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*[not(local-name() eq 'dur') and not(local-name() eq 'dots')]"
+        mode="copy"/>
+      <xsl:variable name="dots">
+        <xsl:value-of select="@dots"/>
+      </xsl:variable>
+      <xsl:variable name="dots2durations">
+        <duration>
+          <xsl:value-of select="@dur * 2"/>
+        </duration>
+        <duration>
+          <xsl:value-of select="@dur * 4"/>
+        </duration>
+        <duration>
+          <xsl:value-of select="@dur * 8"/>
+        </duration>
+        <duration>
+          <xsl:value-of select="@dur * 16"/>
+        </duration>
+      </xsl:variable>
+      <xsl:attribute name="dur">
+        <xsl:value-of select="concat(@dur, ' ')"/>
+        <xsl:value-of select="$dots2durations/mei:duration[position() = 1 to $dots]"/>
+      </xsl:attribute>
+    </xsl:copy>
+  </xsl:template>
+
   <!-- Remove change elements that don't contain any data -->
   <xsl:template match="mei:change[mei:changeDesc[mei:p[not(mei:* or text())]]]" mode="copy">
     <xsl:if test="$removeEmptyElements">
