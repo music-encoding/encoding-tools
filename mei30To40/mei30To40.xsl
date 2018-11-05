@@ -1738,6 +1738,13 @@
     </xsl:attribute>
   </xsl:template>
 
+  <!-- Map fTrem/@slash to @beams -->
+  <xsl:template match="mei:fTrem/@slash" mode="copy">
+    <xsl:attribute name="beams">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+  </xsl:template>
+
   <!-- Remove @subtype -->
   <xsl:template match="@subtype" mode="copy"/>
 
