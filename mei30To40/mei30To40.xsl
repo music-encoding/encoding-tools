@@ -1642,6 +1642,28 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="@lendsymsize | @lstartsymsize" mode="copy">
+    <xsl:variable name="newName">
+      <xsl:value-of select="replace(local-name(), 'symsize', 'sym.size')"/>
+    </xsl:variable>
+    <xsl:attribute name="{$newName}">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
   <!-- Rename @measperf to @unitdur -->
   <xsl:template match="@measperf" mode="copy">
     <xsl:attribute name="unitdur">
