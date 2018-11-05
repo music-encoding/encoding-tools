@@ -312,26 +312,48 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- Map bend/@dots to multiple durations -->
-  <xsl:template match="mei:bend[@dots]" mode="copy">
+  <!-- Map @dur and @dots > 0 on control events to multiple @dur values -->
+  <xsl:template
+    match="
+      mei:*[local-name() eq 'beamSpan' or local-name() eq 'bend' or
+      local-name() eq 'bracketSpan' or local-name() eq 'gliss' or
+      local-name() eq 'hairpin' or local-name() eq 'mRest' or
+      local-name() eq 'mSpace' or local-name() eq 'octave' or
+      local-name() eq 'slur' or local-name() eq 'tuplet' or
+      local-name() eq 'trill' or local-name() eq 'fing' or
+      local-name() eq 'fingGrp' or local-name() eq 'f' or
+      local-name() eq 'harm' or local-name() eq 'annot' or
+      local-name() eq 'dir' or local-name() eq 'dynam' or
+      local-name() eq 'ornam' or local-name() eq 'phrase' or
+      local-name() eq 'line'][@dots > 0]"
+    mode="copy">
     <xsl:copy>
       <xsl:apply-templates select="@*[not(local-name() eq 'dur') and not(local-name() eq 'dots')]"
         mode="copy"/>
       <xsl:variable name="dots">
         <xsl:value-of select="@dots"/>
       </xsl:variable>
+      <xsl:variable name="numDur">
+        <xsl:choose>
+          <xsl:when test="@dur eq 'breve'">.5</xsl:when>
+          <xsl:when test="@dur eq 'long'">.25</xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="@dur"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
       <xsl:variable name="dots2durations">
         <duration>
-          <xsl:value-of select="@dur * 2"/>
+          <xsl:value-of select="$numDur * 2"/>
         </duration>
         <duration>
-          <xsl:value-of select="@dur * 4"/>
+          <xsl:value-of select="$numDur * 4"/>
         </duration>
         <duration>
-          <xsl:value-of select="@dur * 8"/>
+          <xsl:value-of select="$numDur * 8"/>
         </duration>
         <duration>
-          <xsl:value-of select="@dur * 16"/>
+          <xsl:value-of select="$numDur * 16"/>
         </duration>
       </xsl:variable>
       <xsl:attribute name="dur">
