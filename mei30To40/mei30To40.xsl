@@ -718,6 +718,23 @@
     </xsl:copy>
   </xsl:template>
 
+  <!-- Remove lyrics element -->
+  <xsl:template match="mei:lyrics" mode="copy">
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(.), '&#32;', $thisID, '&#32;: Removed ', local-name(), ' element')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
   <!-- Add encodingDesc/classDecls if classification appears anywhere in the file -->
   <xsl:template match="mei:meiHead" mode="copy">
     <xsl:copy>
