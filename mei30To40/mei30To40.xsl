@@ -1410,6 +1410,13 @@
     </work>
   </xsl:template>
 
+  <xsl:template match="mei:workDesc" mode="copy">
+    <workList>
+      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates/>
+    </workList>
+  </xsl:template>
+
   <!-- ======================================================================= -->
   <!-- MATCH TEMPLATES FOR ATTRIBUTES                                          -->
   <!-- ======================================================================= -->
