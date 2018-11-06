@@ -240,7 +240,6 @@
       </xsl:processing-instruction>
       <xsl:value-of select="$nl"/>
     </xsl:if>
-
     <xsl:if test="$sch_model_path != ''">
       <xsl:processing-instruction name="xml-model">
         <xsl:value-of select="concat(' href=&quot;', $sch_model_path, '&quot;')"/>
@@ -309,6 +308,31 @@
           <xsl:value-of select="$progname"/>
         </name>
       </application>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- If back already exists, copy separated lyrics there -->
+  <xsl:template match="mei:back" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates mode="copy"/>
+      <xsl:if test="ancestor::mei:music/descendant::mei:lyrics">
+        <div type="add_lyrics">
+          <xsl:variable name="lyricsCopy">
+            <xsl:apply-templates select="//mei:lyrics" mode="move"/>
+          </xsl:variable>
+          <!-- Group verses by @pseudo-n attribute assigned during copy process -->
+          <xsl:for-each-group select="$lyricsCopy//mei:verse" group-by="@pseudo-n">
+            <lg type="verse" n="{current-grouping-key()}">
+              <xsl:for-each select="current-group()">
+                <l>
+                  <xsl:apply-templates select="mei:syl"/>
+                </l>
+              </xsl:for-each>
+            </lg>
+          </xsl:for-each-group>
+        </div>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
 
@@ -718,7 +742,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- Remove lyrics element -->
+  <!-- Move or delete lyrics element -->
   <xsl:template match="mei:lyrics" mode="copy">
     <xsl:if test="$verbose">
       <xsl:variable name="thisID">
@@ -726,13 +750,31 @@
       </xsl:variable>
       <xsl:call-template name="warning">
         <xsl:with-param name="warningText">
-          <xsl:value-of
-            select="
-              concat(local-name(.), '&#32;', $thisID, '&#32;: Removed ', local-name(), ' element')"
-          />
+          <xsl:choose>
+            <xsl:when test="ancestor::mei:body">
+              <xsl:value-of
+                select="
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: ', local-name(), ' element copied to back')"
+              />
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of
+                select="
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: ', local-name(), ' element removed')"
+              />
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
+  </xsl:template>
+
+  <!-- Copy lyrics element, apply templates to content in move mode -->
+  <xsl:template match="mei:lyrics" mode="move">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates mode="move"/>
+    </xsl:copy>
   </xsl:template>
 
   <!-- Add encodingDesc/classDecls if classification appears anywhere in the file -->
@@ -774,6 +816,26 @@
     <xsl:copy>
       <xsl:apply-templates select="@*[not(local-name() eq 'meiversion')]" mode="copy"/>
       <xsl:apply-templates mode="copy"/>
+      <!-- If additional lyrics exist, but there's no back -->
+      <xsl:if test="descendant::mei:lyrics and not(mei:back)">
+        <back>
+          <div type="add_lyrics">
+            <xsl:variable name="lyricsCopy">
+              <xsl:apply-templates select="//mei:lyrics" mode="move"/>
+            </xsl:variable>
+            <!-- Group verses by @pseudo-n attribute assigned during copy process -->
+            <xsl:for-each-group select="$lyricsCopy//mei:verse" group-by="@pseudo-n">
+              <lg type="verse" n="{current-grouping-key()}">
+                <xsl:for-each select="current-group()">
+                  <l>
+                    <xsl:apply-templates select="mei:syl"/>
+                  </l>
+                </xsl:for-each>
+              </lg>
+            </xsl:for-each-group>
+          </div>
+        </back>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
 
@@ -913,7 +975,8 @@
   </xsl:template>
 
   <!-- Remove empty pubStmt elements -->
-  <xsl:template match="mei:pubStmt[normalize-space(.) eq '' and not(descendant::mei:ptr[@target])]"
+  <xsl:template
+    match="mei:source/mei:pubStmt[normalize-space(.) eq '' and not(descendant::mei:ptr[@target])]"
     mode="copy">
     <xsl:if test="$removeEmptyElements">
       <xsl:if test="$verbose">
@@ -1400,6 +1463,17 @@
       </xsl:for-each-group>
       <xsl:apply-templates select="*[not(local-name() eq 'head') and not(local-name() eq 'title')]"
         mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Copy verse element, assign a pseudo @n -->
+  <xsl:template match="mei:verse" mode="move">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:attribute name="pseudo-n">
+        <xsl:value-of select="position()"/>
+      </xsl:attribute>
+      <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
 
