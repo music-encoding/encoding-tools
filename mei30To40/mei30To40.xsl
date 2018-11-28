@@ -290,6 +290,21 @@
     <xsl:text>&gt;</xsl:text>
   </xsl:template>
 
+  <!-- Map accessRestrict to bibl/imprint/annot -->
+  <xsl:template match="mei:accessRestrict" mode="bibl">
+    <annot>
+      <xsl:apply-templates mode="bibl"/>
+    </annot>
+  </xsl:template>
+
+  <!-- Copy accessRestrict and useRestrict in manifestation -->
+  <xsl:template match="mei:accessRestrict | mei:useRestrict" mode="manifestation">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates mode="manifestation"/>
+    </xsl:copy>
+  </xsl:template>
+
   <!-- Revise appInfo -->
   <xsl:template match="mei:appInfo" mode="copy">
     <xsl:copy>
@@ -309,6 +324,11 @@
         </name>
       </application>
     </xsl:copy>
+  </xsl:template>
+
+  <!-- Use contents of availability -->
+  <xsl:template match="mei:availability" mode="bibl">
+    <xsl:apply-templates mode="bibl"/>
   </xsl:template>
 
   <!-- If back already exists, copy separated lyrics there -->
@@ -406,8 +426,25 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template
+    match="mei:change[mei:respStmt/mei:*[matches(local-name(), '(name|corpName|persName)') and @resp and normalize-space() eq '']]"
+    mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:if test="not(@resp)">
+        <xsl:attribute name="resp">
+          <xsl:value-of
+            select="mei:respStmt/mei:*[matches(local-name(), '(name|corpName|persName)') and @resp][1]/@resp"
+          />
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates select="mei:changeDesc | mei:date" mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
+
   <!-- Reorder content of classification -->
-  <xsl:template match="mei:classification" mode="copy">
+  <xsl:template match="mei:classification" mode="#all">
     <xsl:choose>
       <xsl:when test="mei:termList">
         <xsl:copy>
@@ -495,7 +532,7 @@
             <xsl:with-param name="warningText">
               <xsl:value-of
                 select="
-                  concat(local-name(.), '&#32;', $thisID, '&#32;: Added classDecls')"
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: Added classDecls element')"
               />
             </xsl:with-param>
           </xsl:call-template>
@@ -506,8 +543,8 @@
 
   <!-- Remove empty identifier elements -->
   <xsl:template
-    match="mei:identifier[normalize-space(.) eq '' and not(descendant::mei:ptr[@target])]"
-    mode="copy">
+    match="mei:identifier[normalize-space(.) eq '' and not(descendant::mei:ptr[@target] or descendant::mei:ref)]"
+    mode="#all">
     <xsl:if test="$removeEmptyElements">
       <xsl:if test="$verbose">
         <xsl:variable name="thisID">
@@ -730,7 +767,7 @@
                 <xsl:with-param name="warningText">
                   <xsl:value-of
                     select="
-                      concat(local-name(.), '&#32;', $thisID, '&#32;: Modified @midi.instrname')"
+                      concat(local-name(.), '&#32;', $thisID, '&#32;: Modified value of @midi.instrname')"
                   />
                 </xsl:with-param>
               </xsl:call-template>
@@ -754,7 +791,7 @@
             <xsl:when test="ancestor::mei:body">
               <xsl:value-of
                 select="
-                  concat(local-name(.), '&#32;', $thisID, '&#32;: ', local-name(), ' element copied to back')"
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: ', local-name(), ' element moved to back')"
               />
             </xsl:when>
             <xsl:otherwise>
@@ -772,7 +809,7 @@
   <!-- Copy lyrics element, apply templates to content in move mode -->
   <xsl:template match="mei:lyrics" mode="move">
     <xsl:copy>
-      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates mode="move"/>
     </xsl:copy>
   </xsl:template>
@@ -807,13 +844,28 @@
           </encodingDesc>
         </xsl:when>
       </xsl:choose>
-      <xsl:apply-templates select="mei:extMeta | mei:revisionDesc | mei:workDesc" mode="copy"/>
+      <xsl:apply-templates select="mei:extMeta | mei:workDesc" mode="copy"/>
+      <xsl:if
+        test="
+          mei:fileDesc/mei:sourceDesc/mei:source[mei:biblList |
+          mei:classification | mei:componentGrp | mei:contents | mei:extMeta |
+          mei:history | mei:itemList | mei:relationList |
+          mei:physDesc[mei:*[not(matches(local-name(),
+          '(dimensions|extent|perfDuration|watermark)'))]]]">
+        <!-- source has complex description -->
+        <manifestationList>
+          <xsl:apply-templates select="mei:fileDesc/mei:sourceDesc/mei:source" mode="manifestation"
+          />
+        </manifestationList>
+      </xsl:if>
+      <xsl:apply-templates select="mei:revisionDesc" mode="copy"/>
     </xsl:copy>
   </xsl:template>
 
-  <!-- Remove music/@meiversion -->
+  <!-- Revise music element -->
   <xsl:template match="mei:music" mode="copy">
     <xsl:copy>
+      <!-- Remove music/@meiversion -->
       <xsl:apply-templates select="@*[not(local-name() eq 'meiversion')]" mode="copy"/>
       <xsl:apply-templates mode="copy"/>
       <!-- If additional lyrics exist, but there's no back -->
@@ -840,15 +892,31 @@
   </xsl:template>
 
   <!-- Use role-specific element (arranger, composer, etc.) -->
-  <xsl:template match="mei:name | mei:corpname | mei:persName" mode="titleStmtReorg">
+  <xsl:template match="mei:name | mei:corpName | mei:persName" mode="respStmtReorg">
     <xsl:choose>
       <xsl:when
-        test="matches(@role, 'arranger|author|composer|contributor|editor|funder|librettist|lyricist|sponsor')">
+        test="matches(@role, 'arranger|author|composer|contributor|distributor|editor|funder|librettist|lyricist|publisher|sponsor')">
         <xsl:element name="{@role}">
           <xsl:apply-templates select="." mode="copy"/>
         </xsl:element>
       </xsl:when>
+      <xsl:when test="matches(@role, 'creator')">
+        <composer>
+          <xsl:apply-templates select="." mode="copy"/>
+        </composer>
+      </xsl:when>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="mei:name | mei:corpName | mei:persName" mode="copy">
+    <xsl:element name="{local-name()}">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates select="text() | mei:*[not(matches(local-name(), 'address'))]"
+        mode="copy"/>
+    </xsl:element>
+    <xsl:if test="mei:address">
+      <xsl:apply-templates select="mei:address" mode="copy"/>
+    </xsl:if>
   </xsl:template>
 
   <!-- Remove empty p elements -->
@@ -891,6 +959,9 @@
       </xsl:if>
     </xsl:if>
   </xsl:template>
+
+  <!-- Remove physDesc in bibl mode -->
+  <xsl:template match="mei:physDesc" mode="bibl"/>
 
   <!-- Remove empty physDesc elements -->
   <xsl:template match="mei:physDesc[normalize-space(.) eq '' and not(descendant::mei:ptr[@target])]"
@@ -946,52 +1017,85 @@
     </xsl:if>
   </xsl:template>
 
-  <!-- Use role-specific element (publisher, etc.) -->
-  <xsl:template match="mei:pubStmt/mei:respStmt" mode="copy">
-    <xsl:for-each
-      select="
-        mei:*[matches(local-name(), '(name|corpName|persName)')]
-        [matches(@role, '(arranger|author|composer|contributor|funder|librettist|lyricist|publisher|sponsor)')]">
-      <xsl:element name="{@role}">
-        <xsl:element name="{local-name()}">
-          <xsl:apply-templates select="@*[not(local-name() eq 'role')]" mode="copy"/>
-          <xsl:apply-templates select="text() | mei:*[not(local-name() eq 'address')]" mode="copy"/>
-        </xsl:element>
-        <xsl:apply-templates select="mei:address" mode="copy"/>
-      </xsl:element>
-    </xsl:for-each>
-    <xsl:if
-      test="
-        mei:*[matches(local-name(), '(name|corpName|persName)')]
-        [not(matches(@role, '(arranger|author|composer|contributor|editor|funder|librettist|lyricist|sponsor)', 'i'))]">
-      <respStmt>
+  <xsl:template match="mei:pubStmt[parent::mei:fileDesc]" mode="copy">
+    <pubStmt>
+      <xsl:apply-templates select="mei:publisher | mei:distributor" mode="copy"/>
+      <xsl:for-each select="mei:respStmt">
         <xsl:apply-templates
-          select="
-            mei:*[matches(local-name(), '(name|corpName|persName)')]
-            [not(matches(@role, '(arranger|author|composer|contributor|editor|funder|librettist|lyricist|sponsor)', 'i'))] | mei:resp"
-          mode="copy"/>
-      </respStmt>
+          select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(@role, '(publisher|distributor)')]"
+          mode="respStmtReorg"/>
+        <xsl:if
+          test="
+            mei:*[matches(local-name(), '(name|persName|corpName)')]
+            [not(matches(@role, 'publisher|distributor'))]">
+          <respStmt>
+            <xsl:apply-templates
+              select="
+                mei:*[matches(local-name(), '(name|persName|corpName)')]
+                [not(matches(@role, 'publisher|distributor'))]"
+              mode="copy"/>
+          </respStmt>
+        </xsl:if>
+      </xsl:for-each>
+      <xsl:apply-templates
+        select="mei:*[not(matches(local-name(), '(publisher|distributor|respStmt)'))]" mode="copy"/>
+    </pubStmt>
+  </xsl:template>
+
+  <!-- Process children of titleStmt using bibl mode -->
+  <xsl:template match="mei:titleStmt[parent::mei:source]" mode="bibl">
+    <xsl:apply-templates mode="bibl"/>
+  </xsl:template>
+
+  <!-- Map pubStmt to imprint in bibl mode -->
+  <xsl:template match="mei:pubStmt[parent::mei:source]" mode="bibl">
+    <imprint>
+      <xsl:apply-templates mode="bibl"/>
+    </imprint>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(.), '&#32;', $thisID, '&#32;: Mapped to imprint element')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
     </xsl:if>
   </xsl:template>
 
-  <!-- Remove empty pubStmt elements -->
-  <xsl:template
-    match="mei:source/mei:pubStmt[normalize-space(.) eq '' and not(descendant::mei:ptr[@target])]"
+  <!-- Process children of pubStmt and titleStmt using copy mode -->
+  <xsl:template match="mei:pubStmt[parent::mei:source] | mei:titleStmt[parent::mei:source]"
     mode="copy">
-    <xsl:if test="$removeEmptyElements">
-      <xsl:if test="$verbose">
-        <xsl:variable name="thisID">
-          <xsl:call-template name="thisID"/>
-        </xsl:variable>
-        <xsl:call-template name="warning">
-          <xsl:with-param name="warningText">
-            <xsl:value-of
-              select="
-                concat(local-name(.), '&#32;', $thisID, '&#32;: Empty; not copied')"
-            />
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
+    <xsl:apply-templates mode="copy"/>
+  </xsl:template>
+
+  <!-- Copy pubStmt in manifestation mode -->
+  <xsl:template match="mei:pubStmt[parent::mei:source]" mode="manifestation">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates mode="manifestation"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:respStmt" mode="bibl">
+    <xsl:apply-templates
+      select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)')]"
+      mode="respStmtReorg"/>
+    <xsl:if
+      test="
+        mei:*[matches(local-name(), '(name|persName|corpName)')]
+        [not(matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]">
+      <respStmt>
+        <xsl:apply-templates
+          select="
+            mei:*[matches(local-name(), '(name|persName|corpName)')]
+            [not(matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]"
+          mode="copy"/>
+      </respStmt>
     </xsl:if>
   </xsl:template>
 
@@ -1012,20 +1116,6 @@
         </xsl:call-template>
       </xsl:if>
     </xsl:if>
-  </xsl:template>
-
-  <!-- Use role-specific element (arranger, composer, etc.) -->
-  <xsl:template match="mei:titleStmt/mei:respStmt | mei:seriesStmt/mei:respStmt" mode="copy">
-    <xsl:for-each
-      select="mei:*[matches(local-name(), '(name|corpName|persName)')][matches(@role, '(arranger|author|composer|contributor|editor|funder|librettist|lyricist|sponsor)')]">
-      <xsl:element name="{@role}">
-        <xsl:element name="{local-name()}">
-          <xsl:apply-templates select="@*[not(local-name() eq 'role')]" mode="copy"/>
-          <xsl:apply-templates select="text() | mei:*[not(local-name() eq 'address')]" mode="copy"/>
-        </xsl:element>
-        <xsl:apply-templates select="mei:address" mode="copy"/>
-      </xsl:element>
-    </xsl:for-each>
   </xsl:template>
 
   <!-- Where respStmt contains only a resp element, the resp actually holds a name -->
@@ -1137,6 +1227,78 @@
     </xsl:copy>
   </xsl:template>
 
+  <!-- Map seriesStmt to series in bibl mode -->
+  <xsl:template match="mei:seriesStmt" mode="bibl">
+    <series>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates mode="bibl"/>
+    </series>
+  </xsl:template>
+
+  <xsl:template match="mei:seriesStmt" mode="manifestation copy">
+    <seriesStmt>
+      <xsl:apply-templates select="mei:title" mode="copy"/>
+      <xsl:apply-templates select="mei:editor" mode="copy"/>
+      <xsl:for-each select="mei:respStmt">
+        <xsl:apply-templates
+          select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)')]"
+          mode="respStmtReorg"/>
+        <xsl:if
+          test="
+            mei:*[matches(local-name(), '(name|persName|corpName)')]
+            [not(matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]">
+          <respStmt>
+            <xsl:apply-templates
+              select="
+                mei:*[matches(local-name(), '(name|persName|corpName)')]
+                [not(matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]"
+              mode="copy"/>
+          </respStmt>
+        </xsl:if>
+      </xsl:for-each>
+      <xsl:apply-templates
+        select="mei:*[not(matches(local-name(), '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor|respStmt|title|editor)'))]"
+        mode="copy"/>
+    </seriesStmt>
+  </xsl:template>
+
+  <!-- Map source to bibl if it contains a "simple" description -->
+  <xsl:template match="mei:source" mode="bibl">
+    <!-- source has simple description -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <bibl>
+        <xsl:apply-templates mode="bibl"/>
+      </bibl>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Map source to manifestation if it contains a "complex" description -->
+  <xsl:template match="mei:source" mode="manifestation">
+    <!-- source has complex description -->
+    <manifestation>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates mode="manifestation"/>
+    </manifestation>
+  </xsl:template>
+
+  <!-- Copy sourceDesc if all source children contain a "simple" description -->
+  <xsl:template match="mei:sourceDesc" mode="copy">
+    <!-- source has simple description -->
+    <xsl:if
+      test="
+        not(mei:source[mei:biblList | mei:classification |
+        mei:componentGrp | mei:contents | mei:extMeta |
+        mei:history | mei:itemList | mei:relationList]) and
+        not(mei:source/mei:physDesc[mei:*[not(matches(local-name(),
+        '(dimensions|extent|perfDuration|watermark)'))]])">
+      <xsl:copy>
+        <xsl:apply-templates select="@*" mode="copy"/>
+        <xsl:apply-templates select="mei:source" mode="bibl"/>
+      </xsl:copy>
+    </xsl:if>
+  </xsl:template>
+
   <!-- Modify staffDef labels; move @key.sig.mixed values to keySig/keyAccid -->
   <xsl:template match="mei:staffDef" mode="copy">
     <xsl:copy>
@@ -1174,13 +1336,13 @@
             <xsl:with-param name="warningText">
               <xsl:value-of
                 select="
-                  concat(local-name(.), '&#32;', $thisID, '&#32;: Moved @key.sig.mixed to &lt;keySig>')"
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: Moved @key.sig.mixed to keySig element')"
               />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
       </xsl:if>
-      <xsl:if test="@label">
+      <xsl:if test="@label and not(mei:label)">
         <label xsl:exclude-result-prefixes="mei xlink">
           <xsl:value-of select="@label"/>
         </label>
@@ -1198,7 +1360,53 @@
           </xsl:call-template>
         </xsl:if>
       </xsl:if>
-      <xsl:if test="@label.abbr">
+      <xsl:if test="@label.abbr and not(mei:labelAbbr)">
+        <labelAbbr xsl:exclude-result-prefixes="mei xlink">
+          <xsl:value-of select="@label.abbr"/>
+        </labelAbbr>
+        <xsl:if test="$verbose">
+          <xsl:variable name="thisID">
+            <xsl:call-template name="thisID"/>
+          </xsl:variable>
+          <xsl:call-template name="warning">
+            <xsl:with-param name="warningText">
+              <xsl:value-of
+                select="
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced @label.abbr with labelAbbr element')"
+              />
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:if>
+      <xsl:apply-templates mode="copy"/>
+      <!--<xsl:apply-templates select="mei:*[not(local-name() eq 'label')]" mode="copy"/>-->
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Modify staffGrp labels -->
+  <xsl:template match="mei:staffGrp" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates
+        select="@*[not(local-name() eq 'label') and not(local-name() eq 'label.abbr')]" mode="copy"/>
+      <xsl:if test="@label and not(mei:label)">
+        <label xsl:exclude-result-prefixes="mei xlink">
+          <xsl:value-of select="@label"/>
+        </label>
+        <xsl:if test="$verbose">
+          <xsl:variable name="thisID">
+            <xsl:call-template name="thisID"/>
+          </xsl:variable>
+          <xsl:call-template name="warning">
+            <xsl:with-param name="warningText">
+              <xsl:value-of
+                select="
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced @label with label element')"
+              />
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:if>
+      <xsl:if test="@label.abbr and not(mei:labelAbbr)">
         <labelAbbr xsl:exclude-result-prefixes="mei xlink">
           <xsl:value-of select="@label.abbr"/>
         </labelAbbr>
@@ -1220,50 +1428,8 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- Modify staffGrp labels -->
-  <xsl:template match="mei:staffGrp" mode="copy">
-    <xsl:copy>
-      <xsl:apply-templates
-        select="@*[not(local-name() eq 'label') and not(local-name() eq 'label.abbr')]" mode="copy"/>
-      <xsl:if test="@label">
-        <label xsl:exclude-result-prefixes="mei xlink">
-          <xsl:value-of select="@label"/>
-        </label>
-      </xsl:if>
-      <xsl:if test="@label.abbr">
-        <labelAbbr xsl:exclude-result-prefixes="mei xlink">
-          <xsl:value-of select="@label.abbr"/>
-        </labelAbbr>
-      </xsl:if>
-      <xsl:apply-templates select="mei:*[not(local-name() eq 'label')]" mode="copy"/>
-      <xsl:if test="$verbose">
-        <xsl:variable name="thisID">
-          <xsl:call-template name="thisID"/>
-        </xsl:variable>
-        <xsl:call-template name="warning">
-          <xsl:with-param name="warningText">
-            <xsl:value-of
-              select="
-                concat(local-name(.), '&#32;', $thisID, '&#32;: Moved @label and @label.abbr to label and labelAbbr, respectively')"
-            />
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-    </xsl:copy>
-  </xsl:template>
-
-  <!-- Remove @classcode -->
-  <xsl:template match="mei:termList" mode="copy">
-    <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name() eq 'classcode')]"/>
-      <xsl:apply-templates select="mei:term" mode="copy">
-        <xsl:sort/>
-      </xsl:apply-templates>
-    </xsl:copy>
-  </xsl:template>
-
   <!-- Substitute @class for @classcode -->
-  <xsl:template match="mei:termList/mei:term" mode="copy">
+  <xsl:template match="mei:term[parent::mei:termList]" mode="copy">
     <xsl:if test="not(normalize-space(.) eq '')">
       <xsl:copy>
         <xsl:copy-of select="@*[not(local-name() eq 'classcode') and not(name() eq 'xml:id')]"/>
@@ -1312,6 +1478,16 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- Remove @classcode -->
+  <xsl:template match="mei:termList" mode="copy">
+    <xsl:copy>
+      <xsl:copy-of select="@*[not(local-name() eq 'classcode')]"/>
+      <xsl:apply-templates select="mei:term" mode="copy">
+        <xsl:sort/>
+      </xsl:apply-templates>
+    </xsl:copy>
+  </xsl:template>
+
   <!-- Use titlePart for title/title -->
   <xsl:template match="mei:title[ancestor::mei:title and not(ancestor::mei:titleStmt)]" mode="copy">
     <xsl:choose>
@@ -1330,7 +1506,7 @@
             <xsl:with-param name="warningText">
               <xsl:value-of
                 select="
-                  concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced by @titlePart')"
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced by titlePart element')"
               />
             </xsl:with-param>
           </xsl:call-template>
@@ -1364,7 +1540,7 @@
             <xsl:with-param name="warningText">
               <xsl:value-of
                 select="
-                  concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced by @titlePart')"
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced by titlePart element')"
               />
             </xsl:with-param>
           </xsl:call-template>
@@ -1401,6 +1577,52 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="mei:titleStmt[ancestor::mei:fileDesc]" mode="copy">
+    <titleStmt>
+      <xsl:for-each-group select="mei:title"
+        group-starting-with="
+          mei:title[every $i in tokenize(@type, '\s+')
+            satisfies
+            not(matches($i, 'subordinate') or matches($i, 'sub'))]">
+        <xsl:variable name="titleStmt">
+          <titleStmt xmlns:mei="http://www.music-encoding.org/ns/mei"
+            xsl:exclude-result-prefixes="mei xlink">
+            <xsl:copy-of select="current-group()"/>
+          </titleStmt>
+        </xsl:variable>
+        <xsl:for-each select="$titleStmt/mei:titleStmt/mei:title[1]">
+          <xsl:variable name="titleJoin">
+            <xsl:copy>
+              <xsl:apply-templates select="@*" mode="copy"/>
+              <xsl:apply-templates mode="copy"/>
+              <xsl:apply-templates select="following-sibling::mei:title" mode="copy"/>
+            </xsl:copy>
+          </xsl:variable>
+          <xsl:apply-templates select="$titleJoin" mode="titleReorg"/>
+        </xsl:for-each>
+      </xsl:for-each-group>
+      <xsl:copy-of
+        select="
+          mei:arranger | mei:author | mei:composer | mei:creator | mei:editor |
+          mei:funder | mei:librettist | mei:lyricist | mei:sponsor"/>
+      <xsl:for-each select="mei:respStmt">
+        <xsl:apply-templates select="mei:name | mei:corpname | mei:persName" mode="respStmtReorg"/>
+        <xsl:if
+          test="
+            mei:*[matches(local-name(), '(name|persName|corpName)')]
+            [not(matches(@role, 'arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor'))]">
+          <respStmt>
+            <xsl:apply-templates
+              select="
+                mei:*[matches(local-name(), '(name|persName|corpName)')]
+                [not(matches(@role, 'arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor'))]"
+              mode="copy"/>
+          </respStmt>
+        </xsl:if>
+      </xsl:for-each>
+    </titleStmt>
+  </xsl:template>
+
   <!-- Remove titleStmt in work and expression; use its contents directly -->
   <xsl:template match="mei:titleStmt[ancestor::mei:work or ancestor::mei:expression]" mode="copy">
     <xsl:for-each-group select="mei:title"
@@ -1427,49 +1649,59 @@
     </xsl:for-each-group>
     <xsl:copy-of
       select="
-        mei:arranger | mei:author | mei:composer | mei:editor |
+        mei:arranger | mei:author | mei:composer | mei:creator | mei:editor |
         mei:funder | mei:librettist | mei:lyricist | mei:sponsor"/>
     <xsl:for-each select="mei:respStmt">
-      <xsl:apply-templates select="mei:name | mei:corpname | mei:persName" mode="titleStmtReorg"/>
+      <xsl:apply-templates select="mei:name | mei:corpname | mei:persName" mode="respStmtReorg"/>
     </xsl:for-each>
   </xsl:template>
 
-  <!-- Group titles -->
-  <xsl:template match="mei:titleStmt" mode="copy">
-    <xsl:copy>
-      <xsl:apply-templates select="@*" mode="copy"/>
-      <xsl:apply-templates select="mei:head" mode="copy"/>
-      <xsl:for-each-group select="mei:title"
-        group-starting-with="
-          mei:title[every $i in tokenize(@type, '\s+')
-            satisfies
-            not(matches($i, 'subordinate') or matches($i, 'sub'))]">
-        <xsl:variable name="titleStmt">
-          <titleStmt xmlns:mei="http://www.music-encoding.org/ns/mei"
-            xsl:exclude-result-prefixes="mei xlink">
-            <xsl:copy-of select="current-group()"/>
-          </titleStmt>
-        </xsl:variable>
-        <xsl:for-each select="$titleStmt/mei:titleStmt/mei:title[1]">
-          <xsl:variable name="titleJoin">
-            <xsl:copy>
-              <xsl:apply-templates select="@*" mode="copy"/>
-              <xsl:apply-templates mode="copy"/>
-              <xsl:apply-templates select="following-sibling::mei:title" mode="copy"/>
-            </xsl:copy>
+  <!-- Map accessRestrict to bibl/imprint/date or bibl/imprint/annot -->
+  <xsl:template match="mei:useRestrict" mode="bibl">
+    <xsl:choose>
+      <xsl:when test="matches(., '(&#x00A9;|\(c\)|copyright\s+\d+)')">
+        <date type="copyright">
+          <xsl:apply-templates mode="bibl"/>
+        </date>
+        <xsl:if test="$verbose">
+          <xsl:variable name="thisID">
+            <xsl:call-template name="thisID"/>
           </xsl:variable>
-          <xsl:apply-templates select="$titleJoin" mode="titleReorg"/>
-        </xsl:for-each>
-      </xsl:for-each-group>
-      <xsl:apply-templates select="*[not(local-name() eq 'head') and not(local-name() eq 'title')]"
-        mode="copy"/>
-    </xsl:copy>
+          <xsl:call-template name="warning">
+            <xsl:with-param name="warningText">
+              <xsl:value-of
+                select="
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: Mapped to date element')"
+              />
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+        <annot>
+          <xsl:apply-templates mode="bibl"/>
+        </annot>
+        <xsl:if test="$verbose">
+          <xsl:variable name="thisID">
+            <xsl:call-template name="thisID"/>
+          </xsl:variable>
+          <xsl:call-template name="warning">
+            <xsl:with-param name="warningText">
+              <xsl:value-of
+                select="
+                  concat(local-name(.), '&#32;', $thisID, '&#32;: Mapped to annot element')"
+              />
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
-  <!-- Copy verse element, assign a pseudo @n -->
+  <!-- Copy verse element, assign a pseudo @n for later processing -->
   <xsl:template match="mei:verse" mode="move">
     <xsl:copy>
-      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:attribute name="pseudo-n">
         <xsl:value-of select="position()"/>
       </xsl:attribute>
@@ -1477,6 +1709,7 @@
     </xsl:copy>
   </xsl:template>
 
+  <!-- Create empty title element when work doesn't contain a title -->
   <xsl:template match="mei:work[not(mei:title)]" mode="copy">
     <work>
       <title/>
@@ -1484,9 +1717,10 @@
     </work>
   </xsl:template>
 
+  <!-- Rename workDesc to workList -->
   <xsl:template match="mei:workDesc" mode="copy">
     <workList>
-      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates/>
     </workList>
   </xsl:template>
@@ -1503,7 +1737,7 @@
         select="distinct-values(tokenize(replace(replace(normalize-space(.), 'ten-stacc', 'ten stacc'), 'marc-stacc', 'marc stacc'), ' '))"
       />
     </xsl:attribute>
-    <xsl:if test="$verbose">
+    <xsl:if test="$verbose and matches(., 'ten-stacc|marc-stacc')">
       <xsl:variable name="thisID">
         <xsl:call-template name="thisID"/>
       </xsl:variable>
@@ -1511,7 +1745,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1531,7 +1765,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @auth')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1551,7 +1785,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @auth.uri')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1631,7 +1865,7 @@
             <xsl:with-param name="warningText">
               <xsl:value-of
                 select="
-                  concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+                  concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @', $durType)"
               />
             </xsl:with-param>
           </xsl:call-template>
@@ -1657,7 +1891,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1684,7 +1918,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1692,7 +1926,7 @@
   </xsl:template>
 
   <!-- Map beatRpt/@form values to new ones -->
-  <xsl:template match="mei:beatRpt/@form" mode="copy">
+  <xsl:template match="@form[parent::mei:beatRpt]" mode="copy">
     <xsl:attribute name="slash">
       <xsl:choose>
         <xsl:when test="matches(., '4')">1</xsl:when>
@@ -1704,10 +1938,24 @@
         <xsl:when test="matches(., 'mixed')">mixed</xsl:when>
       </xsl:choose>
     </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+
   </xsl:template>
 
   <!-- Update values in mordent/@form -->
-  <xsl:template match="mei:mordent/@form" mode="copy">
+  <xsl:template match="@form[parent::mei:mordent]" mode="copy">
     <xsl:attribute name="form">
       <xsl:choose>
         <xsl:when test=". eq 'inv'">
@@ -1726,7 +1974,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified @',
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @',
               local-name())"
           />
         </xsl:with-param>
@@ -1747,7 +1995,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @glyph.name')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1767,19 +2015,32 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @glyph.num')"
           />
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
 
-  <!-- Fix up half-step values in @intm -->
+  <!-- Fix up for half-step values in @intm -->
   <xsl:template match="@intm" mode="copy">
     <xsl:attribute name="intm">
       <xsl:choose>
         <xsl:when test="matches(., '^[0-9\.\+\-]+$')">
           <xsl:value-of select="concat(normalize-space(.), 'hs')"/>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:call-template name="thisID"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:value-of
+                  select="
+                    concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
+                />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
         </xsl:when>
         <xsl:otherwise>
           <xsl:value-of select="normalize-space(.)"/>
@@ -1801,7 +2062,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @keysig.show')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1839,13 +2100,14 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
           />
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
 
+  <!-- Rename lendsymsize and lstartsymsize attributes -->
   <xsl:template match="@lendsymsize | @lstartsymsize" mode="copy">
     <xsl:variable name="newName">
       <xsl:value-of select="replace(local-name(), 'symsize', 'sym.size')"/>
@@ -1861,7 +2123,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @', $newName)"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1881,7 +2143,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @unitdur')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1901,7 +2163,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1913,6 +2175,19 @@
     <xsl:attribute name="n">
       <xsl:value-of select="replace(normalize-space(.), '\s', '_')"/>
     </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Rename pad/@num to @width -->
@@ -1928,7 +2203,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name())"
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @width')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -1947,17 +2222,60 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Map fTrem/@slash to @beams -->
-  <xsl:template match="mei:fTrem/@slash" mode="copy">
+  <xsl:template match="@slash[parent::mei:fTrem]" mode="copy">
     <xsl:attribute name="beams">
       <xsl:value-of select="."/>
     </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Renamed @', local-name(), ' to @beams')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Remove @subtype -->
   <xsl:template match="@subtype" mode="copy"/>
+
+  <!-- Remove @tstamp.ges -->
+  <xsl:template match="@tstamp.ges" mode="copy">
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Removed @', local-name())"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
 
   <!-- Add values in @subtype to @type -->
   <xsl:template match="@type" mode="copy">
@@ -1967,6 +2285,19 @@
         <xsl:value-of select="concat(' ', ../@subtype)"/>
       </xsl:if>
     </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Copied values in @', local-name(), ' to @type')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Identity template -->
