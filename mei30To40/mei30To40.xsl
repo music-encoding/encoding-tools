@@ -2283,21 +2283,21 @@
       <xsl:value-of select="."/>
       <xsl:if test="../@subtype">
         <xsl:value-of select="concat(' ', ../@subtype)"/>
+        <xsl:if test="$verbose">
+          <xsl:variable name="thisID">
+            <xsl:call-template name="thisID"/>
+          </xsl:variable>
+          <xsl:call-template name="warning">
+            <xsl:with-param name="warningText">
+              <xsl:value-of
+                select="
+                  concat(local-name(..), '&#32;', $thisID, '&#32;: Copied values in @', local-name(), ' to @type')"
+              />
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
       </xsl:if>
     </xsl:attribute>
-    <xsl:if test="$verbose">
-      <xsl:variable name="thisID">
-        <xsl:call-template name="thisID"/>
-      </xsl:variable>
-      <xsl:call-template name="warning">
-        <xsl:with-param name="warningText">
-          <xsl:value-of
-            select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Copied values in @', local-name(), ' to @type')"
-          />
-        </xsl:with-param>
-      </xsl:call-template>
-    </xsl:if>
   </xsl:template>
 
   <!-- Identity template -->
