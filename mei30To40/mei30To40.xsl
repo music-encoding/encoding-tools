@@ -895,14 +895,22 @@
   <xsl:template match="mei:name | mei:corpName | mei:persName" mode="respStmtReorg">
     <xsl:choose>
       <xsl:when
-        test="matches(@role, 'arranger|author|composer|contributor|distributor|editor|funder|librettist|lyricist|publisher|sponsor')">
-        <xsl:element name="{@role}">
-          <xsl:apply-templates select="." mode="copy"/>
+        test="matches(lower-case(@role), 'arranger|author|composer|contributor|distributor|editor|funder|librettist|lyricist|publisher|sponsor')">
+        <xsl:element name="{lower-case(@role)}">
+          <xsl:element name="{local-name()}">
+            <xsl:apply-templates select="@*" mode="copy"/>
+            <xsl:apply-templates select="child::node()" mode="copy"/>
+          </xsl:element>
+          <!--<xsl:apply-templates select="." mode="copy"/>-->
         </xsl:element>
       </xsl:when>
-      <xsl:when test="matches(@role, 'creator')">
+      <xsl:when test="matches(lower-case(@role), 'creator')">
         <composer>
-          <xsl:apply-templates select="." mode="copy"/>
+          <xsl:element name="{local-name()}">
+            <xsl:apply-templates select="@*" mode="copy"/>
+            <xsl:apply-templates select="child::node()" mode="copy"/>
+          </xsl:element>
+          <!--<xsl:apply-templates select="." mode="copy"/>-->
         </composer>
       </xsl:when>
     </xsl:choose>
@@ -1022,17 +1030,17 @@
       <xsl:apply-templates select="mei:publisher | mei:distributor" mode="copy"/>
       <xsl:for-each select="mei:respStmt">
         <xsl:apply-templates
-          select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(@role, '(publisher|distributor)')]"
+          select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(lower-case(@role), '(publisher|distributor)')]"
           mode="respStmtReorg"/>
         <xsl:if
           test="
             mei:*[matches(local-name(), '(name|persName|corpName)')]
-            [not(matches(@role, 'publisher|distributor'))]">
+            [not(matches(lower-case(@role), 'publisher|distributor'))]">
           <respStmt>
             <xsl:apply-templates
               select="
                 mei:*[matches(local-name(), '(name|persName|corpName)')]
-                [not(matches(@role, 'publisher|distributor'))]"
+                [not(matches(lower-case(@role), 'publisher|distributor'))]"
               mode="copy"/>
           </respStmt>
         </xsl:if>
@@ -1083,17 +1091,17 @@
 
   <xsl:template match="mei:respStmt" mode="bibl">
     <xsl:apply-templates
-      select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)')]"
+      select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(lower-case(@role), '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)')]"
       mode="respStmtReorg"/>
     <xsl:if
       test="
         mei:*[matches(local-name(), '(name|persName|corpName)')]
-        [not(matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]">
+        [not(matches(lower-case(@role), '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]">
       <respStmt>
         <xsl:apply-templates
           select="
             mei:*[matches(local-name(), '(name|persName|corpName)')]
-            [not(matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]"
+            [not(matches(lower-case(@role), '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]"
           mode="copy"/>
       </respStmt>
     </xsl:if>
@@ -1241,17 +1249,17 @@
       <xsl:apply-templates select="mei:editor" mode="copy"/>
       <xsl:for-each select="mei:respStmt">
         <xsl:apply-templates
-          select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)')]"
+          select="mei:*[matches(local-name(), 'name|corpName|persName')][matches(lower-case(@role), '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)')]"
           mode="respStmtReorg"/>
         <xsl:if
           test="
             mei:*[matches(local-name(), '(name|persName|corpName)')]
-            [not(matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]">
+            [not(matches(lower-case(@role), '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]">
           <respStmt>
             <xsl:apply-templates
               select="
                 mei:*[matches(local-name(), '(name|persName|corpName)')]
-                [not(matches(@role, '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]"
+                [not(matches(lower-case(@role), '(arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor)'))]"
               mode="copy"/>
           </respStmt>
         </xsl:if>
@@ -1601,21 +1609,22 @@
           <xsl:apply-templates select="$titleJoin" mode="titleReorg"/>
         </xsl:for-each>
       </xsl:for-each-group>
-      <xsl:copy-of
+      <xsl:apply-templates
         select="
           mei:arranger | mei:author | mei:composer | mei:creator | mei:editor |
-          mei:funder | mei:librettist | mei:lyricist | mei:sponsor"/>
+          mei:funder | mei:librettist | mei:lyricist | mei:sponsor"
+        mode="copy"/>
       <xsl:for-each select="mei:respStmt">
         <xsl:apply-templates select="mei:name | mei:corpname | mei:persName" mode="respStmtReorg"/>
         <xsl:if
           test="
             mei:*[matches(local-name(), '(name|persName|corpName)')]
-            [not(matches(@role, 'arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor'))]">
+            [not(matches(lower-case(@role), 'arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor'))]">
           <respStmt>
             <xsl:apply-templates
               select="
                 mei:*[matches(local-name(), '(name|persName|corpName)')]
-                [not(matches(@role, 'arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor'))]"
+                [not(matches(lower-case(@role), 'arranger|author|composer|contributor|creator|editor|funder|librettist|lyricist|sponsor'))]"
               mode="copy"/>
           </respStmt>
         </xsl:if>
@@ -1647,10 +1656,11 @@
         <xsl:apply-templates select="$titleJoin" mode="titleReorg"/>
       </xsl:for-each>
     </xsl:for-each-group>
-    <xsl:copy-of
+    <xsl:apply-templates
       select="
         mei:arranger | mei:author | mei:composer | mei:creator | mei:editor |
-        mei:funder | mei:librettist | mei:lyricist | mei:sponsor"/>
+        mei:funder | mei:librettist | mei:lyricist | mei:sponsor"
+      mode="copy"/>
     <xsl:for-each select="mei:respStmt">
       <xsl:apply-templates select="mei:name | mei:corpname | mei:persName" mode="respStmtReorg"/>
     </xsl:for-each>
@@ -1710,7 +1720,7 @@
   </xsl:template>
 
   <!-- Create empty title element when work doesn't contain a title -->
-  <xsl:template match="mei:work[not(mei:title)]" mode="copy">
+  <xsl:template match="mei:work[not(mei:titleStmt/mei:title)]" mode="copy">
     <work>
       <title/>
       <xsl:apply-templates mode="copy"/>
@@ -1721,7 +1731,7 @@
   <xsl:template match="mei:workDesc" mode="copy">
     <workList>
       <xsl:apply-templates select="@*" mode="copy"/>
-      <xsl:apply-templates/>
+      <xsl:apply-templates mode="copy"/>
     </workList>
   </xsl:template>
 
@@ -1753,7 +1763,7 @@
   </xsl:template>
 
   <!-- Rename @authority to @auth -->
-  <xsl:template match="@authority" mode="copy">
+  <xsl:template match="@authority" mode="copy" priority="5">
     <xsl:attribute name="auth">
       <xsl:value-of select="."/>
     </xsl:attribute>
@@ -1773,7 +1783,7 @@
   </xsl:template>
 
   <!-- Rename @authURI to @auth.uri -->
-  <xsl:template match="@authURI" mode="copy">
+  <xsl:template match="@authURI" mode="#all">
     <xsl:attribute name="auth.uri">
       <xsl:value-of select="."/>
     </xsl:attribute>
