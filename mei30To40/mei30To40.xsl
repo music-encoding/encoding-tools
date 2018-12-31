@@ -1864,10 +1864,10 @@
       <xsl:otherwise>
         <xsl:variable name="durType">
           <xsl:choose>
-            <xsl:when test="matches(., 'b$4')">dur.metrical</xsl:when>
-            <xsl:when test="matches(., 'p$')">dur.ppq</xsl:when>
+            <xsl:when test="matches(., 'b$')">dur.metrical</xsl:when>
             <xsl:when test="matches(., 'r$')">dur.recip</xsl:when>
             <xsl:when test="matches(., 's$')">dur.real</xsl:when>
+            <xsl:otherwise>dur.ppq</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
         <xsl:attribute name="{$durType}">
