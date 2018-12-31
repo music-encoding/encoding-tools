@@ -1396,43 +1396,49 @@
     <xsl:copy>
       <xsl:apply-templates
         select="@*[not(local-name() eq 'label') and not(local-name() eq 'label.abbr')]" mode="copy"/>
-      <xsl:if test="@label and not(mei:label)">
-        <label xsl:exclude-result-prefixes="mei xlink">
-          <xsl:value-of select="@label"/>
-        </label>
-        <xsl:if test="$verbose">
-          <xsl:variable name="thisID">
-            <xsl:call-template name="thisID"/>
-          </xsl:variable>
-          <xsl:call-template name="warning">
-            <xsl:with-param name="warningText">
-              <xsl:value-of
-                select="
-                  concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced @label with label element')"
-              />
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-      </xsl:if>
-      <xsl:if test="@label.abbr and not(mei:labelAbbr)">
-        <labelAbbr xsl:exclude-result-prefixes="mei xlink">
-          <xsl:value-of select="@label.abbr"/>
-        </labelAbbr>
-        <xsl:if test="$verbose">
-          <xsl:variable name="thisID">
-            <xsl:call-template name="thisID"/>
-          </xsl:variable>
-          <xsl:call-template name="warning">
-            <xsl:with-param name="warningText">
-              <xsl:value-of
-                select="
-                  concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced @label.abbr with labelAbbr element')"
-              />
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-      </xsl:if>
-      <xsl:apply-templates select="mei:*[not(local-name() eq 'label')]" mode="copy"/>
+      <xsl:choose>
+        <xsl:when test="@label and not(mei:label)">
+          <label xsl:exclude-result-prefixes="mei xlink">
+            <xsl:value-of select="@label"/>
+          </label>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:call-template name="thisID"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:value-of
+                  select="
+                    concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced @label with label element')"
+                />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+          <xsl:apply-templates select="mei:*[not(local-name() eq 'label')]" mode="copy"/>
+        </xsl:when>
+        <xsl:when test="@label.abbr and not(mei:labelAbbr)">
+          <labelAbbr xsl:exclude-result-prefixes="mei xlink">
+            <xsl:value-of select="@label.abbr"/>
+          </labelAbbr>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:call-template name="thisID"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:value-of
+                  select="
+                    concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced @label.abbr with labelAbbr element')"
+                />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+          <xsl:apply-templates select="mei:*[not(local-name() eq 'label')]" mode="copy"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="mei:*" mode="copy"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:copy>
   </xsl:template>
 
