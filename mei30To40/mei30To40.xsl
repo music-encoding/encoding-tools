@@ -1503,6 +1503,29 @@
   </xsl:template>
 
   <!-- Use titlePart for title/title -->
+  <xsl:template match="mei:title[ancestor::mei:title]" mode="bibl" priority="5">
+    <xsl:text>&#32;</xsl:text>
+    <titlePart xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates mode="bibl"/>
+    </titlePart>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(.), '&#32;', $thisID, '&#32;: Replaced by titlePart element')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- Use titlePart for title/title -->
   <xsl:template match="mei:title[ancestor::mei:title and not(ancestor::mei:titleStmt)]" mode="copy">
     <xsl:choose>
       <xsl:when test="count(ancestor::mei:title) mod 2 != 0">
@@ -2319,7 +2342,7 @@
   <!-- Identity template -->
   <xsl:template match="@* | node()" mode="#all">
     <xsl:copy>
-      <xsl:apply-templates select="@* | node()" mode="copy"/>
+      <xsl:apply-templates select="@* | node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
 
