@@ -27,6 +27,11 @@
   <!-- GLOBAL VARIABLES                                                        -->
   <!-- ======================================================================= -->
 
+  <!-- document URI -->
+  <xsl:variable name="docURI">
+    <xsl:value-of select="document-uri(/)"/>
+  </xsl:variable>
+
   <!-- program name -->
   <xsl:variable name="progname">
     <xsl:text>mei30To40.xsl</xsl:text>
@@ -48,6 +53,7 @@
     <xsl:text>&#xa;</xsl:text>
   </xsl:variable>
 
+  <!-- computed class declarations -->
   <xsl:variable name="classDecls">
     <xsl:call-template name="makeClassDecls"/>
   </xsl:variable>
@@ -223,6 +229,7 @@
   <xsl:template name="warning">
     <xsl:param name="warningText"/>
     <xsl:message>
+      <xsl:value-of select="concat($docURI, ': ')"/>
       <xsl:value-of select="normalize-space($warningText)"/>
     </xsl:message>
   </xsl:template>
@@ -2212,21 +2219,29 @@
   <!-- Replace spaces in @n with underscores -->
   <xsl:template match="@n" mode="copy">
     <xsl:attribute name="n">
-      <xsl:value-of select="replace(normalize-space(.), '\s', '_')"/>
+      <xsl:choose>
+        <xsl:when test="matches(., ' ')">
+          <xsl:value-of select="replace(normalize-space(.), '\s', '_')"/>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:call-template name="thisID"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:value-of
+                  select="
+                    concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
+                />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:attribute>
-    <xsl:if test="$verbose">
-      <xsl:variable name="thisID">
-        <xsl:call-template name="thisID"/>
-      </xsl:variable>
-      <xsl:call-template name="warning">
-        <xsl:with-param name="warningText">
-          <xsl:value-of
-            select="
-              concat(local-name(..), '&#32;', $thisID, '&#32;: Modified value of @', local-name())"
-          />
-        </xsl:with-param>
-      </xsl:call-template>
-    </xsl:if>
   </xsl:template>
 
   <!-- Rename pad/@num to @width -->
