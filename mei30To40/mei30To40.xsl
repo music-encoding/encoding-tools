@@ -789,8 +789,14 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- Remove source/langUsage -->
-  <xsl:template match="mei:langUsage[parent::mei:source]" mode="bibl"/>
+  <!-- Map source/langUsage/language to bibl/annot -->
+  <xsl:template match="mei:langUsage[parent::mei:source]" mode="bibl">
+    <xsl:for-each select="mei:language">
+      <annot label="language">
+        <xsl:apply-templates mode="bibl"/>
+      </annot>
+    </xsl:for-each>
+  </xsl:template>
 
   <!-- Move or delete lyrics element -->
   <xsl:template match="mei:lyrics" mode="copy">
@@ -938,6 +944,11 @@
     <xsl:if test="mei:address">
       <xsl:apply-templates select="mei:address" mode="copy"/>
     </xsl:if>
+  </xsl:template>
+
+  <!-- Keep source/notesStmt/annot elements in bibl mode -->
+  <xsl:template match="mei:notesStmt[parent::mei:source]" mode="bibl">
+    <xsl:apply-templates select="mei:annot" mode="bibl"/>
   </xsl:template>
 
   <!-- Remove empty p elements -->
