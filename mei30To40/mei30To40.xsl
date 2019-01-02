@@ -2224,6 +2224,27 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- Replace meter.rend with meter.form or meter.showchange -->
+  <xsl:template match="@meter.rend[matches(normalize-space(.), 'invis')]" mode="#all">
+    <xsl:choose>
+      <xsl:when test="parent::mei:scoreDef[not(preceding::mei:scoreDef)]">
+        <xsl:attribute name="meter.form">
+          <xsl:text>invis</xsl:text>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:when test="parent::mei:staffDef[not(preceding::mei:staffDef)]">
+        <xsl:attribute name="meter.form">
+          <xsl:text>invis</xsl:text>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="meter.showchange">
+          <xsl:text>false</xsl:text>
+        </xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <!-- Replace spaces in @n with underscores -->
   <xsl:template match="@n" mode="#all">
     <xsl:attribute name="n">
