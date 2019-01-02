@@ -498,7 +498,7 @@
   </xsl:template>
 
   <!-- Remove source/seriesStmt/contents -->
-  <xsl:template match="mei:contents[parent::mei:seriesStmt[parent::mei:source]]" mode="#all"/>
+  <xsl:template match="mei:contents[parent::mei:seriesStmt[parent::mei:source]]" mode="bibl"/>
 
   <!-- Add encodingDesc/classDecls if classification appears anywhere in the file -->
   <xsl:template match="mei:encodingDesc" mode="copy">
@@ -788,6 +788,9 @@
       <xsl:apply-templates mode="copy"/>
     </xsl:copy>
   </xsl:template>
+
+  <!-- Remove source/langUsage -->
+  <xsl:template match="mei:langUsage[parent::mei:source]" mode="bibl"/>
 
   <!-- Move or delete lyrics element -->
   <xsl:template match="mei:lyrics" mode="copy">
