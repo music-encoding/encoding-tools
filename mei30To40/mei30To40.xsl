@@ -1777,7 +1777,7 @@
 
   <!-- Replace deprecated "marc-stacc" and "ten-stacc" values with "marc" and "stacc" 
     and "ten" and "stac" values, respectively -->
-  <xsl:template match="@artic | @artic.ges" mode="copy">
+  <xsl:template match="@artic | @artic.ges" mode="#all">
     <xsl:attribute name="{local-name()}">
       <xsl:value-of
         select="distinct-values(tokenize(replace(replace(normalize-space(.), 'ten-stacc', 'ten stacc'), 'marc-stacc', 'marc stacc'), ' '))"
@@ -1799,7 +1799,7 @@
   </xsl:template>
 
   <!-- Rename @authority to @auth -->
-  <xsl:template match="@authority" mode="copy" priority="5">
+  <xsl:template match="@authority" mode="#all" priority="5">
     <xsl:attribute name="auth">
       <xsl:value-of select="."/>
     </xsl:attribute>
@@ -1839,7 +1839,7 @@
   </xsl:template>
 
   <!-- Rename @barplace to @bar.method -->
-  <xsl:template match="@barplace" mode="copy">
+  <xsl:template match="@barplace" mode="#all">
     <xsl:choose>
       <xsl:when test="not(. eq 'mensur')">
         <xsl:attribute name="bar.method">
@@ -1857,14 +1857,14 @@
   </xsl:template>
 
   <!-- Rename @barthru to @bar.thru -->
-  <xsl:template match="@barthru" mode="copy">
+  <xsl:template match="@barthru" mode="#all">
     <xsl:attribute name="bar.thru">
       <xsl:value-of select="."/>
     </xsl:attribute>
   </xsl:template>
 
   <!-- Remove @def -->
-  <xsl:template match="@def" mode="copy">
+  <xsl:template match="@def" mode="#all">
     <xsl:if test="$verbose">
       <xsl:variable name="thisID">
         <xsl:call-template name="thisID"/>
@@ -1881,7 +1881,7 @@
   </xsl:template>
 
   <!-- Rename @dur.ges -->
-  <xsl:template match="@dur.ges" mode="copy">
+  <xsl:template match="@dur.ges" mode="#all">
     <xsl:choose>
       <xsl:when
         test="
@@ -1945,7 +1945,7 @@
   </xsl:template>
 
   <!-- Replace 'cue' with 'small' in @fontsize; rename @size to @fontsize -->
-  <xsl:template match="@fontsize | @size" mode="copy">
+  <xsl:template match="@fontsize | @size" mode="#all">
     <xsl:attribute name="fontsize">
       <xsl:choose>
         <xsl:when test="matches(., 'cue')">
@@ -1972,7 +1972,7 @@
   </xsl:template>
 
   <!-- Map beatRpt/@form values to new ones -->
-  <xsl:template match="@form[parent::mei:beatRpt]" mode="copy">
+  <xsl:template match="@form[parent::mei:beatRpt]" mode="#all">
     <xsl:attribute name="slash">
       <xsl:choose>
         <xsl:when test="matches(., '4')">1</xsl:when>
@@ -2001,7 +2001,7 @@
   </xsl:template>
 
   <!-- Update values in mordent/@form -->
-  <xsl:template match="@form[parent::mei:mordent]" mode="copy">
+  <xsl:template match="@form[parent::mei:mordent]" mode="#all">
     <xsl:attribute name="form">
       <xsl:choose>
         <xsl:when test=". eq 'inv'">
@@ -2029,7 +2029,7 @@
   </xsl:template>
 
   <!-- Rename @glyphname to @glyph.name -->
-  <xsl:template match="@glyphname" mode="copy">
+  <xsl:template match="@glyphname" mode="#all">
     <xsl:attribute name="glyph.name">
       <xsl:value-of select="."/>
     </xsl:attribute>
@@ -2049,7 +2049,7 @@
   </xsl:template>
 
   <!-- Rename @glyphnum to @glyph.num -->
-  <xsl:template match="@glyphnum" mode="copy">
+  <xsl:template match="@glyphnum" mode="#all">
     <xsl:attribute name="glyph.num">
       <xsl:value-of select="."/>
     </xsl:attribute>
@@ -2069,7 +2069,7 @@
   </xsl:template>
 
   <!-- Fix up for half-step values in @intm -->
-  <xsl:template match="@intm" mode="copy">
+  <xsl:template match="@intm" mode="#all">
     <xsl:attribute name="intm">
       <xsl:choose>
         <xsl:when test="matches(., '^[0-9\.\+\-]+$')">
@@ -2096,7 +2096,7 @@
   </xsl:template>
 
   <!-- Rename @key.sig.show to @keysig.show -->
-  <xsl:template match="@key.sig.show" mode="copy">
+  <xsl:template match="@key.sig.show" mode="#all">
     <xsl:attribute name="keysig.show">
       <xsl:value-of select="."/>
     </xsl:attribute>
@@ -2117,7 +2117,7 @@
 
   <!-- Add 'pt' to numeric values without specified units; replace 'cue' with 'small';
     replace 'medium' with 'normal'. -->
-  <xsl:template match="@lyric.size | @mensur.size | @music.size | @text.size" mode="copy">
+  <xsl:template match="@lyric.size | @mensur.size | @music.size | @text.size" mode="#all">
     <xsl:attribute name="{local-name()}">
       <xsl:choose>
         <xsl:when test="normalize-space(.) eq string(number(normalize-space(.)))">
@@ -2154,7 +2154,7 @@
   </xsl:template>
 
   <!-- Rename lendsymsize and lstartsymsize attributes -->
-  <xsl:template match="@lendsymsize | @lstartsymsize" mode="copy">
+  <xsl:template match="@lendsymsize | @lstartsymsize" mode="#all">
     <xsl:variable name="newName">
       <xsl:value-of select="replace(local-name(), 'symsize', 'sym.size')"/>
     </xsl:variable>
@@ -2177,7 +2177,7 @@
   </xsl:template>
 
   <!-- Rename @measperf to @unitdur -->
-  <xsl:template match="@measperf" mode="copy">
+  <xsl:template match="@measperf" mode="#all">
     <xsl:attribute name="unitdur">
       <xsl:value-of select="."/>
     </xsl:attribute>
@@ -2197,7 +2197,7 @@
   </xsl:template>
 
   <!-- Update @meiversion -->
-  <xsl:template match="@meiversion" mode="copy">
+  <xsl:template match="@meiversion" mode="#all">
     <xsl:attribute name="meiversion">
       <xsl:text>4.0.0</xsl:text>
     </xsl:attribute>
@@ -2217,7 +2217,7 @@
   </xsl:template>
 
   <!-- Replace spaces in @n with underscores -->
-  <xsl:template match="@n" mode="copy">
+  <xsl:template match="@n" mode="#all">
     <xsl:attribute name="n">
       <xsl:choose>
         <xsl:when test="matches(., ' ')">
@@ -2265,7 +2265,7 @@
   </xsl:template>
 
   <!-- Correct common error in @xlink:show -->
-  <xsl:template match="@xlink:show" mode="copy">
+  <xsl:template match="@xlink:show" mode="#all">
     <xsl:attribute name="xlink:show">
       <xsl:choose>
         <xsl:when test="matches(., '_?self')">
@@ -2292,7 +2292,7 @@
   </xsl:template>
 
   <!-- Map fTrem/@slash to @beams -->
-  <xsl:template match="@slash[parent::mei:fTrem]" mode="copy">
+  <xsl:template match="@slash[parent::mei:fTrem]" mode="#all">
     <xsl:attribute name="beams">
       <xsl:value-of select="."/>
     </xsl:attribute>
@@ -2312,10 +2312,10 @@
   </xsl:template>
 
   <!-- Remove @subtype -->
-  <xsl:template match="@subtype" mode="copy"/>
+  <xsl:template match="@subtype" mode="#all"/>
 
   <!-- Remove @tstamp.ges -->
-  <xsl:template match="@tstamp.ges" mode="copy">
+  <xsl:template match="@tstamp.ges" mode="#all">
     <xsl:if test="$verbose">
       <xsl:variable name="thisID">
         <xsl:call-template name="thisID"/>
@@ -2332,7 +2332,7 @@
   </xsl:template>
 
   <!-- Add values in @subtype to @type -->
-  <xsl:template match="@type" mode="copy">
+  <xsl:template match="@type" mode="#all">
     <xsl:attribute name="type">
       <xsl:value-of select="."/>
       <xsl:if test="../@subtype">
