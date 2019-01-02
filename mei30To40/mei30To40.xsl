@@ -1925,7 +1925,7 @@
     match="
       @fontsize[normalize-space(.) eq string(number(normalize-space(.)))] |
       @size[normalize-space(.) eq string(number(normalize-space(.)))]"
-    mode="copy">
+    mode="#all">
     <xsl:attribute name="fontsize">
       <xsl:value-of select="concat(normalize-space(.), 'pt')"/>
     </xsl:attribute>
@@ -1945,13 +1945,15 @@
   </xsl:template>
 
   <!-- Replace 'cue' with 'small' in @fontsize; rename @size to @fontsize -->
-  <xsl:template match="@fontsize | @size" mode="#all">
+  <xsl:template
+    match="@fontsize[matches(normalize-space(.), 'cue')] | @size[matches(normalize-space(.), 'cue')]"
+    mode="#all">
     <xsl:attribute name="fontsize">
       <xsl:choose>
-        <xsl:when test="matches(., 'cue')">
+        <xsl:when test="matches(normalize-space(.), 'cue')">
           <xsl:text>small</xsl:text>
         </xsl:when>
-        <xsl:when test="matches(., 'medium')">
+        <xsl:when test="matches(normalize-space(.), 'medium')">
           <xsl:text>normal</xsl:text>
         </xsl:when>
       </xsl:choose>
