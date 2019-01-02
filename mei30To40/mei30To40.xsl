@@ -497,6 +497,9 @@
     </componentList>
   </xsl:template>
 
+  <!-- Remove source/seriesStmt/contents -->
+  <xsl:template match="mei:contents[parent::mei:seriesStmt[parent::mei:source]]" mode="#all"/>
+
   <!-- Add encodingDesc/classDecls if classification appears anywhere in the file -->
   <xsl:template match="mei:encodingDesc" mode="copy">
     <xsl:copy>
