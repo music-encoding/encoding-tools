@@ -500,6 +500,11 @@
   <!-- Remove source/seriesStmt/contents -->
   <xsl:template match="mei:contents[parent::mei:seriesStmt[parent::mei:source]]" mode="bibl"/>
 
+  <!-- Map source/editionStmt/edition to bibl/edition in bibl mode -->
+  <xsl:template match="mei:editionStmt[parent::mei:source]" mode="bibl">
+    <xsl:apply-templates select="mei:edition" mode="bibl"/>
+  </xsl:template>
+
   <!-- Add encodingDesc/classDecls if classification appears anywhere in the file -->
   <xsl:template match="mei:encodingDesc" mode="copy">
     <xsl:copy>
