@@ -2019,8 +2019,8 @@
 
   </xsl:template>
 
-  <!-- Update values in mordent/@form -->
-  <xsl:template match="@form[parent::mei:mordent]" mode="#all">
+  <!-- Update values in mordent/@form and turn/@form -->
+  <xsl:template match="@form[parent::mei:mordent or parent::mei:turn]" mode="#all">
     <xsl:attribute name="form">
       <xsl:choose>
         <xsl:when test=". eq 'inv'">
