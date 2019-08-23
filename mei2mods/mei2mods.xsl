@@ -58,7 +58,7 @@
     <xsl:apply-templates select="mei:pubStmt"/>
 
     <!-- Language -->
-    <xsl:apply-templates select="../mei:workDesc/mei:work/mei:langUsage/mei:language"/>
+    <xsl:apply-templates select="../mei:workList/mei:work/mei:langUsage/mei:language"/>
 
     <!-- Physical Description -->
     <xsl:call-template name="physicalDescription"/>
