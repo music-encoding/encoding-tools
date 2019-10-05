@@ -1743,21 +1743,39 @@
             <xsl:call-template name="subfield">
               <xsl:with-param name="code">d</xsl:with-param>
               <xsl:with-param name="value">
-                <xsl:value-of select="@label"/>
+                <xsl:value-of select="@label" />
               </xsl:with-param>
             </xsl:call-template>
           </xsl:if>
           <xsl:call-template name="subfield">
+            <xsl:with-param name="code">g</xsl:with-param>
+            <xsl:with-param name="value">
+              <xsl:choose>
+                <xsl:when test="contains(mei:incipCode[@form=$form][1], ' ')">
+                  <xsl:value-of select="substring(substring-after(mei:incipCode[@form=$form][1], '%'), 1, 3)" />
+                </xsl:when>
+                <xsl:otherwise></xsl:otherwise>
+              </xsl:choose>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="subfield">
             <xsl:with-param name="code">p</xsl:with-param>
             <xsl:with-param name="value">
-              <xsl:value-of select="mei:incipCode[@form=$form][1]"/>
+              <xsl:choose>
+                <xsl:when test="contains(mei:incipCode[@form=$form][1], ' ')">
+                  <xsl:value-of select="substring-after(mei:incipCode[@form=$form][1], ' ')" />
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="mei:incipCode[@form=$form][1]" />
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:for-each select="mei:incipText">
             <xsl:call-template name="subfield">
               <xsl:with-param name="code">t</xsl:with-param>
               <xsl:with-param name="value">
-                <xsl:value-of select="normalize-space(.)"/>
+                <xsl:value-of select="normalize-space(.)" />
               </xsl:with-param>
             </xsl:call-template>
           </xsl:for-each>
@@ -2131,33 +2149,32 @@
   </xsl:template>
 
   <xsl:template match="mei:titleStmt">
-    <xsl:variable name="tag" select="'245'"/>
+    <xsl:variable name="tag" select="'245'" />
     <datafield>
-      <xsl:attribute name="tag" select="$tag"/>
-      <xsl:call-template name="indicators"/>
+      <xsl:attribute name="tag" select="$tag" />
+      <xsl:call-template name="indicators" />
+      <xsl:for-each select="mei:title[@type='proper' or @analog='marc:245']/mei:titlePart">
+        <xsl:call-template name="subfield">
+          <xsl:with-param name="code">
+            <xsl:value-of select="substring(@analog, string-length(@analog), 1)" />
+          </xsl:with-param>
+          <xsl:with-param name="value">
+            <xsl:value-of select="text()" />
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:for-each>
       <xsl:call-template name="subfield">
-        <xsl:with-param name="code">a</xsl:with-param>
-        <xsl:with-param name="value">
-          <xsl:choose>
-            <xsl:when test="mei:title[@type='proper' or @analog='marc:245']">
-              <xsl:value-of select="mei:title[@type='proper' or @analog='marc:245']"/>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="mei:title[not(@type='uniform' or @type='subtitle')][1]"/>
-            </xsl:otherwise>
-          </xsl:choose>
+        <xsl:with-param name="code">
+          <xsl:value-of select="substring(@analog, string-length(@analog), 1)" />
         </xsl:with-param>
-      </xsl:call-template>
-      <xsl:call-template name="subfield">
-        <xsl:with-param name="code">b</xsl:with-param>
         <xsl:with-param name="value">
           <xsl:choose>
             <xsl:when test="mei:title[@type='proper' or @analog='marc:245']">
               <xsl:value-of select="mei:title[not(@type='proper' or @analog='marc:245') and
-                not(@type='uniform')]"/>
+                not(@type='uniform')]" />
             </xsl:when>
             <xsl:otherwise>
-              <xsl:value-of select="mei:title[not(@type='uniform')][position() &gt; 1]"/>
+              <xsl:value-of select="mei:title[not(@type='uniform')][position() &gt; 1]" />
             </xsl:otherwise>
           </xsl:choose>
         </xsl:with-param>
