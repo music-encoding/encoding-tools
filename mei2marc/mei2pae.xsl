@@ -68,7 +68,9 @@
       <xsl:call-template name="setOctave" />
       <xsl:call-template name="setAccidental" />
       <xsl:value-of select="translate(@pname, 'cdefgab', 'CDEFGAB')" />
-      <xsl:value-of select="'^'" />
+      <xsl:if test="position() != last()">
+        <xsl:value-of select="'^'" />
+      </xsl:if>
     </xsl:for-each>
   </xsl:template>
 
