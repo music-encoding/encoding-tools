@@ -3722,10 +3722,15 @@
                 <xsl:value-of select="concat($tag, '|a')"/>
               </xsl:with-param>
             </xsl:call-template>
+            <xsl:if test="marc:subfield[@code = 'j']">
+              <xsl:attribute name="type">
+                <xsl:value-of select="marc:subfield[@code = 'j']"/>
+              </xsl:attribute>
+            </xsl:if>
             <xsl:choose>
               <xsl:when test="marc:subfield[@code = 'd']">
                 <xsl:call-template name="subfieldSelect">
-                  <xsl:with-param name="codes">abcjq</xsl:with-param>
+                  <xsl:with-param name="codes">abcq</xsl:with-param>
                 </xsl:call-template>
                 <xsl:text>&#32;</xsl:text>
                 <date>
@@ -3743,7 +3748,7 @@
               </xsl:when>
               <xsl:otherwise>
                 <xsl:call-template name="subfieldSelect">
-                  <xsl:with-param name="codes">abcjq</xsl:with-param>
+                  <xsl:with-param name="codes">abcq</xsl:with-param>
                 </xsl:call-template>
               </xsl:otherwise>
             </xsl:choose>
@@ -4463,11 +4468,6 @@
                 <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="contributor"/>
               </xsl:when>
             </xsl:choose>
-            <xsl:if test="marc:subfield[@code = 'j']">
-              <xsl:attribute name="type">
-                <xsl:value-of select="marc:subfield[@code = 'j']"/>
-              </xsl:attribute>
-            </xsl:if>
             <xsl:if test="marc:subfield[@code = '0']">
               <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
@@ -4478,6 +4478,11 @@
                 <xsl:value-of select="concat($tag, '|a')"/>
               </xsl:with-param>
             </xsl:call-template>
+            <xsl:if test="marc:subfield[@code = 'j']">
+              <xsl:attribute name="type">
+                <xsl:value-of select="marc:subfield[@code = 'j']"/>
+              </xsl:attribute>
+            </xsl:if>
             <xsl:choose>
               <xsl:when test="marc:subfield[@code = 'd']">
                 <xsl:call-template name="subfieldSelect">
