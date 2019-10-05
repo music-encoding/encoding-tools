@@ -3080,7 +3080,8 @@
                         />
                       </xsl:if>
                     </xsl:variable>
-                    <xsl:if test="$manifestationNotes/*">
+                    <xsl:if test="$manifestationNotes/marc:*[marc:subfield[@code = '3']
+                    = current-grouping-key()]">
                       <notesStmt>
                         <xsl:apply-templates
                           select="
