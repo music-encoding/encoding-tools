@@ -200,7 +200,7 @@
       </xsl:call-template>
     </xsl:if>
     <xsl:if test="position()=1">
-      <xsl:text></xsl:text>
+      <xsl:value-of select="' '" />
     </xsl:if>
   </xsl:template>
 
