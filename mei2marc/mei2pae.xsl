@@ -36,7 +36,7 @@
   </xsl:template>
 
   <xsl:template match="mei:measure" mode="music">
-    <xsl:apply-templates />
+    <xsl:apply-templates select="mei:staff[@n = $staff]|mei:staffDef" />
     <xsl:call-template name="setBarline" />
   </xsl:template>
 
@@ -171,7 +171,7 @@
   </xsl:template>
 
   <!-- MEI staff -->
-  <xsl:template match="mei:staff[@n = $staff]">
+  <xsl:template match="mei:staff">
     <xsl:apply-templates />
   </xsl:template>
 
