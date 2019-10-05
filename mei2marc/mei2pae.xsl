@@ -144,6 +144,35 @@
     <xsl:text>=</xsl:text>
   </xsl:template>
 
+  <!-- MEI meter signature -->
+  <xsl:template name="meterSig" match="mei:meterSig">
+    <xsl:param name="meterSymbol" select="@sym" />
+    <xsl:param name="meterCount" select="@count" />
+    <xsl:param name="meterUnit" select="@unit" />
+    <xsl:param name="meterRend" select="@form" />
+    <xsl:choose>
+      <xsl:when test="$meterRend = 'invis'"></xsl:when>
+      <xsl:when test="$meterSymbol">
+        <!-- data.METERSIGN -->
+        <xsl:choose>
+          <xsl:when test="$meterSymbol = 'common'">
+            <xsl:value-of select="'c'" />
+          </xsl:when>
+          <xsl:when test="$meterSymbol = 'cut'">
+            <xsl:value-of select="'c/'" />
+          </xsl:when>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:when test="$meterRend = 'num'">
+        <xsl:value-of select="$meterCount" />
+      </xsl:when>
+      <xsl:when test="$meterUnit">
+        <xsl:value-of select="concat($meterCount,'/',$meterUnit)" />
+      </xsl:when>
+      <xsl:otherwise />
+    </xsl:choose>
+  </xsl:template>
+
   <!-- MEI multi measure rest -->
   <xsl:template match="mei:multiRest">
     <xsl:value-of select="concat('=', @num)" />
@@ -214,32 +243,9 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template name="meterSig" match="mei:meterSig">
-    <xsl:param name="meterSymbol" select="@sym" />
-    <xsl:param name="meterCount" select="@count" />
-    <xsl:param name="meterUnit" select="@unit" />
-    <xsl:param name="meterRend" select="@form" />
-    <xsl:choose>
-      <xsl:when test="$meterRend = 'invis'"></xsl:when>
-      <xsl:when test="$meterSymbol">
-        <!-- data.METERSIGN -->
-        <xsl:choose>
-          <xsl:when test="$meterSymbol = 'common'">
-            <xsl:value-of select="'c'" />
-          </xsl:when>
-          <xsl:when test="$meterSymbol = 'cut'">
-            <xsl:value-of select="'c/'" />
-          </xsl:when>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="$meterRend = 'num'">
-        <xsl:value-of select="$meterCount" />
-      </xsl:when>
-      <xsl:when test="$meterUnit">
-        <xsl:value-of select="concat($meterCount,'/',$meterUnit)" />
-      </xsl:when>
-      <xsl:otherwise />
-    </xsl:choose>
+  <!-- MEI tuplet -->
+  <xsl:template match="mei:tuplet">
+    <xsl:apply-templates />
   </xsl:template>
 
   <!-- Helper templates -->
