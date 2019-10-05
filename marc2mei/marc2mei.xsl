@@ -2423,8 +2423,11 @@
             <xsl:variable name="contributors">
               <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
               <xsl:if test="not($workMainEntryOnly = 'true')">
-                <xsl:apply-templates select="marc:datafield[@tag = '700' or @tag = '710']"
-                  mode="contributor"/>
+                <xsl:for-each select="marc:datafield[@tag = '700' or @tag = '710']">
+                  <xsl:if test="not(marc:subfield[@code = '3']/text())">
+                    <xsl:apply-templates select="." mode="contributor"/>
+                  </xsl:if>
+                </xsl:for-each>
                 </xsl:if>
               </xsl:variable>
               <xsl:variable name="sortedContributors">
