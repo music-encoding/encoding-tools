@@ -2627,13 +2627,15 @@
                   <xsl:apply-templates select="marc:datafield[@tag = '300']"/>
                   <xsl:apply-templates select="marc:datafield[@tag = '028'][@ind1 = '2']"/>
                   <xsl:apply-templates select="marc:datafield[@tag = '306']"/>
-                  <xsl:apply-templates select="marc:datafield[@tag = '561']"/>
                 </physDesc>
               </xsl:if>
 
               <!-- manifestation physLoc -->
-              <xsl:apply-templates select="marc:datafield[@tag = '852']"/>
-
+              <physLoc>
+                <xsl:apply-templates select="marc:datafield[@tag = '852']"/>
+                <xsl:apply-templates select="marc:datafield[@tag = '561']"/>
+              </physLoc>
+        
               <!-- manifestation seriesStmt -->
               <xsl:apply-templates select="marc:datafield[@tag = '490']"/>
 
@@ -2809,7 +2811,7 @@
               </xsl:variable>
               <xsl:if test="$notes">
                 <notesStmt>
-                  <xsl:apply-templates select="$notes/*"/>
+                    <xsl:apply-templates select="$notes/*"/>
                 </notesStmt>
               </xsl:if>
 
@@ -2911,20 +2913,20 @@
               <xsl:if
                 test="
                   marc:datafield[@tag = '028' and @ind1 = '2'] or marc:datafield[@tag = '300'
-                  or @tag = '306' or @tag = '561'][not(marc:subfield[@code = '3'])]">
+                  or @tag = '306'][not(marc:subfield[@code = '3'])]">
                 <physDesc>
                   <xsl:apply-templates
                     select="marc:datafield[@tag = '300'][not(marc:subfield[@code = '3'])]"/>
                   <xsl:apply-templates select="marc:datafield[@tag = '028'][@ind1 = '2']"/>
                   <xsl:apply-templates select="marc:datafield[@tag = '306']"/>
-                  <xsl:apply-templates
-                    select="marc:datafield[@tag = '561'][not(marc:subfield[@code = '3'])]"/>
                 </physDesc>
               </xsl:if>
 
               <!-- manifestation physLoc -->
-              <xsl:apply-templates
-                select="marc:datafield[@tag = '852'][not(marc:subfield[@code = '3'])]"/>
+              <physLoc>
+                <xsl:apply-templates select="marc:datafield[@tag = '852'][not(marc:subfield[@code = '3'])]" />
+                <xsl:apply-templates select="marc:datafield[@tag = '561'][not(marc:subfield[@code = '3'])]" />
+              </physLoc>
 
               <!-- manifestation seriesStmt -->
               <xsl:apply-templates
@@ -3039,22 +3041,26 @@
                     <!-- component physDesc -->
                     <xsl:if
                       test="
-                        $componentContent/marc:datafield[@tag = '300' or
-                        @tag = '561'][marc:subfield[@code = '3'] = current-grouping-key()]">
+                        $componentContent/marc:datafield[@tag = '300'][marc:subfield[@code = '3'] = current-grouping-key()]">
                       <physDesc>
                         <xsl:apply-templates
                           select="
-                            $componentContent/marc:datafield[@tag = '300'
-                            or @tag = '561'][marc:subfield[@code = '3'] = current-grouping-key()]"
+                            $componentContent/marc:datafield[@tag = '300'][marc:subfield[@code = '3'] = current-grouping-key()]"
                         />
                       </physDesc>
                     </xsl:if>
 
                     <!-- component physLoc -->
-                    <xsl:apply-templates
+                    <physLoc>
+                        <xsl:apply-templates
                       select="
                         $componentContent/marc:datafield[@tag = '852'][marc:subfield[@code = '3']
                         = current-grouping-key()]"/>
+                        <xsl:apply-templates
+                          select="
+                            $componentContent/marc:datafield[@tag = '561'][marc:subfield[@code = '3'] = current-grouping-key()]"
+                        />
+                    </physLoc>
 
                     <!-- component seriesStmt -->
                     <xsl:apply-templates
@@ -4367,18 +4373,20 @@
   <!-- provenance -->
   <xsl:template match="marc:datafield[@tag = '561']">
     <xsl:variable name="tag" select="@tag"/>
-    <provenance>
-      <repository>
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="concat($tag, '|a')"/>
-          </xsl:with-param>
-        </xsl:call-template>
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">a</xsl:with-param>
-        </xsl:call-template>
-      </repository>
-    </provenance>
+    <history>
+      <provenance>
+        <repository>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat($tag, '|a')" />
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">a</xsl:with-param>
+          </xsl:call-template>
+        </repository>
+      </provenance>
+    </history>
   </xsl:template>
 
   <!-- If the marc2mei59x.xsl module is unavailable, 59x fields are
@@ -4411,7 +4419,7 @@
     </contentItem>
   </xsl:template>
 
-  <!-- responsibility statement; added entry -->
+  <!-- contributor; added entry -->
   <xsl:template match="marc:datafield[@tag = '700' or @tag = '710']" mode="contributor">
     <xsl:variable name="tag">
       <xsl:value-of select="@tag"/>
@@ -4455,6 +4463,11 @@
                 <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="contributor"/>
               </xsl:when>
             </xsl:choose>
+            <xsl:if test="marc:subfield[@code = 'j']">
+              <xsl:attribute name="type">
+                <xsl:value-of select="marc:subfield[@code = 'j']"/>
+              </xsl:attribute>
+            </xsl:if>
             <xsl:if test="marc:subfield[@code = '0']">
               <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
@@ -4468,7 +4481,7 @@
             <xsl:choose>
               <xsl:when test="marc:subfield[@code = 'd']">
                 <xsl:call-template name="subfieldSelect">
-                  <xsl:with-param name="codes">abcjq</xsl:with-param>
+                  <xsl:with-param name="codes">abcq</xsl:with-param>
                 </xsl:call-template>
                 <xsl:text>&#32;</xsl:text>
                 <date>
@@ -4486,7 +4499,7 @@
               </xsl:when>
               <xsl:otherwise>
                 <xsl:call-template name="subfieldSelect">
-                  <xsl:with-param name="codes">abcjq</xsl:with-param>
+                  <xsl:with-param name="codes">abcq</xsl:with-param>
                 </xsl:call-template>
               </xsl:otherwise>
             </xsl:choose>
@@ -4537,137 +4550,135 @@
 
   <!-- physical location -->
   <xsl:template match="marc:datafield[@tag = '852']">
-    <xsl:variable name="tag" select="@tag"/>
-    <physLoc>
-      <xsl:if test="marc:subfield[@code = 'a' or @code = 'b' or @code = 'e']">
-        <repository>
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="$tag"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <name>
-            <xsl:value-of select="marc:subfield[@code = 'a']"/>
-            <xsl:if test="marc:subfield[@code = 'b']">
-              <xsl:text>, </xsl:text>
-              <name>
-                <xsl:value-of select="marc:subfield[@code = 'b']"/>
-              </name>
-            </xsl:if>
-          </name>
-          <xsl:for-each select="marc:subfield[@code = 'e']">
-            <address>
+    <xsl:variable name="tag" select="@tag" />
+    <xsl:if test="marc:subfield[@code = 'a' or @code = 'b' or @code = 'e']">
+      <repository>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="$tag" />
+          </xsl:with-param>
+        </xsl:call-template>
+        <name>
+          <xsl:value-of select="marc:subfield[@code = 'a']" />
+          <xsl:if test="marc:subfield[@code = 'b']">
+            <xsl:text>, </xsl:text>
+            <name>
+              <xsl:value-of select="marc:subfield[@code = 'b']" />
+            </name>
+          </xsl:if>
+        </name>
+        <xsl:for-each select="marc:subfield[@code = 'e']">
+          <address>
+            <addrLine>
+              <xsl:for-each select="..">
+                <xsl:call-template name="subfieldSelect">
+                  <xsl:with-param name="codes">e</xsl:with-param>
+                </xsl:call-template>
+              </xsl:for-each>
+            </addrLine>
+            <xsl:if test="../marc:subfield[@code = 'n']">
               <addrLine>
-                <xsl:for-each select="..">
-                  <xsl:call-template name="subfieldSelect">
-                    <xsl:with-param name="codes">e</xsl:with-param>
+                <identifier type="countryCode">
+                  <xsl:call-template name="analog">
+                    <xsl:with-param name="tag">
+                      <xsl:value-of select="concat($tag, '|n')" />
+                    </xsl:with-param>
                   </xsl:call-template>
-                </xsl:for-each>
-              </addrLine>
-              <xsl:if test="../marc:subfield[@code = 'n']">
-                <addrLine>
-                  <identifier type="countryCode">
-                    <xsl:call-template name="analog">
-                      <xsl:with-param name="tag">
-                        <xsl:value-of select="concat($tag, '|n')"/>
-                      </xsl:with-param>
+                  <xsl:for-each select="..">
+                    <xsl:call-template name="subfieldSelect">
+                      <xsl:with-param name="codes">n</xsl:with-param>
                     </xsl:call-template>
-                    <xsl:for-each select="..">
-                      <xsl:call-template name="subfieldSelect">
-                        <xsl:with-param name="codes">n</xsl:with-param>
-                      </xsl:call-template>
-                    </xsl:for-each>
-                  </identifier>
-                </addrLine>
-              </xsl:if>
-            </address>
-          </xsl:for-each>
-        </repository>
-      </xsl:if>
-      <xsl:if test="marc:subfield[@code = 'c']">
-        <identifier type="shelfLocation">
-          <xsl:if test="marc:subfield[@code = '2']">
-            <xsl:attribute name="authority">
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">2</xsl:with-param>
-              </xsl:call-template>
-            </xsl:attribute>
-          </xsl:if>
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat($tag, '|c')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">c</xsl:with-param>
-          </xsl:call-template>
-        </identifier>
-      </xsl:if>
-      <xsl:if test="marc:subfield[@code = 'j']">
-        <identifier type="shelvingControlNumber">
-          <xsl:if test="marc:subfield[@code = '2']">
-            <xsl:attribute name="authority">
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">2</xsl:with-param>
-              </xsl:call-template>
-            </xsl:attribute>
-          </xsl:if>
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat($tag, '|j')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">j</xsl:with-param>
-          </xsl:call-template>
-        </identifier>
-      </xsl:if>
-      <xsl:if test="marc:subfield[matches(@code, 'khim')]">
-        <identifier type="shelfLocation">
-          <xsl:if test="marc:subfield[@code = '2']">
-            <xsl:attribute name="authority">
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">2</xsl:with-param>
-              </xsl:call-template>
-            </xsl:attribute>
-          </xsl:if>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">khim</xsl:with-param>
-          </xsl:call-template>
-        </identifier>
-      </xsl:if>
-      <xsl:if test="marc:subfield[@code = 'p']">
-        <identifier type="shelfLocation">
-          <xsl:if test="marc:subfield[@code = '2']">
-            <xsl:attribute name="authority">
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">2</xsl:with-param>
-              </xsl:call-template>
-            </xsl:attribute>
-          </xsl:if>
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat($tag, '|p')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">p</xsl:with-param>
-          </xsl:call-template>
-        </identifier>
-      </xsl:if>
-      <xsl:if test="marc:subfield[@code = 't']">
-        <identifier type="copy">
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat($tag, '|t')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">t</xsl:with-param>
-          </xsl:call-template>
-        </identifier>
-      </xsl:if>
-    </physLoc>
+                  </xsl:for-each>
+                </identifier>
+              </addrLine>
+            </xsl:if>
+          </address>
+        </xsl:for-each>
+      </repository>
+    </xsl:if>
+    <xsl:if test="marc:subfield[@code = 'c']">
+      <identifier type="shelfLocation">
+        <xsl:if test="marc:subfield[@code = '2']">
+          <xsl:attribute name="authority">
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">2</xsl:with-param>
+            </xsl:call-template>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat($tag, '|c')" />
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">c</xsl:with-param>
+        </xsl:call-template>
+      </identifier>
+    </xsl:if>
+    <xsl:if test="marc:subfield[@code = 'j']">
+      <identifier type="shelvingControlNumber">
+        <xsl:if test="marc:subfield[@code = '2']">
+          <xsl:attribute name="authority">
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">2</xsl:with-param>
+            </xsl:call-template>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat($tag, '|j')" />
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">j</xsl:with-param>
+        </xsl:call-template>
+      </identifier>
+    </xsl:if>
+    <xsl:if test="marc:subfield[matches(@code, 'khim')]">
+      <identifier type="shelfLocation">
+        <xsl:if test="marc:subfield[@code = '2']">
+          <xsl:attribute name="authority">
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">2</xsl:with-param>
+            </xsl:call-template>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">khim</xsl:with-param>
+        </xsl:call-template>
+      </identifier>
+    </xsl:if>
+    <xsl:if test="marc:subfield[@code = 'p']">
+      <identifier type="shelfLocation">
+        <xsl:if test="marc:subfield[@code = '2']">
+          <xsl:attribute name="authority">
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">2</xsl:with-param>
+            </xsl:call-template>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat($tag, '|p')" />
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">p</xsl:with-param>
+        </xsl:call-template>
+      </identifier>
+    </xsl:if>
+    <xsl:if test="marc:subfield[@code = 't']">
+      <identifier type="copy">
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat($tag, '|t')" />
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">t</xsl:with-param>
+        </xsl:call-template>
+      </identifier>
+    </xsl:if>
   </xsl:template>
 
   <!-- relator codes -->
