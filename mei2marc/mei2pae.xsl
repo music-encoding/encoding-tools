@@ -29,20 +29,20 @@
     <xsl:text>1.0 BETA</xsl:text>
   </xsl:variable>
 
-  <!-- Main ouput template -->
+  <!-- Main ouput templates -->
   <xsl:template match="/">
     <!-- select only the first score in the file -->
-    <xsl:apply-templates select="//mei:score[1]" />
+    <xsl:apply-templates select="descendant::mei:score[1]" />
   </xsl:template>
 
   <xsl:template match="mei:measure" mode="music">
-    <xsl:apply-templates select="mei:staff[@n = $staff]/mei:layer[@n = $layer]" />
+    <xsl:apply-templates />
     <xsl:call-template name="setBarline" />
   </xsl:template>
 
   <xsl:template match="mei:measure" mode="lyrics">
     <xsl:if test="position() &lt;= $measures">
-      <xsl:apply-templates select="mei:staff[@n = $staff]/mei:layer[@n = $layer]//mei:syl" />
+      <xsl:apply-templates select="mei:staff[@n = $staff]/mei:layer[1]//mei:syl" />
     </xsl:if>
   </xsl:template>
 
@@ -130,7 +130,10 @@
   </xsl:template>
 
   <!-- MEI layer -->
-  <xsl:template match="mei:layer">
+  <xsl:template match="mei:layer[not(@n)][1]">
+    <xsl:apply-templates />
+  </xsl:template>
+  <xsl:template match="mei:layer[@n = $layer]">
     <xsl:apply-templates />
   </xsl:template>
 
@@ -164,6 +167,11 @@
 
   <!-- MEI section -->
   <xsl:template match="mei:section">
+    <xsl:apply-templates />
+  </xsl:template>
+
+  <!-- MEI staff -->
+  <xsl:template match="mei:staff[@n = $staff]">
     <xsl:apply-templates />
   </xsl:template>
 
