@@ -1722,7 +1722,7 @@
         </datafield>
       </xsl:when>
       <!-- MARC only supports Plaine and Easie or DARMS -->
-      <xsl:when test="mei:incipCode[@form='plaineAndEasie' or @form='DARMS']">
+      <xsl:when test="mei:incipCode[@form='plaineAndEasie' or @form='DARMS' or @analog='marc:031']">
         <xsl:variable name="tag" select="'031'" />
         <xsl:variable name="form" select="mei:incipCode/@form" />
         <datafield>
@@ -1744,23 +1744,28 @@
               </xsl:with-param>
             </xsl:call-template>
           </xsl:if>
-          <xsl:call-template name="subfield">
-            <xsl:with-param name="code">g</xsl:with-param>
-            <xsl:with-param name="value">
-              <xsl:choose>
-                <xsl:when test="contains(mei:incipCode[@form=$form][1], ' ')">
-                  <xsl:value-of select="substring(substring-after(mei:incipCode[@form=$form][1], '%'), 1, 3)" />
-                </xsl:when>
-                <xsl:otherwise></xsl:otherwise>
-              </xsl:choose>
-            </xsl:with-param>
-          </xsl:call-template>
+          <xsl:if test="contains(mei:incipCode[@form=$form][1], ' ')">
+            <xsl:call-template name="subfield">
+              <xsl:with-param name="code">g</xsl:with-param>
+              <xsl:with-param name="value">
+                <xsl:value-of select="substring(substring-after(mei:incipCode[@form=$form][1], '%'), 1, 3)" />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+          <xsl:if test="contains(substring-before(mei:incipCode[@form=$form][1], ' '), '$')">
+            <xsl:call-template name="subfield">
+              <xsl:with-param name="code">n</xsl:with-param>
+              <xsl:with-param name="value">
+                <xsl:value-of select="matches(substring-after(mei:incipCode[@form=$form][1], '$'), '[bx][A-G]+')" />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
           <xsl:call-template name="subfield">
             <xsl:with-param name="code">p</xsl:with-param>
             <xsl:with-param name="value">
               <xsl:choose>
                 <xsl:when test="contains(mei:incipCode[@form=$form][1], ' ')">
-                  <xsl:value-of select="substring-after(mei:incipCode[@form=$form][1], ' ')" />
+                  <xsl:value-of select="replace(substring-after(mei:incipCode[@form=$form][1], ' '), '~[?+t]', '')" />
                 </xsl:when>
                 <xsl:otherwise>
                   <xsl:value-of select="mei:incipCode[@form=$form][1]" />
@@ -1768,6 +1773,14 @@
               </xsl:choose>
             </xsl:with-param>
           </xsl:call-template>
+          <xsl:if test="contains(mei:incipCode[@form=$form][1], '~')">
+            <xsl:call-template name="subfield">
+              <xsl:with-param name="code">s</xsl:with-param>
+              <xsl:with-param name="value">
+                <xsl:value-of select="substring-after(mei:incipCode[@form=$form][1], '~')" />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
           <xsl:for-each select="mei:incipText">
             <xsl:call-template name="subfield">
               <xsl:with-param name="code">t</xsl:with-param>
