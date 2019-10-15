@@ -2872,7 +2872,7 @@
                   <xsl:apply-templates
                     select="
                       marc:datafield[@tag = '700' or
-                      @tag = '710'][not(@ind2 = '2')]"
+                      @tag = '710'][not(@ind2 = '2')][not(marc:subfield[@code = '3'])]"
                     mode="contributor"/>
                 </xsl:variable>
                 <xsl:variable name="sortedContributors">
@@ -3002,7 +3002,7 @@
                     @tag = '534' or @tag = '535' or @tag = '540' or @tag = '541' or
                     @tag = '542' or @tag = '544' or @tag = '546' or @tag = '561' or
                     @tag = '563' or @tag = '581' or @tag = '585' or @tag = '586' or
-                    @tag = '852'][marc:subfield[@code = '3']]"/>
+                    @tag = '700' or @tag = '710' or @tag = '852'][marc:subfield[@code = '3']]"/>
                 <xsl:if test="$keepLocalNotes = 'true'">
                   <xsl:copy-of
                     select="
@@ -3017,9 +3017,17 @@
                   group-by="marc:subfield[@code = '3']">
                   <xsl:sort select="current-grouping-key()"/>
                   <manifestation>
-                    <xsl:attribute name="label">
-                      <xsl:value-of select="current-grouping-key()"/>
-                    </xsl:attribute>
+                    <xsl:if test="number(current-grouping-key())">
+                      <xsl:attribute name="n">
+                        <xsl:value-of select="current-grouping-key()"/>
+                      </xsl:attribute>
+                    </xsl:if>
+                    <titleStmt>
+                      <title>
+                        <xsl:value-of select="current-grouping-key()"/>
+                      </title>
+                      <xsl:apply-templates select="$componentContent/marc:datafield[@tag = '700' or @tag = '710'][marc:subfield[@code = '3'] = current-grouping-key()]" mode="contributor"/>
+                    </titleStmt>
 
                     <!-- component edition statement -->
                     <xsl:if test="$componentContent/marc:datafield[@tag = '250']">
