@@ -3716,6 +3716,11 @@
               <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
+              <xsl:if test="starts-with(marc:subfield[@code = '0'], 'ks')">
+                <xsl:attribute name="auth">
+                  <xsl:value-of select="'RISM'" />
+                </xsl:attribute>
+              </xsl:if>
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
@@ -3734,6 +3739,11 @@
               <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
+              <xsl:if test="starts-with(marc:subfield[@code = '0'], 'pe')">
+                <xsl:attribute name="auth">
+                  <xsl:value-of select="'RISM'" />
+                </xsl:attribute>
+              </xsl:if>
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
@@ -4464,6 +4474,14 @@
               <xsl:attribute name="codedval">
                 <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
+              <xsl:if test="starts-with(marc:subfield[@code = '0'], 'ks') or starts-with(marc:subfield[@code = '0'], 'pe')">
+                <xsl:attribute name="codedval">
+                  <xsl:value-of select="marc:subfield[@code = '0']" />
+                </xsl:attribute>
+                <xsl:attribute name="auth">
+                  <xsl:value-of select="'RISM'" />
+                </xsl:attribute>
+              </xsl:if>
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
@@ -4581,6 +4599,15 @@
             <xsl:value-of select="$tag" />
           </xsl:with-param>
         </xsl:call-template>
+        <xsl:if test="starts-with(marc:subfield[@code = 'x'], 'ks') or starts-with(marc:subfield[@code = 'x'], 'pe')">
+          <!-- RISM stores the ID in subfield x -->
+          <xsl:attribute name="codedval">
+            <xsl:value-of select="marc:subfield[@code = 'x']" />
+          </xsl:attribute>
+          <xsl:attribute name="auth">
+            <xsl:value-of select="'RISM'" />
+          </xsl:attribute>
+        </xsl:if>
         <name>
           <xsl:value-of select="marc:subfield[@code = 'a']" />
           <xsl:if test="marc:subfield[@code = 'b']">
