@@ -2447,7 +2447,11 @@
                 </xsl:for-each>
 
           <!-- work incipits -->
-          <xsl:apply-templates select="marc:datafield[@tag = '031']"/>
+          <xsl:apply-templates select="marc:datafield[@tag = '031']">
+            <xsl:sort select="tokenize(marc:subfield[@code = 'a'], '\.')[1]" data-type="number"/>
+            <xsl:sort select="tokenize(marc:subfield[@code = 'a'], '\.')[2]" data-type="number"/>
+            <xsl:sort select="tokenize(marc:subfield[@code = 'a'], '\.')[3]" data-type="number"/>
+          </xsl:apply-templates>
           <xsl:apply-templates
             select="
               marc:datafield[@tag = '246' and
