@@ -4735,6 +4735,20 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- 856 - Electronic Location and Access (R) -->
+  <xsl:template match="marc:datafield[@tag = '856']">
+    <xsl:if test="marc:subfield[@code = 'u']">
+      <ptr>
+        <xsl:attribute name="target">
+          <xsl:value-of select="marc:subfield[@code = 'u']"/>
+        </xsl:attribute>
+        <xsl:attribute name="label">
+          <xsl:value-of select="marc:subfield[@code = 'z']"/>
+        </xsl:attribute>
+      </ptr>
+    </xsl:if>
+  </xsl:template>
+
   <!-- relator codes -->
   <xsl:template match="marc:subfield[@code = '4']" mode="contributor">
     <xsl:variable name="code">
