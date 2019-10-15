@@ -4619,7 +4619,7 @@
         </xsl:for-each>
       </repository>
     </xsl:if>
-    <xsl:if test="marc:subfield[@code = 'c']">
+    <xsl:if test="marc:subfield[@code = 'c']/text()">
       <identifier type="shelfLocation">
         <xsl:if test="marc:subfield[@code = '2']">
           <xsl:attribute name="authority">
@@ -4638,7 +4638,7 @@
         </xsl:call-template>
       </identifier>
     </xsl:if>
-    <xsl:if test="marc:subfield[@code = 'j']">
+    <xsl:if test="marc:subfield[@code = 'j']/text()">
       <identifier type="shelvingControlNumber">
         <xsl:if test="marc:subfield[@code = '2']">
           <xsl:attribute name="authority">
@@ -4657,7 +4657,7 @@
         </xsl:call-template>
       </identifier>
     </xsl:if>
-    <xsl:if test="marc:subfield[matches(@code, 'khim')]">
+    <xsl:if test="marc:subfield[matches(@code, 'khim')]/text()">
       <identifier type="shelfLocation">
         <xsl:if test="marc:subfield[@code = '2']">
           <xsl:attribute name="authority">
@@ -4671,7 +4671,7 @@
         </xsl:call-template>
       </identifier>
     </xsl:if>
-    <xsl:if test="marc:subfield[@code = 'p']">
+    <xsl:if test="marc:subfield[@code = 'p']/text()">
       <identifier type="shelfLocation">
         <xsl:if test="marc:subfield[@code = '2']">
           <xsl:attribute name="authority">
