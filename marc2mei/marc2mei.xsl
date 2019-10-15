@@ -3297,6 +3297,19 @@
             <xsl:attribute name="pname">
               <xsl:value-of select="lower-case(substring($key, 1, 1))"/>
             </xsl:attribute>
+            <xsl:choose>
+              <!-- accidentals -->
+              <xsl:when test="matches(substring($key, 2, 1), 'b')">
+                <xsl:attribute name="accid">
+                  <xsl:value-of select="'f'"/>
+                </xsl:attribute>
+              </xsl:when>
+              <xsl:when test="matches(substring($key, 2, 1), 'x')">
+                <xsl:attribute name="accid">
+                  <xsl:value-of select="'s'"/>
+                </xsl:attribute>
+              </xsl:when>
+            </xsl:choose>
           </xsl:if>
           <xsl:value-of select="$key"/>
           <xsl:if test="contains($key, '[0-9]')">
