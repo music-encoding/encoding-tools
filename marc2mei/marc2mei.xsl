@@ -2448,6 +2448,7 @@
 
           <!-- work incipits -->
           <xsl:apply-templates select="marc:datafield[@tag = '031']">
+            <!-- RISM specific sorting -->
             <xsl:sort select="tokenize(marc:subfield[@code = 'a'], '\.')[1]" data-type="number"/>
             <xsl:sort select="tokenize(marc:subfield[@code = 'a'], '\.')[2]" data-type="number"/>
             <xsl:sort select="tokenize(marc:subfield[@code = 'a'], '\.')[3]" data-type="number"/>
