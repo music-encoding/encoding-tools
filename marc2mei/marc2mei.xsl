@@ -2,23 +2,18 @@
 
 <!--
 
-	marc2mei.xsl - XSLT (2.0) stylesheet for transformation of MARC21 XML to MEI header XML
+	marc2mei.xsl - XSLT (2.0) stylesheet for transformation of MARC21 XML to MEI4 header
 
-	Perry Roland <pdr4h@virginia.edu>
-	Music Library
-	University of Virginia
+	Klaus Rettinghaus
 
 	For info on MARC XML, see http://www.loc.gov/marc/marcxml.html
 	For info on the MEI header, see http://music-encoding.org/
 	For info on RISM, see http://www.rism.info/
 
-	Based on:
-	1. https://code.google.com/p/mei-incubator/source/browse/rism2mei/rism2mei-2012.xsl
-	by Laurent Pugin <laurent.pugin@rism-ch.org> / Swiss RISM Office
-	2. http://oreo.grainger.uiuc.edu/stylesheets/MARC_TEI-twc.xsl
-	3. marc2tei.xsl - XSLT (1.0) stylesheet for transformation of MARC XML to TEI header
-	XML (TEI P4) by Greg Murray <gpm2a@virginia.edu> / Digital Library Production Services,
-	University of Virginia Library
+	Based on a former version by:
+	Perry Roland <pdr4h@virginia.edu>
+	Music Library
+	University of Virginia
 
 -->
 
