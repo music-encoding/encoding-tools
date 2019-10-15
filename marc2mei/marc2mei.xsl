@@ -2559,11 +2559,11 @@
                 </xsl:attribute>
               </xsl:if>
 
-              <!-- system control number(s) -->
+              <!-- System Control Number -->
               <xsl:variable name="systemIDs" select="marc:datafield[@tag = '010' or @tag = '035']"/>
               <xsl:apply-templates select="$systemIDs"/>
 
-              <!-- cataloging manifestation -->
+              <!-- Cataloging Source -->
               <xsl:variable name="catalogingSource" select="marc:datafield[@tag = '040']"/>
               <xsl:apply-templates select="$catalogingSource"/>
 
@@ -3395,7 +3395,7 @@
     </incip>
   </xsl:template>
 
-  <!-- system control number -->
+  <!-- 035 - System Control Number (R) -->
   <xsl:template match="marc:datafield[@tag = '035']">
     <xsl:variable name="tag" select="@tag"/>
     <identifier>
@@ -3406,7 +3406,7 @@
     </identifier>
   </xsl:template>
 
-  <!-- manifestation of cataloging -->
+  <!-- 040 - Cataloging Source (NR) -->
   <xsl:template match="marc:datafield[@tag = '040']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:for-each select="marc:subfield[@code = 'a' or @code = 'c' or @code = 'd']">
@@ -3421,7 +3421,7 @@
     </xsl:for-each>
   </xsl:template>
 
-  <!-- language -->
+  <!-- 041 - Language Code (R) -->
   <xsl:template match="marc:datafield[@tag = '041']">
     <xsl:for-each select="marc:subfield[matches(@code, '[a-gjkm]')]">
       <language>
@@ -4371,7 +4371,7 @@
     </xsl:call-template>
   </xsl:template>
 
-  <!-- participants in event -->
+  <!-- 511 - Participant or Performer Note (R) -->
   <xsl:template match="marc:datafield[@tag = '511']">
     <xsl:variable name="tag" select="@tag"/>
     <event>
@@ -4388,7 +4388,7 @@
     </event>
   </xsl:template>
 
-  <!-- event -->
+  <!-- 518 - Date/Time and Place of an Event Note (R) -->
   <xsl:template match="marc:datafield[@tag = '518']">
     <xsl:variable name="tag" select="@tag"/>
     <event>
@@ -4406,7 +4406,7 @@
     </event>
   </xsl:template>
 
-  <!-- provenance -->
+  <!-- 561 - Ownership and Custodial History (R) -->
   <xsl:template match="marc:datafield[@tag = '561']">
     <xsl:variable name="tag" select="@tag"/>
     <history>
@@ -4553,7 +4553,8 @@
     </contributor>
   </xsl:template>
 
-  <!-- associated place -->
+  <!-- 751 - Added Entry-Geographic Name (R) -->
+  <!-- 752 - Added Entry-Hierarchical Place Name (R) -->
   <xsl:template match="marc:datafield[@tag = '751' or @tag = '752']">
     <term>
       <xsl:variable name="tag" select="@tag"/>
@@ -4592,7 +4593,7 @@
     </term>
   </xsl:template>
 
-  <!-- physical location -->
+  <!-- 852 - Location (R) -->
   <xsl:template match="marc:datafield[@tag = '852']">
     <xsl:variable name="tag" select="@tag" />
     <xsl:if test="marc:subfield[@code = 'a' or @code = 'b' or @code = 'e']">
