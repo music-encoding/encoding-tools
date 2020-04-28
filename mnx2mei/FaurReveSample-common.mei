@@ -22,7 +22,7 @@
             <score>
                <scoreDef key.sig="3f" meter.count="3" meter.unit="4">
                   <staffGrp>
-                     <staffDef n="1" lines="5">                        
+                     <staffDef n="1" lines="5">
                         <label>Voice</label>
                         <clef shape="G" line="2"/>
                      </staffDef>
@@ -227,50 +227,50 @@
                         <layer>
                            <beam>
                               <chord dur="8">
-                                 <note pname="a" oct="3">
+                                 <note pname="a" oct="3" staff="3">
                                     <accid accid="n"/>
                                  </note>
-                                 <note pname="c" oct="4"/>
+                                 <note pname="c" oct="4" staff="3"/>
                                  <note pname="e" oct="4">
                                     <accid accid.ges="f"/>
                                  </note>
                                  <note pname="g" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3"/>
-                                 <note pname="c" oct="4"/>
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
                                  <note pname="e" oct="4">
                                     <accid accid.ges="f"/>
                                  </note>
                                  <note pname="g" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3"/>
-                                 <note pname="c" oct="4"/>
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
                                  <note pname="e" oct="4">
                                     <accid accid.ges="f"/>
                                  </note>
                                  <note pname="g" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3"/>
-                                 <note pname="c" oct="4"/>
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
                                  <note pname="e" oct="4">
                                     <accid accid.ges="f"/>
                                  </note>
                                  <note pname="g" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3"/>
-                                 <note pname="c" oct="4"/>
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
                                  <note pname="e" oct="4">
                                     <accid accid.ges="f"/>
                                  </note>
                                  <note pname="f" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3"/>
-                                 <note pname="c" oct="4"/>
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
                                  <note pname="e" oct="4">
                                     <accid accid.ges="f"/>
                                  </note>
@@ -309,51 +309,51 @@
                         <layer>
                            <beam>
                               <chord dur="8">
-                                 <note pname="a" oct="3">
+                                 <note pname="a" oct="3" staff="3">
                                     <accid accid="f"/>
                                  </note>
-                                 <note pname="c" oct="4"/>
-                                 <note pname="d" oct="4"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
                                  <note pname="f" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3">
+                                 <note pname="a" oct="3" staff="3">
                                     <accid accid.ges="f"/>
                                  </note>
-                                 <note pname="c" oct="4"/>
-                                 <note pname="d" oct="4"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
                                  <note pname="f" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3">
+                                 <note pname="a" oct="3" staff="3">
                                     <accid accid.ges="f"/>
                                  </note>
-                                 <note pname="c" oct="4"/>
-                                 <note pname="d" oct="4"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
                                  <note pname="f" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3">
+                                 <note pname="a" oct="3" staff="3">
                                     <accid accid.ges="f"/>
                                  </note>
-                                 <note pname="c" oct="4"/>
-                                 <note pname="d" oct="4"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
                                  <note pname="f" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3">
+                                 <note pname="a" oct="3" staff="3">
                                     <accid accid.ges="f"/>
                                  </note>
-                                 <note pname="c" oct="4"/>
-                                 <note pname="d" oct="4"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
                                  <note pname="f" oct="4"/>
                               </chord>
                               <chord dur="8">
-                                 <note pname="a" oct="3">
+                                 <note pname="a" oct="3" staff="3">
                                     <accid accid.ges="f"/>
                                  </note>
-                                 <note pname="c" oct="4"/>
-                                 <note pname="d" oct="4"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
                                  <note pname="f" oct="4"/>
                               </chord>
                            </beam>

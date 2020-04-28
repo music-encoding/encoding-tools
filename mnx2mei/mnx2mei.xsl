@@ -76,8 +76,13 @@
             <xsl:apply-templates select="$converted.events" mode="controlevents"/>
         </xsl:variable>
         
+        <!-- this holds a version with all conversion artifacts removed-->
+        <xsl:variable name="cleaned.up" as="node()">
+            <xsl:apply-templates select="$converted.controlevents" mode="cleanup"/>
+        </xsl:variable>
+        
         <!-- this outputs the final result of all conversion steps -->
-        <xsl:copy-of select="$converted.controlevents"/>
+        <xsl:copy-of select="$cleaned.up"/>
     </xsl:template>
     
     
@@ -241,7 +246,7 @@
         
         <xsl:for-each select="(1 to $own.staves)">
             <xsl:variable name="staff.pos" select="position()" as="xs:integer"/>
-            <staff n="{($staff.pos + $preceding.staves)}" temp-part="{$part.measure/@pos}" xmlns="http://www.music-encoding.org/ns/mei">
+            <staff n="{($staff.pos + $preceding.staves)}" temp-part="{$part.measure/@pos}" temp-part-staff="{$staff.pos}" xmlns="http://www.music-encoding.org/ns/mei">
                 <xsl:choose>
                     <xsl:when test="$own.staves gt 1">
                         <xsl:variable name="layers" select="$part.measure//sequence[@staff = $staff.labels[$staff.pos]]" as="node()+"/>
@@ -353,13 +358,6 @@
         </scoreDef>
     </xsl:template>
     
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Removes a temporary attribute</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:template match="@temp-part" mode="scoreDef"/>
-    
     
     
     <!-- *** templates translating individual events *** -->
@@ -388,7 +386,13 @@
                         <xsl:variable name="note" select="." as="node()"/>
                         <note>
                             <xsl:sequence select="temp:parsePitch($note/@pitch)"/>
-                            <xsl:sequence select="temp:parseAccidentals($note)"/>
+                            <xsl:if test="@staff">
+                                <xsl:variable name="required.staff" select="@staff" as="xs:string"/>
+                                <xsl:variable name="part.n" select="ancestor::mei:staff/@temp-part" as="xs:string"/>
+                                <xsl:variable name="staff.n" select="ancestor::mei:measure/mei:staff[@temp-part = $part.n][@temp-part-staff = $required.staff]/@n" as="xs:string"/>
+                                <xsl:attribute name="staff" select="$staff.n"/>
+                            </xsl:if>
+                            <xsl:sequence select="temp:parseAccidentals($note)"/>                            
                         </note>
                     </xsl:for-each>
                 </chord>
@@ -397,8 +401,13 @@
                 <note xmlns="http://www.music-encoding.org/ns/mei">
                     <xsl:sequence select="temp:parseDuration($event/@value)"/>
                     <xsl:sequence select="temp:parsePitch($event/note/@pitch)"/>
+                    <xsl:if test="@staff">
+                        <xsl:variable name="required.staff" select="@staff" as="xs:string"/>
+                        <xsl:variable name="part.n" select="ancestor::mei:staff/@temp-part" as="xs:string"/>
+                        <xsl:variable name="staff.n" select="ancestor::mei:measure/mei:staff[@temp-part = $part.n][@temp-part-staff = $required.staff]/@n" as="xs:string"/>
+                        <xsl:attribute name="staff" select="$staff.n"/>
+                    </xsl:if>
                     <xsl:sequence select="temp:parseAccidentals($event/note)"/>
-                    
                     <!-- TODO: Lyrics are pretty unstable as of 2020/04, so the following implementation is more or less just a guess. Also: Need to consider chords with lyrics -->
                     <xsl:apply-templates select="lyric" mode="#current"/>
                 </note>
@@ -520,13 +529,6 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Removing temporary placeholders</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:template match="temp:controlEvents | directions" mode="controlevents"/>
-    
-    <xd:doc>
-        <xd:desc>
             <xd:p>Converts MNX dynamics to MEI dynam</xd:p>
         </xd:desc>
     </xd:doc>
@@ -542,6 +544,24 @@
             <xsl:value-of select="@type"/>
         </dynam>
     </xsl:template>
+    
+    
+    
+    <!-- *** templates for cleaning up conversion artifacts *** -->
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Removing temporary placeholders</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="temp:controlEvents | directions" mode="cleanup"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Removes a temporary attribute</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@temp-part | @temp-part-staff" mode="cleanup"/>
     
     
     <!-- *** generic functions *** -->
@@ -719,7 +739,7 @@
             <xd:p>A simple copy template. Some modes are intentionally left out to sort elements into different locations in MEI.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:template match="node() | @*" mode="structure header staves scoreDef events controlevents">
+    <xsl:template match="node() | @*" mode="structure header staves scoreDef events controlevents cleanup">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*" mode="#current"/>
         </xsl:copy>
