@@ -10,8 +10,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
   xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:f="http://music-encoding.org/tools/musicxml2mei"
-  xmlns:functx="http://www.functx.com" exclude-result-prefixes="mei xs f functx"
-  xmlns:saxon="http://saxon.sf.net/" extension-element-prefixes="saxon">
+  xmlns:functx="http://www.functx.com" exclude-result-prefixes="mei xs f functx">
 
   <!-- parameters -->
 
@@ -1907,13 +1906,12 @@
         <xsl:choose>
           <xsl:when test="ancestor::part[attributes/time/beats]/attributes/time/beats">
             <xsl:value-of
-              select="saxon:evaluate(ancestor::part[attributes/time/beats]/attributes/time/beats)"/>
+              select="ancestor::part[attributes/time/beats]/attributes/time/beats"/>
           </xsl:when>
           <xsl:when test="preceding::part[@id = $thisPart and attributes/time]">
             <xsl:value-of
-              select="
-                saxon:evaluate(preceding::part[@id = $thisPart and
-                attributes/time][1]/attributes/time/beats)"
+              select="preceding::part[@id = $thisPart and
+                attributes/time][1]/attributes/time/beats"
             />
           </xsl:when>
           <xsl:otherwise>
@@ -4076,14 +4074,13 @@
           <xsl:choose>
             <xsl:when test="ancestor::part[attributes/time/beats]/attributes/time/beats">
               <xsl:value-of
-                select="saxon:evaluate(ancestor::part[attributes/time/beats]/attributes/time/beats)"
+                select="ancestor::part[attributes/time/beats]/attributes/time/beats"
               />
             </xsl:when>
             <xsl:when test="preceding::part[@id = $thisPart and attributes/time]">
               <xsl:value-of
-                select="
-                  saxon:evaluate(preceding::part[@id = $thisPart and
-                  attributes/time][1]/attributes/time/beats)"
+                select="preceding::part[@id = $thisPart and
+                  attributes/time][1]/attributes/time/beats"
               />
             </xsl:when>
             <xsl:otherwise>
