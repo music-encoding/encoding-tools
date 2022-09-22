@@ -8,6 +8,6 @@ This project contains a number of tools for working with MEI-encoded files. This
 
 ### License
 
-Copyright (c) Music Encoding Initiative (MEI) Board. All rights reserved.
+Copyright (c) Music Encoding Initiative (MEI) Board.
 
 This repo is released under the [ECL-2.0](LICENSE), and original creations contributed to this repo are accepted under the same license.
