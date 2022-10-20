@@ -2223,7 +2223,7 @@
   <!-- Update @meiversion -->
   <xsl:template match="@meiversion" mode="#all">
     <xsl:attribute name="meiversion">
-      <xsl:text>4.0.0</xsl:text>
+      <xsl:text>4.0.1</xsl:text>
     </xsl:attribute>
     <xsl:if test="$verbose">
       <xsl:variable name="thisID">
@@ -2287,6 +2287,30 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
+  </xsl:template>
+
+  <!-- Add @unit to @height and @width -->
+  <xsl:template match="mei:graphic[@unit]" mode="#all">
+    <xsl:copy>
+      <xsl:apply-templates select="@*[not(local-name() eq 'unit')]" mode="copy"/>
+      <xsl:attribute name="height">
+        <xsl:value-of select="concat(@height, @unit)" />
+      </xsl:attribute>
+      <xsl:attribute name="width">
+        <xsl:value-of select="concat(@width, @unit)" />
+      </xsl:attribute>
+    </xsl:copy>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID" />
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of select="
+              concat(local-name(..), '&#32;', $thisID, '&#32;: Added @unit to @height and @width')" />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Rename pad/@num to @width -->
