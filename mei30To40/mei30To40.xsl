@@ -1021,7 +1021,7 @@
   </xsl:template>
 
   <!-- Move physLoc/provenance inside physLoc/history -->
-  <xsl:template match="mei:physLoc" mode="copy">
+  <xsl:template match="mei:physLoc" mode="#all">
     <physLoc>
       <xsl:apply-templates select="mei:head" mode="copy"/>
       <xsl:apply-templates select="mei:repository" mode="copy"/>
