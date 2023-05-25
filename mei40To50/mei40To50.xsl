@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:math="http://www.w3.org/2005/xpath-functions/math"
+    xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
+    xmlns:mei="http://www.music-encoding.org/ns/mei"
+    exclude-result-prefixes="xs math xd mei"
+    version="3.0">
+    <xd:doc scope="stylesheet">
+        <xd:desc>
+            <xd:p><xd:b>Created on:</xd:b> May 25, 2023</xd:p>
+            <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
+            <xd:p>This XSLT translates an MEI v4 file to an MEI v5 file.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    
+    <xsl:output method="xml" indent="yes" encoding="UTF-8" omit-xml-declaration="no" standalone="no"/>
+    <xsl:strip-space elements="*"/>
+    
+    <!-- ======================================================================= -->
+    <!-- PARAMETERS                                                              -->
+    <!-- ======================================================================= -->
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Provides the location of the RNG schema.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="rng_model_path"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Provides the location of the Schematron schema.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="sch_model_path"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Controls the feedback provided by the stylesheet. The default value of 'true()'
+                produces a log message for every change. When set to 'false()' no messages are produced.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="verbose" select="true()"/>
+    
+    <!-- ======================================================================= -->
+    <!-- GLOBAL VARIABLES                                                        -->
+    <!-- ======================================================================= -->
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>document URI</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="docURI">
+        <xsl:value-of select="document-uri(/)"/>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program name</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="progname">
+        <xsl:text>mei40To50.xsl</xsl:text>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program version</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="version">
+        <xsl:text>1.0</xsl:text>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program id</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="progid">
+        <xsl:value-of select="'mei40To50.xsl'"/>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program git url</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="gitUrl">
+        <xsl:value-of select="'https://github.com/music-encoding/encoding-tools/blob/main/mei40To50/mei40To50.xsl'"/>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>new line</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="nl">
+        <xsl:text>&#xa;</xsl:text>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>MEI version</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="meiversion" select="'5.0.0'"/>
+    
+    <!-- ======================================================================= -->
+    <!-- MAIN OUTPUT TEMPLATE                                                    -->
+    <!-- ======================================================================= -->
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Start template</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="/">
+        <xsl:if test="$rng_model_path != ''">
+            <xsl:processing-instruction name="xml-model">
+                <xsl:value-of select="concat(' href=&quot;', $rng_model_path, '&quot;')"/>
+                <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
+            </xsl:processing-instruction>
+            <xsl:value-of select="$nl"/>
+        </xsl:if>
+        <xsl:if test="$sch_model_path != ''">
+            <xsl:processing-instruction name="xml-model">
+                <xsl:value-of select="concat(' href=&quot;', $sch_model_path, '&quot;')"/>
+                <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+            </xsl:processing-instruction>
+            <xsl:value-of select="$nl"/>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="mei:*[starts-with(@meiversion, '5.')]">
+                <xsl:variable name="warning">The source document is already an MEI v5 file!</xsl:variable>
+                <xsl:message terminate="yes" select="$warning"/>
+            </xsl:when>
+            <xsl:when test="mei:*">
+                <xsl:apply-templates select="mei:* | comment()"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="warning">The source document is not an MEI file!</xsl:variable>
+                <xsl:message terminate="yes" select="$warning"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <!-- ======================================================================= -->
+    <!-- MATCH TEMPLATES FOR CHANGES BETWEEN MEI v4 and MEI v5                   -->
+    <!-- ======================================================================= -->
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>pgHead2 for subsequent pages is now encoded as pgHead with func="all", assuming another pgHead will use func="first"</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:pgHead2">
+        <xsl:if test="$verbose">
+            <xsl:message select="'pgHead2 ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || ' changed to pgHead.'"/>
+        </xsl:if>
+        <pgHead xmlns="http://www.music-encoding.org/ns/mei" func="all">
+            <xsl:apply-templates select="node() | @*"/>
+        </pgHead>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>pgHead is now encoded as pgHead with func="first", assuming another pgHead2 was there and is now encoded as pgHead with func="all"</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:pgHead[//mei:pgHead2]">
+        <xsl:if test="$verbose">
+            <xsl:message select="'pgHead ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || ' enriched with func=first'"/>
+        </xsl:if>
+        <xsl:copy>
+            <xsl:attribute name="func" select="'first'"/>
+            <xsl:apply-templates select="node() | @*"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>pgFoot2 for subsequent pages is now encoded as pgFoot with func="all", assuming another pgFoot will use func="first"</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:pgFoot2">
+        <xsl:if test="$verbose">
+            <xsl:message select="'pgFoot2 ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || ' changed to pgFoot.'"/>
+        </xsl:if>
+        <pgFoot xmlns="http://www.music-encoding.org/ns/mei" func="all">
+            <xsl:apply-templates select="node() | @*"/>
+        </pgFoot>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>pgFoot is now encoded as pgFoot with func="first", assuming another pgFoot2 was there and is now encoded as pgFoot with func="all"</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:pgFoot[//mei:pgFoot2]">
+        <xsl:if test="$verbose">
+            <xsl:message select="'pgFoot ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || ' enriched with func=first'"/>
+        </xsl:if>
+        <xsl:copy>
+            <xsl:attribute name="func" select="'first'"/>
+            <xsl:apply-templates select="node() | @*"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Removes @instr on mSpace</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:mSpace/@instr">
+        <xsl:if test="$verbose">
+            <xsl:message select="'Dropping @instr on mSpace ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Removes @instr on multiRest</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:multiRest/@instr">
+        <xsl:if test="$verbose">
+            <xsl:message select="'Dropping @instr on multiRest ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Replace @keysig.show with @keysig.visible.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@keysig.show">
+        <!-- TODO : keysig.visible, same of staffDef -->
+        <xsl:attribute name="keysig.visible" select="."/>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Changing @keysig.show to @keysig.visible on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Resolve @text.dist</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@text.dist">
+        <xsl:attribute name="dir.dist" select="."/>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Replacing @text.dist with @dir.dist on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '. Alternatives could be @reh.dist or @tempo.dist.'"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Adjust value of MIDI name</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@midi.instrname">
+        <xsl:attribute name="midi.instrname" select="replace(., 'Bagpipe', 'Bag_pipe')"/>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Changing Bagpipe to Bag_pipe on @midi.instrname on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Move letter-spacing and line-height on @rend to separate attributes</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:*[@rend and (contains(@rend, 'letter-spacing(') or contains(@rend, 'line-height('))]">
+        <xsl:variable name="rendValues" select="tokenize(normalize-space(@rend), ' ')" as="xs:string+"/>
+        <xsl:variable name="letterSpacingRend" select="$rendValues[starts-with(., 'letter-spacing(')]" as="xs:string?"/>
+        <xsl:variable name="lineHeightRend" select="$rendValues[starts-with(., 'line-height(')]" as="xs:string?"/>
+        <xsl:variable name="remainingRends" select="$rendValues[not(. = $letterSpacingRend) and not(. = $lineHeightRend)]" as="xs:string*"/>
+        <xsl:copy>
+            <xsl:if test="exists($letterSpacingRend)">
+                <xsl:attribute name="letterspacing" select="substring-before(substring-after($letterSpacingRend, '('),')')"/>
+            </xsl:if>
+            <xsl:if test="exists($lineHeightRend)">
+                <xsl:attribute name="lineheight" select="substring-before(substring-after($lineHeightRend, '('),')')"/>
+            </xsl:if>
+            <xsl:if test="exists($remainingRends)">
+                <xsl:attribute name="rend" select="string-join($remainingRends, ' ')"/>
+            </xsl:if>
+            <xsl:apply-templates select="node() | @* except @rend"/>
+        </xsl:copy>
+        
+        <xsl:if test="$verbose">
+            <xsl:message select="'Separating letter-spacing and line-height into separate attributes on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Removes fingerprint in favor of identifier, which is allowed everywhere where fingerprint was allowed.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:fingerprint">
+        <xsl:if test="$verbose">
+            <xsl:message select="'fingerprint ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || ' changed to identifier.'"/>
+        </xsl:if>
+        <identifier xmlns="http://www.music-encoding.org/ns/mei">
+            <xsl:variable name="types" select="(tokenize(normalize-space(@type), ' '), 'fingerprint')" as="xs:string*"/>
+            <xsl:attribute name="type" select="string-join($types, ' ')"/>
+            <xsl:apply-templates select="@* except @type"/>
+            <xsl:apply-templates select="node()"/>
+        </identifier>
+    </xsl:template>
+    
+    <!-- ======================================================================= -->
+    <!-- SELF-DOCUMENTATION TEMPLATES                                            -->
+    <!-- ======================================================================= -->
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Add a change element for the conversion</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:revisionDesc">
+        <xsl:copy>
+            <xsl:apply-templates select="node() | @*"/>
+            
+            <!-- Add a record of the conversion to revisionDesc -->
+            <change xmlns="http://www.music-encoding.org/ns/mei">
+                <xsl:if test="count(mei:change[@n]) = count(mei:change)">
+                    <xsl:attribute name="n" select="count(mei:change) + 1"/>
+                </xsl:if>
+                <xsl:attribute name="resp">
+                    <xsl:value-of select="concat('#', $progid)"/>
+                </xsl:attribute>
+                <changeDesc>
+                    <p><xsl:value-of select="'Converted to MEI version 5.0.0 using ' || $progname || ', version ' || $version"/></p>
+                </changeDesc>
+                <date>
+                    <xsl:attribute name="isodate">
+                        <xsl:value-of select="format-date(current-date(), '[Y]-[M02]-[D02]')"/>
+                    </xsl:attribute>
+                </date>
+            </change>
+            <xsl:if test="$verbose">
+                <xsl:message select="'Added change element to the encoding.'"/>
+            </xsl:if>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Add info about the XSLT to the file</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:appInfo">
+        <xsl:copy>
+            <xsl:apply-templates select="node() | @*"/>
+            
+            <application xmlns="http://www.music-encoding.org/ns/mei">
+                <xsl:attribute name="version" select="'v' || replace($version, '&#32;', '_')"/>
+                <xsl:attribute name="xml:id" select="$progid"/>
+                
+                <name><xsl:value-of select="$progname"/></name>
+                <ptr target="{$gitUrl}"/>
+            </application>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Specify the new version of MEI</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@meiversion">
+        <xsl:attribute name="meiversion" select="$meiversion"/>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Changing @meiversion on ' || local-name(parent::mei:*) || ' to ' || $meiversion"/>
+        </xsl:if>
+    </xsl:template>
+    
+    
+    <!-- ======================================================================= -->
+    <!-- COPY TEMPLATE                                                           -->
+    <!-- ======================================================================= -->
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Copy template</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="node() | @*" mode="#all">
+        <xsl:copy>
+            <xsl:apply-templates select="node() | @*" mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    
+</xsl:stylesheet>
