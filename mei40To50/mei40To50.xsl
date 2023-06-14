@@ -313,6 +313,22 @@
         </identifier>
     </xsl:template>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>A value of "dblwhole" on @head.mod replaced with "fences".</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@head.mod">
+        <xsl:choose>
+            <xsl:when test=". = 'dblwhole'">
+                <xsl:attribute name="head.mod" select="'fences'"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:next-match/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     <!-- ======================================================================= -->
     <!-- SELF-DOCUMENTATION TEMPLATES                                            -->
     <!-- ======================================================================= -->
