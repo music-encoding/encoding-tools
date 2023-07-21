@@ -4,8 +4,7 @@
 
 	mei2pae.xsl - XSLT (1.0) stylesheet for creating incipits in Plaine & Easie Code from MEI
 
-  Klaus Rettinghaus <rettinghaus@bach-leipzig.de>
-  Saxon Academy of Sciences and Humanities in Leipzig
+  Klaus Rettinghaus
 
 	For info on MEI, see http://music-encoding.org
 	For info on Plaine & Easie Code, see https://www.iaml.info/plaine-easie-code
