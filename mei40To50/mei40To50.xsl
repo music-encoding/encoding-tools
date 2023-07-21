@@ -450,6 +450,19 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Create mei:appInfo element.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template name="encodingDesc-insert-appInfo">
+        <xsl:element name="appInfo" namespace="http://www.music-encoding.org/ns/mei">
+            <xsl:call-template name="appInfo-insert-current-application"/>
+        </xsl:element>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Added appInfo element to the encoding.'"/>
+        </xsl:if>
+    </xsl:template>
     
     <xd:doc>
         <xd:desc>
@@ -460,9 +473,7 @@
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
             <xsl:if test="not(mei:appInfo)">
-                <xsl:element name="appInfo" namespace="http://www.music-encoding.org/ns/mei">
-                    <xsl:call-template name="appInfo-insert-current-application"/>
-                </xsl:element>
+                <xsl:call-template name="encodingDesc-insert-appInfo"/>
             </xsl:if>
             <xsl:apply-templates select="node() | @*"/>
         </xsl:copy>
@@ -479,9 +490,7 @@
         </xsl:copy>
         <xsl:if test="not(following-sibling::mei:encodingDesc)">
             <xsl:element name="encodingDesc" namespace="http://www.music-encoding.org/ns/mei">
-                <xsl:element name="appInfo" namespace="http://www.music-encoding.org/ns/mei">
-                    <xsl:call-template name="appInfo-insert-current-application"/>
-                </xsl:element>
+                <xsl:call-template name="encodingDesc-insert-appInfo"/>
             </xsl:element>
         </xsl:if>
     </xsl:template>
