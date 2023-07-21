@@ -152,6 +152,22 @@
     <!-- ======================================================================= -->
     
     <xd:doc>
+        <xd:desc>Insert @meiversion on root element if not present.</xd:desc>
+    </xd:doc>
+    <xsl:template match="/mei:*">
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <xsl:if test="not(@meiversion)">
+                <xsl:attribute name="meiversion" select="$meiversion"/>
+                <xsl:if test="$verbose">
+                    <xsl:message select="'Inserting @meiversion on ' || local-name(parent::mei:*) || ' with value: ' || $meiversion"/>
+                </xsl:if>
+            </xsl:if>
+            <xsl:apply-templates select="node() | @*"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xd:doc>
         <xd:desc>
             <xd:p>pgHead2 for subsequent pages is now encoded as pgHead with func="all", assuming another pgHead will use func="first"</xd:p>
         </xd:desc>
