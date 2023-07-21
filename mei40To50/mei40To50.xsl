@@ -504,7 +504,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Specify the new version of MEI</xd:p>
+            <xd:p>Update @meiversion the new version of MEI.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="@meiversion">
