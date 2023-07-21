@@ -424,21 +424,66 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Add info about the XSLT to the file</xd:p>
+            <xd:p>Insert mei:application with info about the XSLT to an exisiting mei:appInfo.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:appInfo">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*"/>
-            
-            <application xmlns="http://www.music-encoding.org/ns/mei">
-                <xsl:attribute name="version" select="'v' || replace($version, '&#32;', '_')"/>
-                <xsl:attribute name="xml:id" select="$progid"/>
-                
-                <name><xsl:value-of select="$progname"/></name>
-                <ptr target="{$gitUrl}"/>
-            </application>
+            <xsl:call-template name="appInfo-insert-current-application"/>
         </xsl:copy>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Create mei:application element with info about this XSLT.</xd:p>
+        </xd:desc>
+    </xd:doc>    
+    <xsl:template name="appInfo-insert-current-application">
+        <xsl:element name="application" namespace="http://www.music-encoding.org/ns/mei">
+            <xsl:attribute name="version" select="'v' || replace($version, '&#32;', '_')"/>
+            <xsl:attribute name="xml:id" select="$progid"/>
+            
+            <xsl:element name="name" namespace="http://www.music-encoding.org/ns/mei"><xsl:value-of select="$progname"/></xsl:element>
+            <xsl:element name="ptr" namespace="http://www.music-encoding.org/ns/mei">
+                <xsl:attribute name=" target" select="$gitUrl"/>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Copy mei:encodingDesc and, if not present, insert mei:appInfo as first child  with self-documentation.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:encodingDesc">
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <xsl:if test="not(mei:appInfo)">
+                <xsl:element name="appInfo" namespace="http://www.music-encoding.org/ns/mei">
+                    <xsl:call-template name="appInfo-insert-current-application"/>
+                </xsl:element>
+            </xsl:if>
+            <xsl:apply-templates select="node() | @*"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Copy mei:fileDesc and, if not present, insert mei:encodingDesc/mei:appInfo after it with self-documentation.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:fileDesc">
+        <xsl:copy>
+            <xsl:apply-templates select="node() | @*"/>
+        </xsl:copy>
+        <xsl:if test="not(following-sibling::mei:encodingDesc)">
+            <xsl:element name="encodingDesc" namespace="http://www.music-encoding.org/ns/mei">
+                <xsl:element name="appInfo" namespace="http://www.music-encoding.org/ns/mei">
+                    <xsl:call-template name="appInfo-insert-current-application"/>
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
     </xsl:template>
     
     <xd:doc>
