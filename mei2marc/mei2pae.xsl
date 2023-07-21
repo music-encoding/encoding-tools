@@ -88,8 +88,8 @@
     <xsl:param name="keyTonic" select="(@pname|ancestor-or-self::*/@key.pname)[1]" />
     <xsl:param name="keyAccid" select="(@accid|ancestor-or-self::*/@key.accid)[1]" />
     <xsl:param name="keyMode" select="(@mode|ancestor-or-self::*/@key.mode)[1]" />
-    <xsl:param name="keySig" select="(@sig|ancestor-or-self::*/@key.sig)[1]" />
-    <xsl:param name="keySigMixed" select="(@sig.mixed|ancestor-or-self::*/@key.sig.mixed)[1]" />
+    <xsl:param name="keySig" select="(@sig|ancestor-or-self::*/@keysig)[1]" />
+    <xsl:param name="keySigMixed" select="@sig.mixed" />
     <xsl:if test="$keySig != 'mixed'">
       <xsl:value-of select="'$'" />
       <xsl:choose>
