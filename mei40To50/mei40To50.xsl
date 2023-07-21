@@ -294,6 +294,23 @@
     </xsl:template>
     
     <xd:doc>
+        <xd:desc>Resolve changes in @meter.form, moving @meter.from="invis" to @meter.visible</xd:desc>
+    </xd:doc>
+    <xsl:template match="@meter.form">
+        <xsl:choose>
+            <xsl:when test=". = 'invis'">
+                <xsl:attribute name="meter.visible">false</xsl:attribute>
+                <xsl:if test="$verbose">
+                    <xsl:message>Changing @meter with value "invis" to @meter.visible with value "false"</xsl:message>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xd:doc>
         <xd:desc>
             <xd:p>Resolve @text.dist</xd:p>
         </xd:desc>
