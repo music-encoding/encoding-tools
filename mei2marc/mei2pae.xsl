@@ -222,7 +222,7 @@
 
   <!-- MEI staff definition -->
   <xsl:template match="mei:staffDef" mode="music">
-    <xsl:variable name="accidental" select="ancestor-or-self::*/@key.sig" />
+    <xsl:variable name="accidental" select="ancestor-or-self::*/@keysig" />
     <!-- clef -->
     <xsl:call-template name="setClef" />
     <!-- key -->
