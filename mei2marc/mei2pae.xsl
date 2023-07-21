@@ -56,7 +56,17 @@
   <xsl:template name="setClef" match="mei:clef|@*[starts-with(name(),'clef')]">
     <xsl:param name="clefShape" select="(//@shape|ancestor-or-self::*/@clef.shape)[1]" />
     <xsl:param name="clefLine" select="(//@line|ancestor-or-self::*/@clef.line)[1]" />
-    <xsl:value-of select="concat('%', $clefShape, '-', $clefLine)" />
+    <xsl:variable name="connector">
+      <xsl:choose>
+        <xsl:when test="starts-with(ancestor-or-self::*/@notationtype, 'mensural')">
+          <xsl:value-of select="'+'" />
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="'-'" />
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>    
+    <xsl:value-of select="concat('%', $clefShape, $connector, $clefLine)" />
   </xsl:template>
 
   <!-- MEI chord -->
