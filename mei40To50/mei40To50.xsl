@@ -461,7 +461,7 @@
     </xsl:template>
     
     <xd:doc>
-        <xd:desc>Insert mei:revisionDesc if not present</xd:desc>
+        <xd:desc>Insert mei:revisionDesc if not present.</xd:desc>
     </xd:doc>
     <xsl:template match="mei:meiHead[not(mei:revisionDesc)]">
         <xsl:copy>
