@@ -449,7 +449,11 @@
                 <xsl:attribute name=" target" select="$gitUrl"/>
             </xsl:element>
         </xsl:element>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Added application element with documentation of this XSLT.'"/>
+        </xsl:if>
     </xsl:template>
+    
     <xd:doc>
         <xd:desc>
             <xd:p>Create mei:appInfo element.</xd:p>
@@ -492,6 +496,9 @@
             <xsl:element name="encodingDesc" namespace="http://www.music-encoding.org/ns/mei">
                 <xsl:call-template name="encodingDesc-insert-appInfo"/>
             </xsl:element>
+            <xsl:if test="$verbose">
+                <xsl:message select="'Added encodingDesc element to the encoding.'"/>
+            </xsl:if>
         </xsl:if>
     </xsl:template>
     
