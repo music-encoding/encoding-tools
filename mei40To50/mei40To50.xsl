@@ -348,6 +348,30 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>Decide whether to keep instrDef/@n or replace it with instrDef/@label, depending on its contents.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:instrDef/@n">
+        <xsl:choose>
+            <xsl:when test="matches(., '^[1-9]\d*$')">
+                <xsl:copy-of select="."/>
+            </xsl:when>
+            <xsl:when test="matches(., '^[\w_-]+$')">
+                <xsl:if test="$verbose">
+                    <xsl:message select="'Changing instrDef/@n to @label, because it contains non-numeric characters.'"/>
+                </xsl:if>
+                <xsl:attribute name="label" select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">The @n on instrDef seems to be invalid in the source file.
+                <xsl:value-of select="document-uri(root())"/>
+                </xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>A value of "dblwhole" on @head.mod replaced with "fences".</xd:p>
         </xd:desc>
     </xd:doc>
