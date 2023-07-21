@@ -65,7 +65,7 @@
           <xsl:value-of select="'-'" />
         </xsl:otherwise>
       </xsl:choose>
-    </xsl:variable>    
+    </xsl:variable>
     <xsl:value-of select="concat('%', $clefShape, $connector, $clefLine)" />
   </xsl:template>
 
@@ -217,7 +217,15 @@
 
   <!-- MEI score -->
   <xsl:template match="mei:score">
-    <xsl:apply-templates select="//mei:staffDef[@n = $staff]|/descendant::mei:measure[position() &lt;= $measures]" mode="music" />
+    <xsl:apply-templates select="//mei:staffDef[@n = $staff]" mode="music" />
+    <xsl:choose>
+      <xsl:when test="/descendant::mei:measure">
+        <xsl:apply-templates select="/descendant::mei:measure[position() &lt;= $measures]" mode="music" />
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="/descendant::mei:*[local-name() = 'note' or local-name() = 'rest'][position() &lt;= 10]" />
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- MEI staff definition -->
@@ -323,6 +331,21 @@
     <xsl:param name="durval" select="@dur" />
     <!-- data.DURATION -->
     <xsl:choose>
+      <xsl:when test="@dur = 'longa'">
+        <xsl:text>0</xsl:text>
+      </xsl:when>
+      <xsl:when test="@dur = 'brevis'">
+        <xsl:text>9</xsl:text>
+      </xsl:when>
+      <xsl:when test="@dur = 'semibrevis'">
+        <xsl:text>1</xsl:text>
+      </xsl:when>
+      <xsl:when test="@dur = 'minima'">
+        <xsl:text>2</xsl:text>
+      </xsl:when>
+      <xsl:when test="@dur = 'semiminima'">
+        <xsl:text>4</xsl:text>
+      </xsl:when>
       <xsl:when test="@dur = 'long'">
         <xsl:text>0</xsl:text>
       </xsl:when>
