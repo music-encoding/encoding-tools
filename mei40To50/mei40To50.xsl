@@ -414,27 +414,45 @@
     <xsl:template match="mei:revisionDesc">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*"/>
-            
-            <!-- Add a record of the conversion to revisionDesc -->
-            <change xmlns="http://www.music-encoding.org/ns/mei">
-                <xsl:if test="count(mei:change[@n]) = count(mei:change)">
-                    <xsl:attribute name="n" select="count(mei:change) + 1"/>
-                </xsl:if>
-                <xsl:attribute name="resp">
-                    <xsl:value-of select="concat('#', $progid)"/>
-                </xsl:attribute>
-                <changeDesc>
-                    <p><xsl:value-of select="'Converted to MEI version 5.0.0 using ' || $progname || ', version ' || $version"/></p>
-                </changeDesc>
-                <date>
-                    <xsl:attribute name="isodate">
-                        <xsl:value-of select="format-date(current-date(), '[Y]-[M02]-[D02]')"/>
-                    </xsl:attribute>
-                </date>
-            </change>
-            <xsl:if test="$verbose">
-                <xsl:message select="'Added change element to the encoding.'"/>
+            <xsl:call-template name="revisionDesc-insert-change"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>Add a record of the conversion to revisionDesc</xd:desc>
+    </xd:doc>
+    <xsl:template name="revisionDesc-insert-change">
+        <change xmlns="http://www.music-encoding.org/ns/mei">
+            <xsl:if test="count(mei:change[@n]) = count(mei:change)">
+                <xsl:attribute name="n" select="count(mei:change) + 1"/>
             </xsl:if>
+            <xsl:attribute name="resp">
+                <xsl:value-of select="concat('#', $progid)"/>
+            </xsl:attribute>
+            <changeDesc>
+                <p><xsl:value-of select="'Converted to MEI version 5.0.0 using ' || $progname || ', version ' || $version"/></p>
+            </changeDesc>
+            <date>
+                <xsl:attribute name="isodate">
+                    <xsl:value-of select="format-date(current-date(), '[Y]-[M02]-[D02]')"/>
+                </xsl:attribute>
+            </date>
+        </change>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Added change element to the encoding.'"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>Insert mei:revisionDesc if not present</xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:meiHead[not(mei:revisionDesc)]">
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+            <xsl:element name="revisionDesc" namespace="http://www.music-encoding.org/ns/mei">
+                <xsl:call-template name="revisionDesc-insert-change"/>
+            </xsl:element>
+            <xsl:message>Added revisionDesc to the encoding.</xsl:message>
         </xsl:copy>
     </xsl:template>
     
