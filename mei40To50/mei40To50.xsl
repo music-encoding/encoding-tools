@@ -233,6 +233,15 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>Replace @key.sig with @keysig.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@key.sig">
+        <xsl:attribute name="keysig" select="."/>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>Replace @keysig.show with @keysig.visible.</xd:p>
         </xd:desc>
     </xd:doc>
