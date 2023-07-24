@@ -351,7 +351,7 @@
                     <xsl:value-of select="concat('#', $progid)"/>
                 </xsl:attribute>
                 <changeDesc>
-                    <p><xsl:value-of select="'Converted to MEI version 5.0.0 using ' || $progname || ', version ' || $version"/></p>
+                    <p><xsl:value-of select="'Converted to MEI version 5.0 using ' || $progname || ', version ' || $version"/></p>
                 </changeDesc>
                 <date>
                     <xsl:attribute name="isodate">
