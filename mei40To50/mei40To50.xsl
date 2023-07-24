@@ -106,7 +106,7 @@
             <xd:p>MEI version</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="meiversion" select="'5.0.0'"/>
+    <xsl:variable name="meiversion" select="'5.0'"/>
     
     <!-- ======================================================================= -->
     <!-- MAIN OUTPUT TEMPLATE                                                    -->
