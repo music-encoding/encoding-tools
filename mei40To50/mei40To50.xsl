@@ -58,6 +58,13 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>fallback model path</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="fallback_model_path">https://music-encoding.org/schema/5.0/mei-all.rng</xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>program name</xd:p>
         </xd:desc>
     </xd:doc>
@@ -118,20 +125,72 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="/">
-        <xsl:if test="$rng_model_path != ''">
-            <xsl:processing-instruction name="xml-model">
-                <xsl:value-of select="concat(' href=&quot;', $rng_model_path, '&quot;')"/>
-                <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
-            </xsl:processing-instruction>
-            <xsl:value-of select="$nl"/>
-        </xsl:if>
-        <xsl:if test="$sch_model_path != ''">
-            <xsl:processing-instruction name="xml-model">
-                <xsl:value-of select="concat(' href=&quot;', $sch_model_path, '&quot;')"/>
-                <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
-            </xsl:processing-instruction>
-            <xsl:value-of select="$nl"/>
-        </xsl:if>
+        <xsl:variable name="existing_rng_model_instruction" select="/processing-instruction('xml-model')[contains(.,'http://relaxng.org/ns/structure/1.0')]"/>
+        <xsl:variable name="existing_rng_model_path">
+            <xsl:value-of select="tokenize(tokenize($existing_rng_model_instruction, ' ')[starts-with(., 'href')], '&quot;')[2]"/>
+        </xsl:variable>
+        <xsl:message>existing rng model path: <xsl:value-of select="$existing_rng_model_path"/></xsl:message>
+        <xsl:variable name="existing_sch_model_instruction" select="/processing-instruction('xml-model')[contains(.,'http://purl.oclc.org/dsdl/schematron')]"/>
+        <xsl:variable name="existing_sch_model_path">
+            <xsl:value-of select="tokenize(tokenize($existing_sch_model_instruction, ' ')[starts-with(., 'href')], '&quot;')[2]"/>
+        </xsl:variable>
+        <xsl:message>existing schematron model path: <xsl:value-of select="$existing_sch_model_path"/></xsl:message>
+        <xsl:choose>
+            <xsl:when test="$rng_model_path != ''">
+                <xsl:processing-instruction name="xml-model">
+                    <xsl:value-of select="concat(' href=&quot;', $rng_model_path, '&quot;')"/>
+                    <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
+                </xsl:processing-instruction>
+                <xsl:value-of select="$nl"/>
+            </xsl:when>
+            <xsl:when test="matches($existing_rng_model_path, 'https?://music-encoding.org/schema/')">
+                <xsl:variable name="schema_filename" select="tokenize($existing_rng_model_path, '/')[last()]"/>
+                <xsl:variable name="fallback_model_location" select="substring-before($fallback_model_path, tokenize($fallback_model_path, '/')[last()])"/>
+                <xsl:processing-instruction name="xml-model">
+                    <xsl:value-of select="concat(' href=&quot;', $fallback_model_location, $schema_filename, '&quot;')"/>
+                    <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
+                </xsl:processing-instruction>
+                <xsl:value-of select="$nl"/>
+            </xsl:when>
+            <xsl:when test="$existing_rng_model_path != ''">
+                <xsl:copy-of select="$existing_rng_model_instruction"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:processing-instruction name="xml-model">
+                    <xsl:value-of select="concat(' href=&quot;', $fallback_model_path, '&quot;')"/>
+                    <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
+                </xsl:processing-instruction>
+                <xsl:value-of select="$nl"/>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:choose>
+            <xsl:when test="$sch_model_path != ''">
+                <xsl:processing-instruction name="xml-model">
+                    <xsl:value-of select="concat(' href=&quot;', $sch_model_path, '&quot;')"/>
+                    <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+                </xsl:processing-instruction>
+                <xsl:value-of select="$nl"/>
+            </xsl:when>
+            <xsl:when test="matches($existing_sch_model_path, 'https?://music-encoding.org/schema/')">
+                <xsl:variable name="schema_filename" select="tokenize($existing_sch_model_path, '/')[last()]"/>
+                <xsl:variable name="fallback_model_location" select="substring-before($fallback_model_path, tokenize($fallback_model_path, '/')[last()])"/>
+                <xsl:processing-instruction name="xml-model">
+                    <xsl:value-of select="concat(' href=&quot;', $fallback_model_location, $schema_filename, '&quot;')"/>
+                    <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+                </xsl:processing-instruction>
+                <xsl:value-of select="$nl"/>
+            </xsl:when>
+            <xsl:when test="$existing_sch_model_path != ''">
+                <xsl:copy-of select="$existing_sch_model_instruction"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:processing-instruction name="xml-model">
+                    <xsl:value-of select="concat(' href=&quot;', $fallback_model_path, '&quot;')"/>
+                    <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+                </xsl:processing-instruction>
+                <xsl:value-of select="$nl"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:choose>
             <xsl:when test="mei:*[starts-with(@meiversion, '5.')]">
                 <xsl:variable name="warning">The source document is already an MEI v5 file!</xsl:variable>
