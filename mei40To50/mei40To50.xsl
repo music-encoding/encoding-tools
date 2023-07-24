@@ -113,7 +113,7 @@
             <xd:p>MEI version</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="meiversion" select="'5.0.0'"/>
+    <xsl:variable name="meiversion" select="'5.0'"/>
     
     <!-- ======================================================================= -->
     <!-- MAIN OUTPUT TEMPLATE                                                    -->
@@ -501,6 +501,26 @@
         <change xmlns="http://www.music-encoding.org/ns/mei">
             <xsl:if test="count(mei:change[@n]) = count(mei:change)">
                 <xsl:attribute name="n" select="count(mei:change) + 1"/>
+            
+            <!-- Add a record of the conversion to revisionDesc -->
+            <change xmlns="http://www.music-encoding.org/ns/mei">
+                <xsl:if test="count(mei:change[@n]) = count(mei:change)">
+                    <xsl:attribute name="n" select="count(mei:change) + 1"/>
+                </xsl:if>
+                <xsl:attribute name="resp">
+                    <xsl:value-of select="concat('#', $progid)"/>
+                </xsl:attribute>
+                <changeDesc>
+                    <p><xsl:value-of select="'Converted to MEI version 5.0 using ' || $progname || ', version ' || $version"/></p>
+                </changeDesc>
+                <date>
+                    <xsl:attribute name="isodate">
+                        <xsl:value-of select="format-date(current-date(), '[Y]-[M02]-[D02]')"/>
+                    </xsl:attribute>
+                </date>
+            </change>
+            <xsl:if test="$verbose">
+                <xsl:message select="'Added change element to the encoding.'"/>
             </xsl:if>
             <xsl:attribute name="resp">
                 <xsl:value-of select="concat('#', $progid)"/>
