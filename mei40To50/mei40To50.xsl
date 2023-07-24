@@ -353,7 +353,7 @@
     </xsl:template>
     
     <xd:doc>
-        <xd:desc>Resolve changes in @meter.form, moving @meter.from="invis" to @meter.visible</xd:desc>
+        <xd:desc>Resolve changes in @meter.form, moving @meter.form="invis" to @meter.visible</xd:desc>
     </xd:doc>
     <xsl:template match="@meter.form">
         <xsl:choose>
