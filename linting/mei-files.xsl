@@ -16,7 +16,7 @@
   <xd:doc scope="component">
     <xd:desc>
       <xd:p>A static parameter to define the output mode.</xd:p>
-      <xd:p>Otions are:</xd:p>
+      <xd:p>Options are:</xd:p>
       <xd:ul>
         <xd:li><xd:b>clean</xd:b> this will return the file as single-line, stripped from linebreaks and indentation whitespace.</xd:li>
         <xd:li><xd:b>lint</xd:b> this will first clean (as by the above option) and afterwards indent the file.</xd:li>
