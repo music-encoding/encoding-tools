@@ -95,7 +95,7 @@
                 <xsl:text> </xsl:text>
               </xsl:matching-substring>
               <xsl:non-matching-substring>
-                <xsl:analyze-string select="." regex="^\s+">
+                <xsl:analyze-string select="." regex="^\s+|\s+$">
                   <xsl:matching-substring/>
                   <xsl:non-matching-substring>
                     <xsl:copy/>
