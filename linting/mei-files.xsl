@@ -233,6 +233,23 @@
   </xsl:template>
   <xd:doc scope="component">
     <xd:desc>
+      <xd:p>Cleanup namespace declarations on elements.</xd:p>
+    </xd:desc>
+  </xd:doc>
+  <xsl:template match="*" mode="clean">
+    <xsl:element name="{name()}" namespace="{namespace-uri()}">
+      <xsl:variable name="current-element" select="."/>
+      <xsl:for-each select="namespace::*">
+        <xsl:variable name="prefix" select="name()"/>
+        <xsl:if test="$current-element/descendant::*[(namespace-uri() = current() and substring-before(name(), ':') = $prefix) or @*[substring-before(name(), ':') = $prefix]]">
+          <xsl:copy-of select="."/>
+        </xsl:if>
+      </xsl:for-each>
+      <xsl:apply-templates select="@* | node()" mode="clean"/>
+    </xsl:element>
+  </xsl:template>
+  <xd:doc scope="component">
+    <xd:desc>
       <xd:p>Template for processing text nodes.</xd:p>
       <xd:p>Removes leading space character and trailing space or newline characters.</xd:p>
     </xd:desc>
@@ -327,18 +344,6 @@
     <xsl:choose>
       <xsl:when test="self::text()">
         <xsl:next-match/>
-      </xsl:when>
-      <xsl:when test="self::*">
-        <xsl:element name="{name()}" namespace="{namespace-uri()}">
-          <xsl:variable name="current-element" select="."/>
-          <xsl:for-each select="namespace::*">
-            <xsl:variable name="prefix" select="name()"/>
-            <xsl:if test="$current-element/descendant::*[(namespace-uri() = current() and substring-before(name(), ':') = $prefix) or @*[substring-before(name(), ':') = $prefix]]">
-              <xsl:copy-of select="."/>
-            </xsl:if>
-          </xsl:for-each>
-          <xsl:apply-templates select="@* | node()" mode="lint"/>
-        </xsl:element>
       </xsl:when>
       <xsl:when test="self::comment()">
         <xsl:comment select="concat(' ', normalize-space(.), ' ')"/>
