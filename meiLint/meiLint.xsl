@@ -52,15 +52,15 @@
   <xd:doc scope="component">
     <xd:desc>URL of this XSLT</xd:desc>
   </xd:doc>
-  <xsl:variable name="linter-url">https://github.com/music-encoding/encoding-tools/blob/main/linting/mei-files.xsl</xsl:variable>
+  <xsl:variable name="linter-url">https://github.com/music-encoding/encoding-tools/blob/main/meiLint/meiLint.xsl</xsl:variable>
   <xd:doc scope="component">
     <xd:desc>Version of this XSLT</xd:desc>
   </xd:doc>
-  <xsl:variable name="linter-version">0.0.1-alpha</xsl:variable>
+  <xsl:variable name="linter-version">v0.0.1-alpha</xsl:variable>
   <xd:doc scope="component">
-    <xd:desc>Lintet ID</xd:desc>
+    <xd:desc>Linter ID</xd:desc>
   </xd:doc>
-  <xsl:variable name="linter-id" select="'lint-mei-files_' || $linter-version"/>
+  <xsl:variable name="linter-id" select="'meiLint_' || $linter-version"/>
   <xd:doc scope="component">
     <xd:desc>
       <xd:p>Variable with new line character.</xd:p>
