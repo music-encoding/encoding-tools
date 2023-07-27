@@ -156,7 +156,6 @@
       </xsl:element>
     </xsl:element>
   </xsl:template>
-  <!-- ========== DEFAULT MODE TEMPLATES ========== -->
   <!-- ========== DOCUMENTATION MODE TEMPLATES ========== -->
   <xd:doc scope="component">
     <xd:desc>documentation: root-element pre-ckeck for meiHead.</xd:desc>
