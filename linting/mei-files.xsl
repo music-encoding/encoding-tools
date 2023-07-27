@@ -157,6 +157,33 @@
     </xsl:element>
   </xsl:template>
   <!-- ========== DEFAULT MODE TEMPLATES ========== -->
+  <!-- ========== DOCUMENTATION MODE TEMPLATES ========== -->
+  <xd:doc scope="component">
+    <xd:desc>documentation: root-element pre-ckeck for meiHead.</xd:desc>
+  </xd:doc>
+  <xsl:template match="/mei:*[self::mei:meiHead or mei:meiHead]" mode="documentation">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()" mode="documentation"/>
+    </xsl:copy>
+  </xsl:template>
+  <xd:doc scope="component">
+    <xd:desc>documentation</xd:desc>
+  </xd:doc>
+  <xsl:template match="/mei:*[not(mei:meiHead) and not(self::mei:meiHead)]" mode="documentation">
+    <xsl:variable name="comment">
+      <xsl:call-template name="documentation-change">
+        <xsl:with-param name="n" select="1"/>
+      </xsl:call-template>
+      <xsl:value-of select="$nl"/>
+      <xsl:call-template name="documentation-application"/>
+    </xsl:variable>
+    <xsl:comment>
+      <xsl:value-of select="$comment//mei:date/@isodate, $comment//mei:changeDesc/mei:p" separator=" – "/>
+      <xsl:text> Agent: </xsl:text>
+      <xsl:value-of select="$comment//mei:application/mei:ptr/@target, $comment//mei:application/@version" separator=" – "/>
+    </xsl:comment>
+    <xsl:apply-templates select="." mode="clone"/>
+  </xsl:template>
   <xd:doc scope="component">
     <xd:desc>
       <xd:p>Insert documentation into top meiHead.</xd:p>
