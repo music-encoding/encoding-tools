@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../music-encoding/schemata/mei-basic.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../../music-encoding/schemata/mei-basic.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="4.0.1-rc1+basic">
+   <!--Converted from MNX file https://github.com/w3c/mnx/blob/master/examples/FaurReveSample-common.xml with mnx2mei.xsl on 2020-04-27+02:00-->
+  <meiHead>
+      <fileDesc corresp="FaurReveSample-common.xml">
+         <titleStmt>
+            <title type="main">Après un rêve</title>
+            <title type="subordinate">Op. 7, No. 1 (measures 1-8)</title>
+            <composer>Gabriel Fauré</composer>
+            <lyricist>Romain Bussine</lyricist>
+         </titleStmt>
+         <pubStmt>
+            <availability>Copyright © 2002 Recordare LLC</availability>
+         </pubStmt>
+      </fileDesc>
+   </meiHead>
+  <music>
+      <body>
+         <mdiv>
+            <score>
+               <scoreDef key.sig="3f" meter.count="3" meter.unit="4">
+                  <staffGrp>
+                     <staffDef n="1" lines="5">
+                        <label>Voice</label>
+                        <clef shape="G" line="2"/>
+                     </staffDef>
+                     <staffGrp>
+                        <label>Piano</label>
+                        <staffDef n="2" lines="5">
+                           <clef shape="G" line="2"/>
+                        </staffDef>
+                        <staffDef n="3" lines="5">
+                           <clef shape="F" line="4"/>
+                        </staffDef>
+                     </staffGrp>
+                  </staffGrp>
+               </scoreDef>
+               <section>
+                  <measure n="1">
+                     <staff n="1">
+                        <layer>
+                           <mRest/>
+                        </layer>
+                     </staff>
+                     <staff n="2">
+                        <layer>
+            
+                           <beam>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                           </beam>
+                        </layer>
+                     </staff>
+                     <staff n="3">
+                        <layer>
+                           <mRest/>
+                        </layer>
+                     </staff>
+                     <dynam staff="2" tstamp="1">pp</dynam>
+                  </measure>
+                  <measure n="2">
+                     <staff n="1">
+                        <layer>
+            
+                           <note dur="4" pname="g" oct="4">
+                              <verse>
+                                 <syl>Dans</syl>
+                              </verse>
+                           </note>
+                           <note dur="4" pname="c" oct="5">
+                              <verse>
+                                 <syl>un</syl>
+                              </verse>
+                           </note>
+                           <note dur="4" pname="d" oct="5">
+                              <verse>
+                                 <syl wordpos="i" con="d">som</syl>
+                              </verse>
+                           </note>
+                        </layer>
+                     </staff>
+                     <staff n="2">
+                        <layer>
+                           <beam>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="c" oct="4"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                           </beam>
+                        </layer>
+                     </staff>
+                     <staff n="3">
+                        <layer>
+                           <mRest/>
+                        </layer>
+                     </staff>
+                  </measure>
+                  <measure n="3">
+                     <staff n="1">
+                        <layer>
+                           <note dur="4" pname="e" oct="5">
+                              <accid accid.ges="f"/>
+                              <verse>
+                                 <syl wordpos="t">meil</syl>
+                              </verse>
+                           </note>
+                           <tuplet num="3" numbase="2">
+                              <beam>
+                                 <note dur="8" pname="e" oct="5">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note dur="8" pname="d" oct="5">
+                                    <verse>
+                                       <syl>que</syl>
+                                    </verse>
+                                 </note>
+                                 <note dur="8" pname="c" oct="5">
+                                    <verse>
+                                       <syl wordpos="i" con="d">char</syl>
+                                    </verse>
+                                 </note>
+                              </beam>
+                           </tuplet>
+                           <tuplet num="3" numbase="2">
+                              <beam>
+                                 <note dur="8" pname="e" oct="5">
+                                    <accid accid.ges="f"/>
+                                    <verse>
+                                       <syl wordpos="t">mait</syl>
+                                    </verse>
+                                 </note>
+                                 <note dur="8" pname="d" oct="5">
+                                    <verse>
+                                       <syl>ton</syl>
+                                    </verse>
+                                 </note>
+                                 <note dur="8" pname="c" oct="5">
+                                    <verse>
+                                       <syl wordpos="i" con="d">i</syl>
+                                    </verse>
+                                 </note>
+                              </beam>
+                           </tuplet>
+                        </layer>
+                     </staff>
+                     <staff n="2">
+                        <layer>
+                           <beam>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3">
+                                    <accid accid="n"/>
+                                 </note>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="g" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="f" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3"/>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="e" oct="4">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="f" oct="4"/>
+                              </chord>
+                           </beam>
+                        </layer>
+                     </staff>
+                     <staff n="3">
+                        <layer>
+                           <chord dur="2" dots="1">
+                              <note pname="f" oct="1"/>
+                              <note pname="f" oct="2"/>
+                           </chord>
+                        </layer>
+                     </staff>
+                  </measure>
+                  <measure n="4">
+                     <staff n="1">
+                        <layer>
+            
+                           <note dur="2" pname="c" oct="5">
+                              <verse>
+                                 <syl wordpos="m" con="d">ma</syl>
+                              </verse>
+                           </note>
+                           <note dur="4" pname="b" oct="4">
+                              <accid accid.ges="f"/>
+                              <verse>
+                                 <syl wordpos="t">ge</syl>
+                              </verse>
+                           </note>
+                        </layer>
+                     </staff>
+                     <staff n="2">
+                        <layer>
+                           <beam>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3">
+                                    <accid accid="f"/>
+                                 </note>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
+                                 <note pname="f" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
+                                 <note pname="f" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
+                                 <note pname="f" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
+                                 <note pname="f" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
+                                 <note pname="f" oct="4"/>
+                              </chord>
+                              <chord dur="8">
+                                 <note pname="a" oct="3" staff="3">
+                                    <accid accid.ges="f"/>
+                                 </note>
+                                 <note pname="c" oct="4" staff="3"/>
+                                 <note pname="d" oct="4" staff="3"/>
+                                 <note pname="f" oct="4"/>
+                              </chord>
+                           </beam>
+                        </layer>
+                     </staff>
+                     <staff n="3">
+                        <layer>
+                           <chord dur="2" dots="1">
+                              <note pname="b" oct="1">
+                                 <accid accid.ges="f"/>
+                              </note>
+                              <note pname="b" oct="2">
+                                 <accid accid.ges="f"/>
+                              </note>
+                           </chord>
+                        </layer>
+                     </staff>
+                  </measure>
+               </section>
+            </score>
+         </mdiv>
+      </body>
+   </music>
+</mei>
