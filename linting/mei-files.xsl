@@ -85,6 +85,7 @@
     <xsl:variable name="lint" use-when="$output-mode = 'lint'">
       <xsl:apply-templates select="$clean" mode="lint"/>
     </xsl:variable>
+    <xsl:copy-of select="$documentation" use-when="$output-mode = 'documentation'"/>
     <xsl:copy-of select="$clean" use-when="$output-mode = 'clean'"/>
     <xsl:copy-of select="$lint" use-when="$output-mode = 'lint'"/>
   </xsl:template>
@@ -166,7 +167,11 @@
     <xsl:variable name="exists-revisionDesc" select="exists(mei:reivisionDesc)"/>
     <xsl:variable name="nodes-before-encodingDesc" select="mei:fileDesc/preceding-sibling::node(), mei:fileDesc"/>
     <xsl:variable name="nodes-after-encodingDesc" select="mei:fileDesc/following-sibling::node() except (mei:encodingDesc)"/>
-    <xsl:variable name="nodes-after-appInfo" select="if($exists-appInfo) then mei:encodingDesc/mei:appInfo/following-sibling::node() else mei:encodingDesc/node() except (mei:head)"/>
+    <xsl:variable name="nodes-after-appInfo" select="
+        if ($exists-appInfo) then
+          mei:encodingDesc/mei:appInfo/following-sibling::node()
+        else
+          mei:encodingDesc/node() except (mei:head)"/>
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="documentation"/>
       <xsl:apply-templates select="$nodes-before-encodingDesc" mode="documentation"/>
