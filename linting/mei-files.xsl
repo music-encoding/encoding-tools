@@ -50,9 +50,17 @@
   <xsl:param name="elements.do-not-break-contents" select="('addrLine', 'desc', 'dir', 'head', 'p', 'rend', 'title')"/>
   <!-- ========== INTERNAL VARIABLES ========== -->
   <xd:doc scope="component">
+    <xd:desc>URL of this XSLT</xd:desc>
+  </xd:doc>
+  <xsl:variable name="linter-url">https://github.com/music-encoding/encoding-tools/blob/main/linting/mei-files.xsl</xsl:variable>
+  <xd:doc scope="component">
     <xd:desc>Version of this XSLT</xd:desc>
   </xd:doc>
   <xsl:variable name="linter-version">0.0.1-alpha</xsl:variable>
+  <xd:doc scope="component">
+    <xd:desc>Lintet ID</xd:desc>
+  </xd:doc>
+  <xsl:variable name="linter-id" select="'lint-mei-files_' || $linter-version"/>
   <xd:doc scope="component">
     <xd:desc>
       <xd:p>Variable with new line character.</xd:p>
@@ -68,8 +76,11 @@
     </xd:desc>
   </xd:doc>
   <xsl:template match="/">
+    <xsl:variable name="documentation">
+      <xsl:apply-templates select="node() | @*" mode="documentation"/>
+    </xsl:variable>
     <xsl:variable name="clean">
-      <xsl:apply-templates select="node() | @*" mode="clean"/>
+      <xsl:apply-templates select="$documentation" mode="clean"/>
     </xsl:variable>
     <xsl:variable name="lint" use-when="$output-mode = 'lint'">
       <xsl:apply-templates select="$clean" mode="lint"/>
@@ -108,13 +119,83 @@
       </xsl:non-matching-substring>
     </xsl:analyze-string>
   </xsl:template>
+  <xd:doc scope="component">
+    <xd:desc>
+      <xd:p>Application documentation template.</xd:p>
+    </xd:desc>
+  </xd:doc>
+  <xsl:template name="documentation-application">
+    <xsl:element name="application">
+      <xsl:attribute name="version" select="$linter-version"/>
+      <xsl:attribute name="xml:id" select="$linter-id"/>
+      <xsl:element name="name">
+        <xsl:value-of select="tokenize($linter-url, '/')[last()]"/>
+      </xsl:element>
+      <xsl:element name="ptr">
+        <xsl:attribute name="target" select="$linter-url"/>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
+  <xd:doc scope="component">
+    <xd:desc>
+      <xd:p>Change documentation template.</xd:p>
+    </xd:desc>
+    <xd:param name="n">The desired value for change/@n.</xd:param>
+  </xd:doc>
+  <xsl:template name="documentation-change">
+    <xsl:param name="n" required="true"/>
+    <xsl:element name="change">
+      <xsl:attribute name="n" select="$n"/>
+      <xsl:attribute name="resp" select="'#' || $linter-id"/>
+      <xsl:element name="changeDesc">
+        <xsl:element name="p">Applied <xsl:value-of select="$output-mode"/> mode.</xsl:element>
+      </xsl:element>
+      <xsl:element name="date">
+        <xsl:attribute name="isodate" select="format-dateTime(current-dateTime(), '[Y]-[M,2]-[D,2]T[H]:[m]:[s][Z]')"/>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
+  <!-- ========== DEFAULT MODE TEMPLATES ========== -->
+  <xd:doc scope="component">
+    <xd:desc>
+      <xd:p>Insert documentation into top meiHead.</xd:p>
+    </xd:desc>
+  </xd:doc>
+  <xsl:template match="/mei:*/mei:meiHead" mode="documentation">
+    <xsl:variable name="exists-appInfo" select="exists(mei:encodingDesc/mei:appInfo)"/>
+    <xsl:variable name="exists-revisionDesc" select="exists(mei:reivisionDesc)"/>
+    <xsl:variable name="nodes-before-encodingDesc" select="mei:fileDesc/preceding-sibling::node(), mei:fileDesc"/>
+    <xsl:variable name="nodes-after-encodingDesc" select="mei:fileDesc/following-sibling::node() except (mei:encodingDesc)"/>
+    <xsl:variable name="nodes-after-appInfo" select="if($exists-appInfo) then mei:encodingDesc/mei:appInfo/following-sibling::node() else mei:encodingDesc/node() except (mei:head)"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="documentation"/>
+      <xsl:apply-templates select="$nodes-before-encodingDesc" mode="documentation"/>
+      <xsl:element name="encodingDesc">
+        <xsl:apply-templates select="mei:encodingDesc/@*" mode="documentation"/>
+        <xsl:apply-templates select="mei:encodingDesc/mei:head" mode="documentation"/>
+        <xsl:element name="appInfo">
+          <xsl:apply-templates select="mei:encodingDesc/mei:appInfo/@* | mei:encodingDesc/mei:appInfo/node()" mode="documentation"/>
+          <xsl:call-template name="documentation-application"/>
+        </xsl:element>
+        <xsl:apply-templates select="$nodes-after-appInfo" mode="documentation"/>
+      </xsl:element>
+      <xsl:apply-templates select="$nodes-after-encodingDesc except (mei:revisionDesc)" mode="documentation"/>
+      <xsl:element name="revisionDesc">
+        <xsl:variable name="count-change" select="count(mei:revisionDesc/mei:change)"/>
+        <xsl:apply-templates select="mei:revisionDesc/@* | mei:revisionDesc/node()" mode="documentation"/>
+        <xsl:call-template name="documentation-change">
+          <xsl:with-param name="n" select="$count-change + 1"/>
+        </xsl:call-template>
+      </xsl:element>
+    </xsl:copy>
+  </xsl:template>
   <!-- ========== CLEAN TEMPLATES ========== -->
   <xd:doc scope="component">
     <xd:desc>
       <xd:p>Overwrite XSLT default templates to copy every node.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:template match="node() | @*" mode="clean clone">
+  <xsl:template match="node() | @*" mode="clean clone documentation">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()" mode="#current"/>
     </xsl:copy>
