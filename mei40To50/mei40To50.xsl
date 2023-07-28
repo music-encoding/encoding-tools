@@ -352,6 +352,30 @@
     </xsl:template>
     
     <xd:doc>
+        <xd:desc>
+            <xd:p>Replace @sig.showchange with @cancelaccid.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@sig.showchange">
+        <xsl:variable name="value.old" select="."/>
+        <xsl:variable name="value.new">
+            <xsl:choose>
+                <xsl:when test="$value.old = 'false'">none</xsl:when>
+                <xsl:otherwise>before</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:attribute name="cancelaccid" select="$value.new"/>
+        <xsl:if test="$verbose">
+            <xsl:message>
+                <xsl:value-of select="'Changing @sig.showchange to @cancelaccid on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '. '"/>
+                <xsl:text>Please note: converting value from </xsl:text>
+                <xsl:value-of select="$value.old"/><xsl:text> to </xsl:text><xsl:value-of select="$value.new"/><xsl:text>. </xsl:text>
+                <xsl:if test="$value.old = 'true'">There are several alternatives for encoding the style of MEI 4 @sig.showchange='true' in MEI 5.0 (before, after, before-bar), defaulting to 'before'.</xsl:if>
+            </xsl:message>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
         <xd:desc>Resolve changes in @meter.form, moving @meter.form="invis" to @meter.visible</xd:desc>
     </xd:doc>
     <xsl:template match="@meter.form">
