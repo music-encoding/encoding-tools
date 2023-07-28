@@ -343,8 +343,8 @@
         <xsl:attribute name="keysig.cancelaccid" select="$value.new"/>
         <xsl:if test="$verbose">
             <xsl:message>
-                <xsl:value-of select="'Changing @keysig.showchange to @keysig.cancelaccid on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
-                <xsl:text>. Please note: converting value from </xsl:text>
+                <xsl:value-of select="'Changing @keysig.showchange to @keysig.cancelaccid on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '. '"/>
+                <xsl:text>Please note: converting value from </xsl:text>
                 <xsl:value-of select="$value.old"/><xsl:text> to </xsl:text><xsl:value-of select="$value.new"/><xsl:text>. </xsl:text>
                 <xsl:if test="$value.old = 'true'">There are several alternatives for encoding the style of MEI 4 @keysig.showchange='true' in MEI 5.0 (before, after, before-bar), defaulting to 'before'.</xsl:if>
             </xsl:message>
