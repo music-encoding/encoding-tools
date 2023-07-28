@@ -480,7 +480,7 @@
     <xsl:template match="mei:arpeg/@line.width">
         <xsl:attribute name="lwidth" select="."/>
         <xsl:if test="$verbose">
-            <xsl:message select="'Replacing @line.width with @lwidth on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '.'"/>
+            <xsl:message select="'Replacing @line.width with @lwidth on arpeg ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '.'"/>
         </xsl:if>
     </xsl:template>
     
