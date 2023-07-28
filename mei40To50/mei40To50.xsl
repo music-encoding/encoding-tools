@@ -413,6 +413,22 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    <xd:doc>
+        <xd:desc>Resolve changes in meterSig/@form, moving @form="invis" to @visible="false"</xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:meterSig/@form">
+        <xsl:choose>
+            <xsl:when test=". = 'invis'">
+                <xsl:attribute name="visible">false</xsl:attribute>
+                <xsl:if test="$verbose">
+                    <xsl:message select="'Changing @form with value `invis` to @visible with value `false` on meterSig ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
     
     <xd:doc>
         <xd:desc>
