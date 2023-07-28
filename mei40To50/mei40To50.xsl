@@ -413,6 +413,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
     <xd:doc>
         <xd:desc>Resolve changes in meterSig/@form, moving @form="invis" to @visible="false"</xd:desc>
     </xd:doc>
