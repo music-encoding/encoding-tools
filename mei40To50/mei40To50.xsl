@@ -295,7 +295,7 @@
         </xsl:if>
     </xsl:template>
     
-   <xd:doc>
+    <xd:doc>
         <xd:desc>
             <xd:p>Removes @instr on mRest</xd:p>
         </xd:desc>
