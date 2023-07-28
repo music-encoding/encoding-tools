@@ -456,7 +456,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Adjust value of MIDI name</xd:p>
+            <xd:p>Replace a value of "Bagpipe" on @midi.instrname with "Bag_pipe".</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="@midi.instrname">
