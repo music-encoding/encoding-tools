@@ -321,7 +321,6 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="@keysig.show">
-        <!-- TODO : keysig.visible, same of staffDef -->
         <xsl:attribute name="keysig.visible" select="."/>
         <xsl:if test="$verbose">
             <xsl:message select="'Changing @keysig.show to @keysig.visible on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
