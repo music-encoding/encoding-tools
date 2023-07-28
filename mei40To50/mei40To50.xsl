@@ -468,7 +468,7 @@
     <xsl:template match="mei:arpeg/@line.form">
         <xsl:attribute name="lform" select="."/>
         <xsl:if test="$verbose">
-            <xsl:message select="'Replacing @line.form with @lform on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '.'"/>
+            <xsl:message select="'Replacing @line.form with @lform on arpeg ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '.'"/>
         </xsl:if>
     </xsl:template>
 
