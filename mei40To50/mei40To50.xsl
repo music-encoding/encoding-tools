@@ -523,6 +523,17 @@
         </xsl:choose>
     </xsl:template>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Removes @visible on mRest</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:mRest/@visible">
+        <xsl:if test="$verbose">
+            <xsl:message select="'Dropping @visible on mRest ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
     <!-- ======================================================================= -->
     <!-- SELF-DOCUMENTATION TEMPLATES                                            -->
     <!-- ======================================================================= -->
