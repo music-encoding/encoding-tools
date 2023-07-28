@@ -286,6 +286,28 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>Removes @visible on mRest</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:mRest/@visible">
+        <xsl:if test="$verbose">
+            <xsl:message select="'Dropping @visible on mRest ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
+   <xd:doc>
+        <xd:desc>
+            <xd:p>Removes @instr on mRest</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:mRest/@instr">
+        <xsl:if test="$verbose">
+            <xsl:message select="'Dropping @instr on mRest ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>Removes @instr on mSpace</xd:p>
         </xd:desc>
     </xd:doc>
@@ -303,17 +325,6 @@
     <xsl:template match="mei:multiRest/@instr">
         <xsl:if test="$verbose">
             <xsl:message select="'Dropping @instr on multiRest ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
-        </xsl:if>
-    </xsl:template>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Removes @instr on mRest</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:template match="mei:mRest/@instr">
-        <xsl:if test="$verbose">
-            <xsl:message select="'Dropping @instr on mRest ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
         </xsl:if>
     </xsl:template>
     
@@ -538,17 +549,6 @@
                 <xsl:next-match/>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:template>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Removes @visible on mRest</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:template match="mei:mRest/@visible">
-        <xsl:if test="$verbose">
-            <xsl:message select="'Dropping @visible on mRest ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
-        </xsl:if>
     </xsl:template>
     
     <!-- ======================================================================= -->
