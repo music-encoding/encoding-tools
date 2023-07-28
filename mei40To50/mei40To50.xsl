@@ -519,6 +519,7 @@
                     </xsl:attribute>
                 </date>
             </change>
+            </xsl:if>
             <xsl:if test="$verbose">
                 <xsl:message select="'Added change element to the encoding.'"/>
             </xsl:if>
