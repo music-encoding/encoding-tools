@@ -319,6 +319,17 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>Removes @instr on rest</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:rest/@instr">
+        <xsl:if test="$verbose">
+            <xsl:message select="'Dropping @instr on rest ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>Replace @key.sig with @keysig.</xd:p>
         </xd:desc>
     </xd:doc>
