@@ -226,6 +226,23 @@
             <xsl:apply-templates select="node() | @*"/>
         </xsl:copy>
     </xsl:template>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Replace deprecated fingerprint in favor of identifier/@type="fingerprint", which is allowed everywhere where fingerprint was allowed.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:fingerprint">
+        <xsl:if test="$verbose">
+            <xsl:message select="'fingerprint ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || ' changed to identifier.'"/>
+        </xsl:if>
+        <identifier xmlns="http://www.music-encoding.org/ns/mei">
+            <xsl:variable name="types" select="(tokenize(normalize-space(@type), ' '), 'fingerprint')" as="xs:string*"/>
+            <xsl:attribute name="type" select="string-join($types, ' ')"/>
+            <xsl:apply-templates select="@* except @type"/>
+            <xsl:apply-templates select="node()"/>
+        </identifier>
+    </xsl:template>
     
     <xd:doc>
         <xd:desc>
@@ -442,6 +459,30 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Replace @line.form on arpeg with @lform.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:arpeg/@line.form">
+        <xsl:attribute name="lform" select="."/>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Replacing @line.form with @lform on arpeg ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '.'"/>
+        </xsl:if>
+    </xsl:template>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Replace @line.width on arpeg with @lwidth.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:arpeg/@line.width">
+        <xsl:attribute name="lwidth" select="."/>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Replacing @line.width with @lwidth on arpeg ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '.'"/>
+        </xsl:if>
+    </xsl:template>
     
     <xd:doc>
         <xd:desc>
@@ -452,18 +493,6 @@
         <xsl:attribute name="dir.dist" select="."/>
         <xsl:if test="$verbose">
             <xsl:message select="'Replacing @text.dist with @dir.dist on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || '. Alternatives could be @reh.dist or @tempo.dist.'"/>
-        </xsl:if>
-    </xsl:template>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Replace a value of "Bagpipe" on @midi.instrname with "Bag_pipe".</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:template match="@midi.instrname">
-        <xsl:attribute name="midi.instrname" select="replace(., 'Bagpipe', 'Bag_pipe')"/>
-        <xsl:if test="$verbose">
-            <xsl:message select="'Changing Bagpipe to Bag_pipe on @midi.instrname on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
         </xsl:if>
     </xsl:template>
     
@@ -497,23 +526,6 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Replace deprecated fingerprint in favor of identifier/@type="fingerprint", which is allowed everywhere where fingerprint was allowed.</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:template match="mei:fingerprint">
-        <xsl:if test="$verbose">
-            <xsl:message select="'fingerprint ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id || ' changed to identifier.'"/>
-        </xsl:if>
-        <identifier xmlns="http://www.music-encoding.org/ns/mei">
-            <xsl:variable name="types" select="(tokenize(normalize-space(@type), ' '), 'fingerprint')" as="xs:string*"/>
-            <xsl:attribute name="type" select="string-join($types, ' ')"/>
-            <xsl:apply-templates select="@* except @type"/>
-            <xsl:apply-templates select="node()"/>
-        </identifier>
-    </xsl:template>
-    
-    <xd:doc>
-        <xd:desc>
             <xd:p>Move a non-numeric value on instrDef/@n to instrDef/@label.</xd:p>
         </xd:desc>
     </xd:doc>
@@ -534,6 +546,18 @@
                 </xsl:message>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Replace a value of "Bagpipe" on @midi.instrname with "Bag_pipe".</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@midi.instrname">
+        <xsl:attribute name="midi.instrname" select="replace(., 'Bagpipe', 'Bag_pipe')"/>
+        <xsl:if test="$verbose">
+            <xsl:message select="'Changing Bagpipe to Bag_pipe on @midi.instrname on ' || local-name(parent::mei:*) || ' ' || ancestor-or-self::mei:*[@xml:id][1]/@xml:id"/>
+        </xsl:if>
     </xsl:template>
     
     <xd:doc>
