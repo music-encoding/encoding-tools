@@ -10,6 +10,7 @@
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> May 25, 2023</xd:p>
             <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
+            <xd:p><xd:b>Author:</xd:b> Benjamin W. Bohl</xd:p>
             <xd:p>This XSLT translates an MEI v4 file to an MEI v5 file.</xd:p>
         </xd:desc>
     </xd:doc>
@@ -121,7 +122,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Start template</xd:p>
+            <xd:p>Start template.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="/">
@@ -228,7 +229,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>pgHead2 for subsequent pages is now encoded as pgHead with func="all", assuming another pgHead will use func="first"</xd:p>
+            <xd:p>Replace pgHead2 for subsequent pages with pgHead/@func="all", assuming another pgHead will use @func="first".</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:pgHead2">
@@ -242,7 +243,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>pgHead is now encoded as pgHead with func="first", assuming another pgHead2 was there and is now encoded as pgHead with func="all"</xd:p>
+            <xd:p>Replace pgHead with pgHead/@func="first", assuming another pgHead2 was there and is now encoded as pgHead with @func="all".</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:pgHead[//mei:pgHead2]">
@@ -257,7 +258,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>pgFoot2 for subsequent pages is now encoded as pgFoot with func="all", assuming another pgFoot will use func="first"</xd:p>
+            <xd:p>Replace pgFoot2 for subsequent pages with pgFoot/@func="all", assuming another pgFoot will use @func="first".</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:pgFoot2">
@@ -271,7 +272,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>pgFoot is now encoded as pgFoot with func="first", assuming another pgFoot2 was there and is now encoded as pgFoot with func="all"</xd:p>
+            <xd:p>Replace pgFoot with pgFoot/@func="first", assuming another pgFoot2 was there and is now encoded as pgFoot with @func="all".</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:pgFoot[//mei:pgFoot2]">
@@ -286,7 +287,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Removes @visible on mRest</xd:p>
+            <xd:p>Remove @visible on mRest.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:mRest/@visible">
@@ -297,7 +298,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Removes @instr on mRest</xd:p>
+            <xd:p>Remove @instr on mRest.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:mRest/@instr">
@@ -308,7 +309,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Removes @instr on mSpace</xd:p>
+            <xd:p>Remove @instr on mSpace.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:mSpace/@instr">
@@ -319,7 +320,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Removes @instr on multiRest</xd:p>
+            <xd:p>Remove @instr on multiRest.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:multiRest/@instr">
@@ -330,7 +331,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Removes @instr on rest</xd:p>
+            <xd:p>Remove @instr on rest.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:rest/@instr">
@@ -426,7 +427,7 @@
     </xsl:template>
     
     <xd:doc>
-        <xd:desc>Resolve changes in meterSig/@form, moving @form="invis" to @visible="false"</xd:desc>
+        <xd:desc>Resolve changes in meterSig/@form, moving @form="invis" to @visible="false".</xd:desc>
     </xd:doc>
     <xsl:template match="mei:meterSig/@form">
         <xsl:choose>
@@ -444,7 +445,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Resolve @text.dist</xd:p>
+            <xd:p>Resolve @text.dist to @dir.dist.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="@text.dist">
@@ -468,7 +469,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Move letter-spacing and line-height on @rend to separate attributes</xd:p>
+            <xd:p>Move letter-spacing and line-height on @rend to separate attributes.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:*[@rend and (contains(@rend, 'letter-spacing(') or contains(@rend, 'line-height('))]">
@@ -496,7 +497,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Removes fingerprint in favor of identifier, which is allowed everywhere where fingerprint was allowed.</xd:p>
+            <xd:p>Replace deprecated fingerprint in favor of identifier/@type="fingerprint", which is allowed everywhere where fingerprint was allowed.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:fingerprint">
@@ -513,7 +514,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Decide whether to keep instrDef/@n or replace it with instrDef/@label, depending on its contents.</xd:p>
+            <xd:p>Move a non-numeric value on instrDef/@n to instrDef/@label.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:instrDef/@n">
@@ -537,7 +538,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>A value of "dblwhole" on @head.mod replaced with "fences".</xd:p>
+            <xd:p>Replace a value of "dblwhole" on @head.mod with "fences".</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="@head.mod">
@@ -557,7 +558,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Add a change element for the conversion</xd:p>
+            <xd:p>Add a change element for the conversion.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="mei:revisionDesc">
@@ -568,7 +569,7 @@
     </xsl:template>
     
     <xd:doc>
-        <xd:desc>Add a record of the conversion to revisionDesc</xd:desc>
+        <xd:desc>Add a record of the conversion to revisionDesc.</xd:desc>
     </xd:doc>
     <xsl:template name="revisionDesc-insert-change">
         <!-- Add a record of the conversion to revisionDesc -->
@@ -705,7 +706,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Copy template</xd:p>
+            <xd:p>Copy template.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="node() | @*" mode="#all">
