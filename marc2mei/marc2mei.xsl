@@ -2368,19 +2368,19 @@
 
         <!-- file publication statement -->
         <pubStmt>
-          <publisher>
-            <xsl:value-of select="$agency"/>
-            <xsl:if test="$agency_code != ''">
+          <xsl:value-of select="$agency" />
+          <xsl:if test="$agency_code != ''">
+            <publisher>
               <xsl:text>&#32;</xsl:text>
               <xsl:text>(</xsl:text>
               <identifier authority="MARC Code List for Organizations">
-                <xsl:value-of select="$agency_code"/>
+                <xsl:value-of select="$agency_code" />
               </identifier>
               <xsl:text>)</xsl:text>
-            </xsl:if>
-          </publisher>
+            </publisher>
+          </xsl:if>
           <date>
-            <xsl:value-of select="concat('[', format-date(current-date(), '[Y]'), ']')"/>
+            <xsl:value-of select="concat('[', format-date(current-date(), '[Y]'), ']')" />
           </date>
         </pubStmt>
 
