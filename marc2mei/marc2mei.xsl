@@ -2535,8 +2535,8 @@
       <!-- manifestation list -->
       <manifestationList>
         <xsl:choose>
-          <!-- single manifestation if no fields with $3 -->
-          <xsl:when test="count(//marc:subfield[@code = '3']) = 0">
+          <!-- single manifestation if no fields with $3 or $8 -->
+          <xsl:when test="count(//marc:subfield[@code = '3' or @code = '8']) = 0">
             <manifestation>
               <xsl:if test="$analog = 'true'">
                 <xsl:attribute name="xml:id">
@@ -2867,7 +2867,7 @@
                   <xsl:apply-templates
                     select="
                       marc:datafield[@tag = '700' or
-                      @tag = '710'][not(@ind2 = '2')][not(marc:subfield[@code = '3'])]"
+                      @tag = '710'][not(@ind2 = '2')][not(marc:subfield[@code = '3' or @code = '8'])]"
                     mode="contributor"/>
                 </xsl:variable>
                 <xsl:variable name="sortedContributors">
@@ -2888,10 +2888,10 @@
               </titleStmt>
 
               <!-- manifestation edition statement -->
-              <xsl:if test="marc:datafield[@tag = '250'][not(marc:subfield[@code = '3'])]">
+              <xsl:if test="marc:datafield[@tag = '250'][not(marc:subfield[@code = '3' or @code = '8'])]">
                 <editionStmt>
                   <xsl:apply-templates
-                    select="marc:datafield[@tag = '250'][not(marc:subfield[@code = '3'])]"/>
+                    select="marc:datafield[@tag = '250'][not(marc:subfield[@code = '3' or @code = '8'])]"/>
                 </editionStmt>
               </xsl:if>
 
@@ -2899,12 +2899,12 @@
               <xsl:if
                 test="
                   marc:datafield[@tag = '260' or
-                  @tag = '264'][not(marc:subfield[@code = '3'])]">
+                  @tag = '264'][not(marc:subfield[@code = '3' or @code = '8'])]">
                 <pubStmt>
                   <xsl:apply-templates
                     select="
                       marc:datafield[@tag = '260' or
-                      @tag = '264'][not(marc:subfield[@code = '3'])]"
+                      @tag = '264'][not(marc:subfield[@code = '3' or @code = '8'])]"
                   />
                 </pubStmt>
               </xsl:if>
@@ -2913,10 +2913,10 @@
               <xsl:if
                 test="
                   marc:datafield[@tag = '028' and @ind1 = '2'] or marc:datafield[@tag = '300'
-                  or @tag = '306'][not(marc:subfield[@code = '3'])]">
+                  or @tag = '306'][not(marc:subfield[@code = '3' or @code = '8'])]">
                 <physDesc>
                   <xsl:apply-templates
-                    select="marc:datafield[@tag = '300'][not(marc:subfield[@code = '3'])]"/>
+                    select="marc:datafield[@tag = '300'][not(marc:subfield[@code = '3' or @code = '8'])]"/>
                   <xsl:apply-templates select="marc:datafield[@tag = '028'][@ind1 = '2']"/>
                   <xsl:apply-templates select="marc:datafield[@tag = '306']"/>
                 </physDesc>
@@ -2924,13 +2924,13 @@
 
               <!-- manifestation physLoc -->
               <physLoc>
-                <xsl:apply-templates select="marc:datafield[@tag = '852'][not(marc:subfield[@code = '3'])]" />
-                <xsl:apply-templates select="marc:datafield[@tag = '561'][not(marc:subfield[@code = '3'])]" />
+                <xsl:apply-templates select="marc:datafield[@tag = '852'][not(marc:subfield[@code = '3' or @code = '8'])]" />
+                <xsl:apply-templates select="marc:datafield[@tag = '561'][not(marc:subfield[@code = '3' or @code = '8'])]" />
               </physLoc>
 
               <!-- manifestation seriesStmt -->
               <xsl:apply-templates
-                select="marc:datafield[@tag = '490'][not(marc:subfield[@code = '3'])]"/>
+                select="marc:datafield[@tag = '490'][not(marc:subfield[@code = '3' or @code = '8'])]"/>
 
               <!-- manifestation contents -->
               <xsl:choose>
@@ -2966,13 +2966,13 @@
                     marc:datafield[@tag = '254' or @tag = '500' or
                     @tag = '504' or @tag = '506' or @tag = '510' or @tag = '520' or @tag = '525' or
                     @tag = '533' or @tag = '541' or @tag = '545' or @tag = '546' or @tag = '555' or
-                    @tag = '563' or @tag = '580'][not(marc:subfield[@code = '3'])]"/>
+                    @tag = '563' or @tag = '580'][not(marc:subfield[@code = '3' or @code = '8'])]"/>
                 <xsl:if test="$keepLocalNotes = 'true'">
                   <xsl:copy-of
                     select="
                       marc:datafield[@tag = '590' or @tag = '591' or
                       @tag = '592' or @tag = '593' or @tag = '594' or @tag = '596' or @tag = '597' or
-                      @tag = '598' or @tag = '599'][not(marc:subfield[@code = '3'])]"
+                      @tag = '598' or @tag = '599'][not(marc:subfield[@code = '3' or @code = '8'])]"
                   />
                 </xsl:if>
               </xsl:variable>
@@ -2997,7 +2997,7 @@
                     @tag = '534' or @tag = '535' or @tag = '540' or @tag = '541' or
                     @tag = '542' or @tag = '544' or @tag = '546' or @tag = '561' or
                     @tag = '563' or @tag = '581' or @tag = '585' or @tag = '586' or
-                    @tag = '700' or @tag = '710' or @tag = '852'][marc:subfield[@code = '3']]"/>
+                    @tag = '700' or @tag = '710' or @tag = '852'][marc:subfield[@code = '3' or @code = '8']]"/>
                 <xsl:if test="$keepLocalNotes = 'true'">
                   <xsl:copy-of
                     select="
@@ -3009,7 +3009,7 @@
               </xsl:variable>
               <componentList>
                 <xsl:for-each-group select="$componentContent/*"
-                  group-by="marc:subfield[@code = '3']">
+                  group-by="marc:subfield[@code = '3' or @code = '8']">
                   <xsl:sort select="current-grouping-key()"/>
                   <manifestation>
                     <xsl:if test="number(current-grouping-key())">
@@ -3021,7 +3021,7 @@
                       <title>
                         <xsl:value-of select="current-grouping-key()"/>
                       </title>
-                      <xsl:apply-templates select="$componentContent/marc:datafield[@tag = '700' or @tag = '710'][marc:subfield[@code = '3'] = current-grouping-key()]" mode="contributor"/>
+                      <xsl:apply-templates select="$componentContent/marc:datafield[@tag = '700' or @tag = '710'][marc:subfield[@code = '3' or @code = '8'] = current-grouping-key()]" mode="contributor"/>
                     </titleStmt>
 
                     <!-- component edition statement -->
@@ -3036,12 +3036,12 @@
                     <xsl:if
                       test="
                         $componentContent/marc:datafield[@tag = '260' or
-                        @tag = '264'][marc:subfield[@code = '3'] = current-grouping-key()]">
+                        @tag = '264'][marc:subfield[@code = '3' or @code = '8'] = current-grouping-key()]">
                       <pubStmt>
                         <xsl:apply-templates
                           select="
                             $componentContent/marc:datafield[@tag = '260'
-                            or @tag = '264'][marc:subfield[@code = '3'] = current-grouping-key()]"
+                            or @tag = '264'][marc:subfield[@code = '3' or @code = '8'] = current-grouping-key()]"
                         />
                       </pubStmt>
                     </xsl:if>
@@ -3049,11 +3049,11 @@
                     <!-- component physDesc -->
                     <xsl:if
                       test="
-                        $componentContent/marc:datafield[@tag = '300'][marc:subfield[@code = '3'] = current-grouping-key()]">
+                        $componentContent/marc:datafield[@tag = '300'][marc:subfield[@code = '3' or @code = '8'] = current-grouping-key()]">
                       <physDesc>
                         <xsl:apply-templates
                           select="
-                            $componentContent/marc:datafield[@tag = '300'][marc:subfield[@code = '3'] = current-grouping-key()]"
+                            $componentContent/marc:datafield[@tag = '300'][marc:subfield[@code = '3' or @code = '8'] = current-grouping-key()]"
                         />
                       </physDesc>
                     </xsl:if>
@@ -3062,18 +3062,18 @@
                     <physLoc>
                         <xsl:apply-templates
                       select="
-                        $componentContent/marc:datafield[@tag = '852'][marc:subfield[@code = '3']
+                        $componentContent/marc:datafield[@tag = '852'][marc:subfield[@code = '3' or @code = '8']
                         = current-grouping-key()]"/>
                         <xsl:apply-templates
                           select="
-                            $componentContent/marc:datafield[@tag = '561'][marc:subfield[@code = '3'] = current-grouping-key()]"
+                            $componentContent/marc:datafield[@tag = '561'][marc:subfield[@code = '3' or @code = '8'] = current-grouping-key()]"
                         />
                     </physLoc>
 
                     <!-- component seriesStmt -->
                     <xsl:apply-templates
                       select="
-                        $componentContent/marc:datafield[@tag = '490'][marc:subfield[@code = '3']
+                        $componentContent/marc:datafield[@tag = '490'][marc:subfield[@code = '3' or @code = '8']
                         = current-grouping-key()]"/>
 
                     <!-- component notesStmt -->
@@ -3084,22 +3084,22 @@
                           @tag = '500' or @tag = '504' or @tag = '506' or @tag = '510' or @tag = '520' or
                           @tag = '525' or @tag = '530' or @tag = '533' or @tag = '541' or @tag = '545' or
                           @tag = '546' or @tag = '555' or @tag = '563' or
-                          @tag = '580'][marc:subfield[@code = '3']]"/>
+                          @tag = '580'][marc:subfield[@code = '3' or @code = '8']]"/>
                       <xsl:if test="$keepLocalNotes = 'true'">
                         <xsl:copy-of
                           select="
                             $componentContent/marc:datafield[@tag = '590' or
                             @tag = '591' or @tag = '592' or @tag = '593' or @tag = '594' or
-                            @tag = '596' or @tag = '597' or @tag = '598'][marc:subfield[@code = '3']]"
+                            @tag = '596' or @tag = '597' or @tag = '598'][marc:subfield[@code = '3' or @code = '8']]"
                         />
                       </xsl:if>
                     </xsl:variable>
-                    <xsl:if test="$manifestationNotes/marc:*[marc:subfield[@code = '3']
+                    <xsl:if test="$manifestationNotes/marc:*[marc:subfield[@code = '3' or @code = '8']
                     = current-grouping-key()]">
                       <notesStmt>
                         <xsl:apply-templates
                           select="
-                            $manifestationNotes/marc:*[marc:subfield[@code = '3']
+                            $manifestationNotes/marc:*[marc:subfield[@code = '3' or @code = '8']
                             = current-grouping-key()]"/>
                       </notesStmt>
                     </xsl:if>
@@ -4436,7 +4436,7 @@
   </xsl:template>
 
   <!-- contents -->
-  <xsl:template match="marc:datafield[@tag = '700' or @tag = '730' or @tag = '740']" mode="contents">
+  <xsl:template match="marc:datafield[@tag = '700' or @tag = '730' or @tag = '740'][not(marc:subfield[@code = '8'])]" mode="contents">
     <xsl:variable name="tag" select="@tag"/>
     <contentItem>
       <xsl:call-template name="analog">
