@@ -3755,7 +3755,7 @@
             </xsl:call-template>
             <xsl:if test="marc:subfield[@code = 'j']">
               <xsl:attribute name="type">
-                <xsl:value-of select="marc:subfield[@code = 'j']"/>
+                <xsl:value-of select="lower-case(marc:subfield[@code = 'j'])"/>
               </xsl:attribute>
             </xsl:if>
             <xsl:choose>
@@ -4519,7 +4519,7 @@
             </xsl:call-template>
             <xsl:if test="marc:subfield[@code = 'j']">
               <xsl:attribute name="type">
-                <xsl:value-of select="marc:subfield[@code = 'j']"/>
+                <xsl:value-of select="lower-case(marc:subfield[@code = 'j'])"/>
               </xsl:attribute>
             </xsl:if>
             <xsl:choose>
