@@ -9,7 +9,7 @@
 	Music Library
 	University of Virginia
 
-  Klaus Rettinghaus <rettinghaus@bach-leipzig.de>
+  Klaus Rettinghaus
   Saxon Academy of Sciences and Humanities in Leipzig
 
 	For info on MARC XML, see http://www.loc.gov/marc/marcxml.html
@@ -33,7 +33,7 @@
     <xsl:variable name="tag" select="@tag"/>
     <annot type="scoring">
       <xsl:attribute name="analog">
-        <xsl:value-of select="$tag"/>
+        <xsl:value-of select="concat('marc:', $tag)"/>
       </xsl:attribute>
       <xsl:variable name="delimiter">
         <xsl:text>; </xsl:text>
