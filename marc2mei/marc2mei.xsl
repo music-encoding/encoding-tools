@@ -2409,9 +2409,14 @@
       <!-- work description -->
       <workList>
         <work>
+          <!-- work identifier -->
+          <identifier analog="marc:001">
+            <xsl:value-of select="marc:controlfield[@tag = '001']"/>
+          </identifier>
+
           <!-- work title(s) -->
           <xsl:apply-templates
-            select="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245']"
+            select="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245' or @tag = '730']"
             mode="titleProper"/>
 
             <!-- work statements of responsibility -->
@@ -3801,7 +3806,7 @@
 
   <!-- 130 - Main Entry-Uniform Title (NR) -->
   <!-- 240 - Uniform Title (NR) -->
-  <xsl:template match="marc:datafield[@tag = '130' or @tag = '240']" mode="titleProper">
+  <xsl:template match="marc:datafield[@tag = '130' or @tag = '240' or @tag = '730']" mode="titleProper">
     <xsl:variable name="tag" select="@tag"/>
     <title type="uniform">
       <xsl:call-template name="analog"/>
