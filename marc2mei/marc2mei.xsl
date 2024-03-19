@@ -2424,7 +2424,7 @@
               <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
               <xsl:if test="not($workMainEntryOnly = 'true')">
                 <xsl:for-each select="marc:datafield[@tag = '700' or @tag = '710']">
-                  <xsl:if test="not(marc:subfield[@code = '3' or @code = '8']/text())">
+                  <xsl:if test="not(marc:subfield[@code = '3' or @code = '8']/text()) and marc:subfield[@code = '4'] != 'fmo'">
                     <xsl:apply-templates select="." mode="contributor"/>
                   </xsl:if>
                 </xsl:for-each>
