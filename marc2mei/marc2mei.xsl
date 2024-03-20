@@ -41,7 +41,7 @@
   <xsl:param name="fileMainEntryOnly">true</xsl:param>
   <!-- preserve main entry in description of work -->
   <xsl:param name="workMainEntryOnly">false</xsl:param>
-  <!-- preserve local notes (59x) -->
+  <!-- preserve local notes (59X) -->
   <xsl:param name="keepLocalNotes">true</xsl:param>
 
   <!-- ======================================================================= -->
@@ -2804,7 +2804,7 @@
                     marc:datafield[@tag = '254' or @tag = '500' or
                     @tag = '504' or @tag = '506' or @tag = '510' or @tag = '520' or @tag = '525' or
                     @tag = '530' or @tag = '533' or @tag = '541' or @tag = '545' or @tag = '546' or
-                    @tag = '555' or @tag = '563' or @tag = '580']"/>
+                    @tag = '555' or @tag = '563' or @tag = '580' or starts-with(@tag, '69')]"/>
                 <xsl:if test="$keepLocalNotes = 'true'">
                   <xsl:copy-of
                     select="
@@ -2971,7 +2971,7 @@
                     marc:datafield[@tag = '254' or @tag = '500' or
                     @tag = '504' or @tag = '506' or @tag = '510' or @tag = '520' or @tag = '525' or
                     @tag = '533' or @tag = '541' or @tag = '545' or @tag = '546' or @tag = '555' or
-                    @tag = '563' or @tag = '580'][not(marc:subfield[@code = '3' or @code = '8'])]"/>
+                    @tag = '563' or @tag = '580' or starts-with(@tag, '69')][not(marc:subfield[@code = '3' or @code = '8'])]"/>
                 <xsl:if test="$keepLocalNotes = 'true'">
                   <xsl:copy-of
                     select="
@@ -4215,7 +4215,7 @@
       @tag = '520' or @tag = '521' or @tag = '524' or @tag = '525' or @tag = '530' or @tag = '533' or
       @tag = '534' or @tag = '535' or @tag = '540' or @tag = '541' or @tag = '542' or @tag = '545' or
       @tag = '546' or @tag = '555' or @tag = '563' or @tag = '580' or @tag = '581' or @tag = '585' or
-      @tag = '586']">
+      @tag = '586' or starts-with(@tag, '69')]">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:variable name="annottype">
       <xsl:choose>
@@ -4246,7 +4246,7 @@
         <xsl:when test="$tag = '581'">publications</xsl:when>
         <xsl:when test="$tag = '585'">exhibitions</xsl:when>
         <xsl:when test="$tag = '586'">awards</xsl:when>
-        <!-- Datafields 590-599 (local notes) matched separately -->
+        <!-- Datafields 59X (local notes) matched separately -->
         <xsl:otherwise>[unspecified]</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -4430,9 +4430,9 @@
     </history>
   </xsl:template>
 
-  <!-- If the marc2mei59x.xsl module is unavailable, 59x fields are
+  <!-- If the marc2mei59X.xsl module is unavailable, 59X fields are
     output as MEI annotations. -->
-  <!-- 59x (local notes) -->
+  <!-- 59X (local notes) -->
   <xsl:template match="marc:datafield[starts-with(@tag, '59')]" priority="1">
     <annot type="local">
       <xsl:call-template name="analog"/>
@@ -4813,8 +4813,8 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- 59x fields are handled by templates in the external file referenced in @href.
-  If that file isn't available, 59x fields are output using <annot>. -->
-  <xsl:include href="marc2mei59x.xsl"/>
+  <!-- 59X fields are handled by templates in the external file referenced in @href.
+  If that file isn't available, 59X fields are output using <annot>. -->
+  <xsl:include href="marc2mei59X.xsl"/>
 
 </xsl:stylesheet>
