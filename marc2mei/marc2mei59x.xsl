@@ -9,8 +9,7 @@
 	Music Library
 	University of Virginia
 
-  Klaus Rettinghaus
-  Saxon Academy of Sciences and Humanities in Leipzig
+	Klaus Rettinghaus
 
 	For info on MARC XML, see http://www.loc.gov/marc/marcxml.html
 	For info on the MEI header, see http://music-encoding.org
