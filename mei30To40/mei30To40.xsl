@@ -255,8 +255,8 @@
       <xsl:value-of select="$nl"/>
     </xsl:if>
     <xsl:choose>
-      <xsl:when test="mei:*[@meiversion = '4.0.0']">
-        <xsl:variable name="warning">The source document is already a version 4.0.0 MEI
+      <xsl:when test="mei:*[@meiversion = '4.0.1']">
+        <xsl:variable name="warning">The source document is already a version 4.0.1 MEI
           file!</xsl:variable>
         <xsl:message terminate="yes">
           <xsl:value-of select="normalize-space($warning)"/>
@@ -1170,9 +1170,9 @@
       <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates mode="copy"/>
       <xsl:choose>
-        <!-- Already a v. 4.0.0 file -->
-        <xsl:when test="ancestor::mei:mei[@meiversion = '4.0.0']">
-          <xsl:variable name="warning">The source document is already a v. 4.0.0 MEI
+        <!-- Already a v. 4.0.1 file -->
+        <xsl:when test="ancestor::mei:mei[@meiversion = '4.0.1']">
+          <xsl:variable name="warning">The source document is already a v. 4.0.1 MEI
             file</xsl:variable>
           <xsl:message>
             <xsl:value-of select="normalize-space($warning)"/>
@@ -1192,7 +1192,7 @@
               <xsl:value-of select="concat('#', $progid)"/>
             </xsl:attribute>
             <changeDesc>
-              <p>Converted to MEI version 4.0.0 using <xsl:value-of select="$progname"/>, version
+              <p>Converted to MEI version 4.0.1 using <xsl:value-of select="$progname"/>, version
                 <xsl:value-of select="$version"/></p>
             </changeDesc>
             <date>
