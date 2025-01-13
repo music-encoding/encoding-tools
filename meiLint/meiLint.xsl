@@ -23,7 +23,7 @@
       </xd:ul>
     </xd:desc>
   </xd:doc>
-  <xsl:param name="output-mode" static="yes"/>
+  <xsl:param name="output-mode" static="yes" select="'lint'"/>
   <xd:doc>
     <xd:desc>
       <xd:p>A character sequence used for indentation</xd:p>
