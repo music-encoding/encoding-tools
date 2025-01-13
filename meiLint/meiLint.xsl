@@ -34,7 +34,7 @@
       </xd:ul>
     </xd:desc>
   </xd:doc>
-  <xsl:param name="output-mode" static="yes" select="'lint'"/>
+  <xsl:param name="output-mode" static="yes" select="'lint'" as="xs:string"/>
 
 
   <xd:doc>
@@ -42,7 +42,7 @@
       <xd:p>A character sequence used for indentation</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:param name="indentation-characters" select="'  '"/>
+  <xsl:param name="indentation-characters" select="'  '" as="xs:string"/>
 
 
   <xd:doc scope="component">
@@ -50,7 +50,7 @@
       <xd:p>Sequence of element local-names that should be preceded by a newline character and indentation.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:param name="elements.break-before" select="('addrLine', 'lb', 'mei', 'meiHead', 'pb')"/>
+  <xsl:param name="elements.break-before" select="('addrLine', 'lb', 'mei', 'meiHead', 'pb')" as="xs:string*"/>
 
 
   <xd:doc scope="component">
@@ -58,7 +58,7 @@
       <xd:p>Sequence od element local-names that should never be preceded by a newline character and indentation.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:param name="elements.no-break" select="('rend')"/>
+  <xsl:param name="elements.no-break" select="('rend')" as="xs:string*"/>
 
 
   <xd:doc scope="component">
@@ -66,7 +66,7 @@
       <xd:p>Sequence of element local-names, the contents of which should not be indented.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:param name="elements.do-not-break-contents" select="('addrLine', 'desc', 'dir', 'head', 'p', 'rend', 'title')"/>
+  <xsl:param name="elements.do-not-break-contents" select="('addrLine', 'desc', 'dir', 'head', 'p', 'rend', 'title')" as="xs:string*"/>
 
 
   <!-- ======================================================================= -->
@@ -77,19 +77,19 @@
   <xd:doc scope="component">
     <xd:desc>URL of this XSLT</xd:desc>
   </xd:doc>
-  <xsl:variable name="linter-url">https://github.com/music-encoding/encoding-tools/blob/main/meiLint/meiLint.xsl</xsl:variable>
+  <xsl:variable name="linter-url" as="xs:anyURI">https://github.com/music-encoding/encoding-tools/blob/main/meiLint/meiLint.xsl</xsl:variable>
 
 
   <xd:doc scope="component">
     <xd:desc>Version of this XSLT</xd:desc>
   </xd:doc>
-  <xsl:variable name="linter-version">v0.0.1-alpha</xsl:variable>
+  <xsl:variable name="linter-version" as="xs:string">v0.0.1-alpha</xsl:variable>
 
 
   <xd:doc scope="component">
     <xd:desc>Linter ID</xd:desc>
   </xd:doc>
-  <xsl:variable name="linter-id" select="'meiLint_' || $linter-version"/>
+  <xsl:variable name="linter-id" select="'meiLint_' || $linter-version" as="xs:ID"/>
 
 
   <xd:doc scope="component">
@@ -97,7 +97,7 @@
       <xd:p>Variable with new line character.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:variable name="nl">
+  <xsl:variable name="nl" as="xs:string">
     <xsl:text>&#xa;</xsl:text>
   </xsl:variable>
 
@@ -114,15 +114,15 @@
   </xd:doc>
   <xsl:template match="/">
 
-    <xsl:variable name="documentation">
+    <xsl:variable name="documentation" as="node()+">
       <xsl:apply-templates select="node() | @*" mode="documentation"/>
     </xsl:variable>
 
-    <xsl:variable name="clean">
+    <xsl:variable name="clean" as="node()+">
       <xsl:apply-templates select="$documentation" mode="clean"/>
     </xsl:variable>
 
-    <xsl:variable name="lint" use-when="$output-mode = 'lint'">
+    <xsl:variable name="lint" use-when="$output-mode = 'lint'" as="node()+">
       <xsl:apply-templates select="$clean" mode="lint"/>
     </xsl:variable>
 
@@ -283,7 +283,7 @@
   </xd:doc>
   <xsl:template match="/mei:*[not(mei:meiHead) and not(self::mei:meiHead)]" mode="documentation">
 
-    <xsl:variable name="comment">
+    <xsl:variable name="comment" as="text()">
 
       <xsl:call-template name="documentation-change">
 
@@ -318,19 +318,19 @@
   </xd:doc>
   <xsl:template match="/mei:*/mei:meiHead" mode="documentation">
 
-    <xsl:variable name="exists-appInfo" select="exists(mei:encodingDesc/mei:appInfo)"/>
+    <xsl:variable name="exists-appInfo" select="exists(mei:encodingDesc/mei:appInfo)" as="xs:boolean"/>
 
-    <xsl:variable name="exists-revisionDesc" select="exists(mei:reivisionDesc)"/>
+    <xsl:variable name="exists-revisionDesc" select="exists(mei:reivisionDesc)" as="xs:boolean"/>
 
-    <xsl:variable name="nodes-before-encodingDesc" select="mei:fileDesc/preceding-sibling::node(), mei:fileDesc"/>
+    <xsl:variable name="nodes-before-encodingDesc" select="mei:fileDesc/preceding-sibling::node(), mei:fileDesc" as="node()*"/>
 
-    <xsl:variable name="nodes-after-encodingDesc" select="mei:fileDesc/following-sibling::node() except (mei:encodingDesc)"/>
+    <xsl:variable name="nodes-after-encodingDesc" select="mei:fileDesc/following-sibling::node() except (mei:encodingDesc)" as="node()*"/>
 
     <xsl:variable name="nodes-after-appInfo" select="
         if ($exists-appInfo) then
           mei:encodingDesc/mei:appInfo/following-sibling::node()
         else
-          mei:encodingDesc/node() except (mei:head)"/>
+          mei:encodingDesc/node() except (mei:head)" as="node()*"/>
 
     <xsl:copy>
 
@@ -360,7 +360,7 @@
 
       <xsl:element name="revisionDesc">
 
-        <xsl:variable name="count-change" select="count(mei:revisionDesc/mei:change)"/>
+        <xsl:variable name="count-change" select="count(mei:revisionDesc/mei:change)" as="xs:nonNegativeInteger"/>
 
         <xsl:apply-templates select="mei:revisionDesc/@* | mei:revisionDesc/node()" mode="documentation"/>
 
@@ -404,7 +404,7 @@
 
     <xsl:element name="{name()}" namespace="{namespace-uri()}">
 
-      <xsl:variable name="current-element" select="."/>
+      <xsl:variable name="current-element" select="." as="element()"/>
 
       <xsl:for-each select="namespace::*">
 
@@ -432,9 +432,9 @@
   </xd:doc>
   <xsl:template match="text()" mode="clean">
 
-    <xsl:variable name="number-of-nodes-in-parent" select="count(parent::mei:*/node())"/>
+    <xsl:variable name="number-of-nodes-in-parent" select="count(parent::mei:*/node())" as="xs:nonNegativeInteger"/>
 
-    <xsl:variable name="index-in-parent" select="position()"/>
+    <xsl:variable name="index-in-parent" select="position()" as="xs:nonNegativeInteger"/>
 
     <xsl:message>Info: <xsl:text>node number: </xsl:text><xsl:value-of select="$index-in-parent"/> of <xsl:value-of select="$number-of-nodes-in-parent"/> nodes in parent.</xsl:message>
 
@@ -556,17 +556,17 @@
 
     </xsl:variable>
 
-    <xsl:variable name="nesting-depth" select="count(ancestor::*)"/>
+    <xsl:variable name="nesting-depth" select="count(ancestor::*)" as="xs:nonNegativeInteger"/>
 
     <xsl:variable name="indentation-start" select="
         string-join(for $i in 1 to $nesting-depth
         return
-          '  ')"/>
+          '  ')" as="xs:string"/>
 
     <xsl:variable name="indentation-end" select="
         string-join(for $i in 1 to $nesting-depth - 1
         return
-          '  ')"/>
+          '  ')" as="xs:string"/>
 
     <xsl:message>is element: <xsl:value-of select="$is-element"/></xsl:message>
 
@@ -610,7 +610,7 @@
 
     <xsl:if test="(self::* and not(local-name(.) = $elements.no-break)) or self::comment()">
 
-      <xsl:variable name="nesting-depth" select="count(ancestor::*)"/>
+      <xsl:variable name="nesting-depth" select="count(ancestor::*)" as="xs:nonNegativeInteger"/>
 
       <xsl:variable name="indentation" select="
           string-join(for $i in 1 to $nesting-depth
