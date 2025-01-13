@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns="http://www.music-encoding.org/ns/mei" exclude-result-prefixes="xs math xd" version="3.0">
   <xd:doc scope="stylesheet">
     <xd:desc>
-      <xd:p><xd:b>Created on:</xd:b> Jul 25, 2023</xd:p>
+      <xd:p><xd:b>Created on:</xd:b> 2023–2025</xd:p>
       <xd:p><xd:b>Author:</xd:b> Benjamin W. Bohl</xd:p>
       <xd:p>This XSLT is intended for linting Music Encoding Initiative flavoured XML files.</xd:p>
     </xd:desc>
@@ -18,12 +18,13 @@
       <xd:p>A static parameter to define the output mode.</xd:p>
       <xd:p>Options are:</xd:p>
       <xd:ul>
+        <xd:li><xd:b>documentation</xd:b> this will return the original file with added documentation of applying meiLint.xsl.</xd:li>
         <xd:li><xd:b>clean</xd:b> this will return the file as single-line, stripped from linebreaks and indentation whitespace.</xd:li>
         <xd:li><xd:b>lint</xd:b> this will first clean (as by the above option) and afterwards indent the file.</xd:li>
       </xd:ul>
     </xd:desc>
   </xd:doc>
-  <xsl:param name="output-mode" static="yes"/>
+  <xsl:param name="output-mode" static="yes" select="'lint'"/>
   <xd:doc>
     <xd:desc>
       <xd:p>A character sequence used for indentation</xd:p>
