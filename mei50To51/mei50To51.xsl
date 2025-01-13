@@ -83,6 +83,6 @@
             <xd:p>MEI version</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="meiversion" select="'5.1'"/>
+    <xsl:variable name="meiversion" select="string-join(('5.1', tokenize(/mei:*/@meiversion, '\+')[2]), '+')"/>
     
 </xsl:stylesheet>
