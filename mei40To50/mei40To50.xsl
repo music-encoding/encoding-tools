@@ -193,8 +193,8 @@
             </xsl:otherwise>
         </xsl:choose>
         <xsl:choose>
-            <xsl:when test="mei:*[starts-with(@meiversion, '5.')]">
-                <xsl:variable name="warning">The source document is already an MEI v5 file!</xsl:variable>
+            <xsl:when test="mei:*[starts-with(@meiversion, $meiversion)]">
+                <xsl:variable name="warning" select="'The source document is already an MEI v'|| $meiversion ||' file!'"/>
                 <xsl:message terminate="yes" select="$warning"/>
             </xsl:when>
             <xsl:when test="mei:*">
@@ -605,7 +605,7 @@
                 <xsl:value-of select="concat('#', $progid)"/>
             </xsl:attribute>
             <changeDesc>
-                <p><xsl:value-of select="'Converted to MEI version 5.0 using ' || $progname || ', version ' || $version"/></p>
+                <p><xsl:value-of select="'Converted to MEI version ' || $meiversion || ' using ' || $progname || ', version ' || $version"/></p>
             </changeDesc>
             <date>
                 <xsl:attribute name="isodate">
