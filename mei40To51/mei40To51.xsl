@@ -26,7 +26,7 @@
     <xsl:import href="../mei40To50/mei40To50.xsl"/>
     
     <xd:doc>
-        <xd:desc>Import MEI v4.0 to v5.1 Stylesheet to reuse transformation.</xd:desc>
+        <xd:desc>Import MEI v5.0 to v5.1 Stylesheet to reuse transformation.</xd:desc>
     </xd:doc>
     <xsl:import href="../mei50To51/mei50To51.xsl"/>
     
