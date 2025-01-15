@@ -122,7 +122,7 @@
       <xsl:apply-templates select="$documentation" mode="clean"/>
     </xsl:variable>
 
-    <xsl:variable name="lint" use-when="$output-mode = 'lint'">
+    <xsl:variable name="lint" use-when="$output-mode = 'lint'" as="node()+">
       <xsl:apply-templates select="$clean" mode="lint"/>
     </xsl:variable>
 
