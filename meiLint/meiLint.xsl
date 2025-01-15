@@ -308,7 +308,7 @@
   </xd:doc>
   <xsl:template match="/mei:*[not(mei:meiHead) and not(self::mei:meiHead)]" mode="documentation">
 
-    <xsl:variable name="comment" as="text()">
+    <xsl:variable name="documentation-change" as="element()">
 
       <xsl:call-template name="documentation-change">
 
@@ -316,19 +316,21 @@
 
       </xsl:call-template>
 
-      <xsl:value-of select="$nl"/>
+    </xsl:variable>
+
+    <xsl:variable name="documentation-application" as="element()">
 
       <xsl:call-template name="documentation-application"/>
 
     </xsl:variable>
 
     <xsl:comment>
-      
-      <xsl:value-of select="$comment//mei:date/@isodate, $comment//mei:changeDesc/mei:p" separator=" – "/>
-      
+
+      <xsl:value-of select="$documentation-change//mei:date/@isodate, $documentation-change//mei:changeDesc/mei:p" separator=" – "/>
+
       <xsl:text> Agent: </xsl:text>
-      
-      <xsl:value-of select="$comment//mei:application/mei:ptr/@target, $comment//mei:application/@version" separator=" – "/>
+
+      <xsl:value-of select="$documentation-application//mei:application/mei:ptr/@target, $documentation-application//mei:application/@version" separator=" – "/>
     
     </xsl:comment>
 
@@ -654,7 +656,7 @@
 
     </xsl:choose>
 
-    <xsl:if test="(self::* and not(local-name(.) = $elements.no-break)) or self::comment()">
+    <xsl:if test="(self::* and not(local-name(.) = $elements.no-break))">
 
       <xsl:variable name="nesting-depth" select="xs:nonNegativeInteger(count(ancestor::*))" as="xs:nonNegativeInteger"/>
 
