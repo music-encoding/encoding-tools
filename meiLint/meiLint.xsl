@@ -584,14 +584,14 @@
     <xsl:variable name="nesting-depth" select="xs:nonNegativeInteger(count(ancestor::*))" as="xs:nonNegativeInteger"/>
 
     <xsl:variable name="indentation-start" select="
-        string-join(for $i in 1 to $nesting-depth
-        return
-          '  ')" as="xs:string"/>
+      if ($nesting-depth gt 0) then
+        string-join(for $i in 1 to $nesting-depth return '  ')
+      else ()" as="xs:string?"/>
 
     <xsl:variable name="indentation-end" select="
-        string-join(for $i in 1 to $nesting-depth - 1
-        return
-          '  ')" as="xs:string"/>
+      if ($nesting-depth gt 0) then
+        string-join(for $i in 1 to $nesting-depth - 1 return '  ')
+      else ()" as="xs:string?"/>
 
     <xsl:message>is element: <xsl:value-of select="$is-element"/></xsl:message>
 
