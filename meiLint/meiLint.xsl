@@ -203,25 +203,38 @@
   </xd:doc>
   <xsl:template name="documentation-application">
 
-    <xsl:element name="application">
+    <xsl:choose>
 
-      <xsl:attribute name="version" select="$linter-version"/>
+      <xsl:when test="id($linter-id)">
+        <!-- do nothing if an xml:id with the value of $linter-id can be found in the document --> </xsl:when>
 
-      <xsl:attribute name="xml:id" select="$linter-id"/>
+      <xsl:otherwise>
 
-      <xsl:element name="name">
+        <!-- create an mei:application element -->
 
-        <xsl:value-of select="tokenize($linter-url, '/')[last()]"/>
+        <xsl:element name="application">
 
-      </xsl:element>
+          <xsl:attribute name="version" select="$linter-version"/>
 
-      <xsl:element name="ptr">
+          <xsl:attribute name="xml:id" select="$linter-id"/>
 
-        <xsl:attribute name="target" select="$linter-url"/>
+          <xsl:element name="name">
 
-      </xsl:element>
+            <xsl:value-of select="tokenize($linter-url, '/')[last()]"/>
 
-    </xsl:element>
+          </xsl:element>
+
+          <xsl:element name="ptr">
+
+            <xsl:attribute name="target" select="$linter-url"/>
+
+          </xsl:element>
+
+        </xsl:element>
+
+      </xsl:otherwise>
+
+    </xsl:choose>
 
   </xsl:template>
 
