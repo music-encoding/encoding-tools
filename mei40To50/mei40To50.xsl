@@ -63,7 +63,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:variable name="progVersion" as="xs:string">
-        <xsl:text>1.0</xsl:text>
+        <xsl:text>1.1</xsl:text>
     </xsl:variable>
     
     <xd:doc>
