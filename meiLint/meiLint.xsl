@@ -637,11 +637,6 @@
 
       <xsl:variable name="nesting-depth" select="xs:nonNegativeInteger(count(ancestor::*))" as="xs:nonNegativeInteger"/>
 
-      <xsl:variable name="indentation" select="
-          string-join(for $i in 1 to $nesting-depth
-          return
-            '  ')"/>
-
       <xsl:if test="not($has.no-break-ancestor) and not(following-sibling::node())">
 
         <xsl:copy-of select="$nl"/>
