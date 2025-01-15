@@ -450,7 +450,7 @@
 
         <xsl:if test="$current-element/descendant::*[(namespace-uri() = current() and substring-before(name(), ':') = $prefix) or @*[substring-before(name(), ':') = $prefix]]">
 
-          <xsl:copy-of select="."/>
+          <xsl:copy-of select=".[. != 'http://www.music-encoding.org/ns/mei']"/>
 
         </xsl:if>
 
