@@ -426,8 +426,21 @@
     </xd:desc>
   </xd:doc>
   <xsl:template match="*" mode="clean">
+    
+    <xsl:variable name="name.new" as="xs:Name">
+      
+      <xsl:choose>
+        <xsl:when test="namespace-uri() = 'http://www.music-encoding.org/ns/mei'">
+          <xsl:copy-of select="xs:NCName(local-name())"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:copy-of select="xs:Name(name())"/>
+        </xsl:otherwise>
+      </xsl:choose>
+      
+    </xsl:variable>
 
-    <xsl:element name="{name()}" namespace="{namespace-uri()}">
+    <xsl:element name="{$name.new}" namespace="{namespace-uri()}">
 
       <xsl:variable name="current-element" select="." as="element()"/>
 
