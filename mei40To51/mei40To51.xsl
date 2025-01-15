@@ -42,11 +42,11 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>program name</xd:p>
+            <xd:p>program id</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="progname">
-        <xsl:text>mei40To51.xsl</xsl:text>
+    <xsl:variable name="progId" as="xs:string">
+        <xsl:text>mei40To51</xsl:text>
     </xsl:variable>
     
     <xd:doc>
@@ -54,26 +54,8 @@
             <xd:p>program version</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="version">
+    <xsl:variable name="progVersion" as="xs:string">
         <xsl:text>1.0</xsl:text>
-    </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program id</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="progid">
-        <xsl:value-of select="'mei40To51.xsl'"/>
-    </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program git url</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="gitUrl">
-        <xsl:value-of select="'https://github.com/music-encoding/encoding-tools/blob/main/mei40To51/mei40To51.xsl'"/>
     </xsl:variable>
     
 </xsl:stylesheet>

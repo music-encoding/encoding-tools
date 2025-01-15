@@ -37,45 +37,11 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>fallback model path</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="fallback_model_path">https://music-encoding.org/schema/5.1/mei-all.rng</xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program name</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="progname">
-        <xsl:text>mei50To51.xsl</xsl:text>
-    </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program version</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="version">
-        <xsl:text>1.0</xsl:text>
-    </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
             <xd:p>program id</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="progid">
-        <xsl:value-of select="'mei50To51.xsl'"/>
-    </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program git url</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="gitUrl">
-        <xsl:value-of select="'https://github.com/music-encoding/encoding-tools/blob/main/mei50To51/mei50To51.xsl'"/>
+    <xsl:variable name="progId" as="xs:string">
+        <xsl:text>mei50To51</xsl:text>
     </xsl:variable>
     
     <xd:doc>
@@ -83,8 +49,17 @@
             <xd:p>MEI version</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="meiversion">
+    <xsl:variable name="meiversion" as="xs:string">
         <xsl:value-of select="string-join(('5.1', tokenize(/mei:*/@meiversion, '\+')[2]), '+')"/>
+    </xsl:variable>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>fallback model path</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="fallback_model_path" as="xs:anyURI">
+        <xsl:text>https://music-encoding.org/schema/5.1/mei-all.rng</xsl:text>
     </xsl:variable> 
     
 </xsl:stylesheet>
