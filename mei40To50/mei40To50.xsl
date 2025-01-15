@@ -220,7 +220,7 @@
             <xsl:if test="not(@meiversion)">
                 <xsl:attribute name="meiversion" select="$meiversion"/>
                 <xsl:if test="$verbose">
-                    <xsl:message select="'Inserting @meiversion on ' || local-name(parent::mei:*) || ' with value: ' || $meiversion"/>
+                    <xsl:message select="'Inserting @meiversion on ' || local-name() || ' with value: ' || $meiversion"/>
                 </xsl:if>
             </xsl:if>
             <xsl:apply-templates select="node() | @*"/>
@@ -713,13 +713,13 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Update @meiversion the new version of MEI.</xd:p>
+            <xd:p>Update @meiversion to the new version of MEI.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="@meiversion">
         <xsl:attribute name="meiversion" select="$meiversion"/>
         <xsl:if test="$verbose">
-            <xsl:message select="'Changing @meiversion on ' || local-name(parent::mei:*) || ' to ' || $meiversion"/>
+            <xsl:message select="'Changing @meiversion on ' || local-name(parent::mei:*) || ' from ' || . || ' to ' || $meiversion"/>
         </xsl:if>
     </xsl:template>
     
