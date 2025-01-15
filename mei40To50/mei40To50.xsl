@@ -27,14 +27,14 @@
             <xd:p>Provides the location of the RNG schema.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="rng_model_path"/>
+    <xsl:param name="rng_model_path" as="xs:anyURI?"/>
     
     <xd:doc>
         <xd:desc>
             <xd:p>Provides the location of the Schematron schema.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="sch_model_path"/>
+    <xsl:param name="sch_model_path" as="xs:anyURI?"/>
     
     <xd:doc>
         <xd:desc>
@@ -42,12 +42,67 @@
                 produces a log message for every change. When set to 'false()' no messages are produced.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="verbose" select="true()"/>
+    <xsl:param name="verbose" select="true()" as="xs:boolean"/>
     
     <!-- ======================================================================= -->
     <!-- GLOBAL VARIABLES                                                        -->
     <!-- ======================================================================= -->
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program id</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="progId" as="xs:string">
+        <xsl:text>mei40To50</xsl:text>
+    </xsl:variable>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program version</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="progVersion" as="xs:string">
+        <xsl:text>1.1</xsl:text>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program name</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="progName" as="xs:string">
+        <xsl:value-of select="$progId || '.xsl'"/>
+    </xsl:variable>
+
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program git url</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="progGitUrl" as="xs:string">
+        <xsl:value-of select="'https://github.com/music-encoding/encoding-tools/blob/main/' || $progId || '/' || $progName"/>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>MEI version</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="meiversion" as="xs:string">
+        <xsl:value-of select="'5.0'"/>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>fallback model path</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="fallback_model_path" as="xs:anyURI">
+        <xsl:text>https://music-encoding.org/schema/5.0/mei-all.rng</xsl:text>
+    </xsl:variable>
+ 
     <xd:doc>
         <xd:desc>
             <xd:p>document URI</xd:p>
@@ -56,65 +111,15 @@
     <xsl:variable name="docURI">
         <xsl:value-of select="document-uri(/)"/>
     </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>fallback model path</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="fallback_model_path">https://music-encoding.org/schema/5.0/mei-all.rng</xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program name</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="progname">
-        <xsl:text>mei40To50.xsl</xsl:text>
-    </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program version</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="version">
-        <xsl:text>1.0</xsl:text>
-    </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program id</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="progid">
-        <xsl:value-of select="'mei40To50.xsl'"/>
-    </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>program git url</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="gitUrl">
-        <xsl:value-of select="'https://github.com/music-encoding/encoding-tools/blob/main/mei40To50/mei40To50.xsl'"/>
-    </xsl:variable>
-    
+
     <xd:doc>
         <xd:desc>
             <xd:p>new line</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="nl">
+    <xsl:variable name="nl" as="item()">
         <xsl:text>&#xa;</xsl:text>
     </xsl:variable>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>MEI version</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="meiversion" select="'5.0'"/>
     
     <!-- ======================================================================= -->
     <!-- MAIN OUTPUT TEMPLATE                                                    -->
@@ -193,8 +198,8 @@
             </xsl:otherwise>
         </xsl:choose>
         <xsl:choose>
-            <xsl:when test="mei:*[starts-with(@meiversion, '5.')]">
-                <xsl:variable name="warning">The source document is already an MEI v5 file!</xsl:variable>
+            <xsl:when test="mei:*[starts-with(@meiversion, $meiversion)]">
+                <xsl:variable name="warning" select="'The source document is already an MEI v'|| $meiversion ||' file!'"/>
                 <xsl:message terminate="yes" select="$warning"/>
             </xsl:when>
             <xsl:when test="mei:*">
@@ -220,7 +225,7 @@
             <xsl:if test="not(@meiversion)">
                 <xsl:attribute name="meiversion" select="$meiversion"/>
                 <xsl:if test="$verbose">
-                    <xsl:message select="'Inserting @meiversion on ' || local-name(parent::mei:*) || ' with value: ' || $meiversion"/>
+                    <xsl:message select="'Inserting @meiversion on ' || local-name() || ' with value: ' || $meiversion"/>
                 </xsl:if>
             </xsl:if>
             <xsl:apply-templates select="node() | @*"/>
@@ -602,10 +607,10 @@
                 <xsl:attribute name="n" select="count(mei:change) + 1"/>
             </xsl:if>
             <xsl:attribute name="resp">
-                <xsl:value-of select="concat('#', $progid)"/>
+                <xsl:value-of select="concat('#', $progId)"/>
             </xsl:attribute>
             <changeDesc>
-                <p><xsl:value-of select="'Converted to MEI version 5.0 using ' || $progname || ', version ' || $version"/></p>
+                <p><xsl:value-of select="'Converted to MEI version ' || $meiversion || ' using ' || $progName || ', version ' || $progVersion"/></p>
             </changeDesc>
             <date>
                 <xsl:attribute name="isodate">
@@ -650,12 +655,12 @@
     </xd:doc>    
     <xsl:template name="appInfo-insert-current-application">
         <xsl:element name="application" namespace="http://www.music-encoding.org/ns/mei">
-            <xsl:attribute name="version" select="'v' || replace($version, '&#32;', '_')"/>
-            <xsl:attribute name="xml:id" select="$progid"/>
+            <xsl:attribute name="version" select="'v' || replace($progVersion, '&#32;', '_')"/>
+            <xsl:attribute name="xml:id" select="$progId"/>
             
-            <xsl:element name="name" namespace="http://www.music-encoding.org/ns/mei"><xsl:value-of select="$progname"/></xsl:element>
+            <xsl:element name="name" namespace="http://www.music-encoding.org/ns/mei"><xsl:value-of select="$progName"/></xsl:element>
             <xsl:element name="ptr" namespace="http://www.music-encoding.org/ns/mei">
-                <xsl:attribute name=" target" select="$gitUrl"/>
+                <xsl:attribute name=" target" select="$progGitUrl"/>
             </xsl:element>
         </xsl:element>
         <xsl:if test="$verbose">
@@ -713,13 +718,13 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Update @meiversion the new version of MEI.</xd:p>
+            <xd:p>Update @meiversion to the new version of MEI.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="@meiversion">
         <xsl:attribute name="meiversion" select="$meiversion"/>
         <xsl:if test="$verbose">
-            <xsl:message select="'Changing @meiversion on ' || local-name(parent::mei:*) || ' to ' || $meiversion"/>
+            <xsl:message select="'Changing @meiversion on ' || local-name(parent::mei:*) || ' from ' || . || ' to ' || $meiversion"/>
         </xsl:if>
     </xsl:template>
     

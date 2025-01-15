@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+               xmlns:mei="http://www.music-encoding.org/ns/mei"
+               xmlns="http://www.music-encoding.org/ns/mei"
+               stylesheet="mei40To51.xsl">
+    
+    <x:scenario label="mei root element...">
+        <x:scenario label="... without @meiversion attribute">
+            <x:context>
+                <mei xmlns="http://www.music-encoding.org/ns/mei"></mei>
+            </x:context>
+            <x:expect label="it should insert @meiversion attribute with value '5.1'">
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... with existing @meiversion attribute equal to '5.0'"> 
+            <x:context>
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0"></mei>
+            </x:context>
+            <x:expect label="it should update @meiversion attribute to '5.1'">
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... with existing @meiversion attribute lower than '5.0'"> 
+            <x:context>
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="4.0.1"></mei>
+            </x:context>
+            <x:expect label="it should update @meiversion attribute to '5.1'">
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... with existing @meiversion attribute equal to '5.1'">
+            <x:context>
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:context>
+            <x:expect label="it should not change @meiversion attribute">
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="deprecated fingerprint replaced with identifier/@type='fingerprint'">
+        <x:context label="... when processing fingerprint" select="//mei:name">
+            <bibl>
+                <name>
+                    <fingerprint label="Test fingerprint" auth="Test auth">1234567890</fingerprint>
+                </name>
+            </bibl>
+        </x:context>
+        <x:expect label="it should be replaced with identifier @type=fingerprint">
+            <name>
+                <identifier type="fingerprint" label="Test fingerprint" auth="Test auth">1234567890</identifier>
+            </name>
+        </x:expect>
+    </x:scenario>
+
+    <x:scenario label="pgHead/pgHead2 replaced with pgHead with func">
+        <x:scenario label="... when processing pgHead2">
+            <x:context select="//mei:pgHead2">
+                <scoreDef>
+                    <pgHead>Test header 1 should have func=first</pgHead>
+                    <pgHead2>Test header 2 should have func=all</pgHead2>
+                </scoreDef>
+            </x:context>
+            <x:expect label="it should replace pgHead2 with pgHead func='all'">
+                <pgHead func="all">Test header 2 should have func=all</pgHead>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... when processing pgHead (assuming another pgHead2 was there)">
+            <x:context select="//mei:pgHead">
+                <scoreDef>
+                    <pgHead>Test header 1 should have func=first</pgHead>
+                    <pgHead2>Test header 2 should have func=all</pgHead2>
+                </scoreDef>
+            </x:context>
+            <x:expect label="it should replace pgHead with pgHead func='first'">
+                <pgHead func="first">Test header 1 should have func=first</pgHead>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... when processing pgHead &amp; pgHead2">
+            <x:context select="//mei:scoreDef">
+                <mdiv>
+                    <scoreDef>
+                        <pgHead>Test header 1 should have func=first</pgHead>
+                        <pgHead2>Test header 2 should have func=all</pgHead2>
+                    </scoreDef>
+                </mdiv>
+            </x:context>
+            <x:expect label="it should replace pgHead with pgHead func='first' &amp; pgHead2 with pgHead func='all'">
+                <scoreDef>
+                    <pgHead func="first">Test header 1 should have func=first</pgHead>
+                    <pgHead func="all">Test header 2 should have func=all</pgHead>
+                </scoreDef>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="pgFoot/pgFoot2 replaced with pgFoot with func">
+        <x:scenario label="... when processing pgFoot2">
+            <x:context select="//mei:pgFoot2">
+                <scoreDef>
+                    <pgFoot>Test footer 1 should have func=first</pgFoot>
+                    <pgFoot2>Test footer 2 should have func=all</pgFoot2>
+                </scoreDef>
+            </x:context>
+            <x:expect label="it should replace pgFoot2 with pgFoot func='all'">
+                <pgFoot func="all">Test footer 2 should have func=all</pgFoot>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... when processing pgFoot (assuming another pgFoot2 was there)">
+            <x:context select="//mei:pgFoot">
+                <scoreDef>
+                    <pgFoot>Test footer 1 should have func=first</pgFoot>
+                    <pgFoot2>Test footer 2 should have func=all</pgFoot2>
+                </scoreDef>
+            </x:context>
+            <x:expect label="it should replace pgFoot with pgFoot func='first'">
+                <pgFoot func="first">Test footer 1 should have func=first</pgFoot>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... when processing pgFoot &amp; pgFoot2">
+            <x:context select="//mei:scoreDef">
+                <mdiv>
+                    <scoreDef>
+                        <pgFoot>Test footer 1 should have func=first</pgFoot>
+                        <pgFoot2>Test footer 2 should have func=all</pgFoot2>
+                    </scoreDef>
+                </mdiv>
+            </x:context>
+            <x:expect label="it should replace pgFoot with pgFoot func='first' &amp; pgFoot2 with pgFoot func='all'">
+                <scoreDef>
+                    <pgFoot func="first">Test footer 1 should have func=first</pgFoot>
+                    <pgFoot func="all">Test footer 2 should have func=all</pgFoot>
+                </scoreDef>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="@instr removed from mRest, mSpace, multiRest, rest">
+        <x:scenario label="... when processing mRest">
+            <x:scenario label="with instr attribute">
+                <x:context select="//mei:mRest">
+                    <measure>
+                        <mRest instr="violin"></mRest>
+                    </measure>
+                </x:context>
+                <x:expect label="it should remove @instr attribute">
+                        <mRest></mRest>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without instr attribute">
+                <x:context select="//mei:mRest">
+                    <measure>
+                        <mRest></mRest>
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change mRest element">
+                        <mRest></mRest>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="... when processing mSpace">
+            <x:scenario label="with instr attribute">
+                <x:context select="//mei:mSpace">
+                    <measure>
+                        <mSpace instr="violin"></mSpace>
+                    </measure>
+                </x:context>
+                <x:expect label="it should remove @instr attribute">
+                        <mSpace></mSpace>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without instr attribute">
+                <x:context select="//mei:mSpace">
+                    <measure>
+                        <mSpace></mSpace>
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change mSpace element">
+                        <mSpace></mSpace>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="... when processing multiRest">
+            <x:scenario label="... with instr attribute">
+                <x:context select="//mei:multiRest">
+                    <measure>
+                        <multiRest instr="violin"></multiRest>
+                    </measure>
+                </x:context>
+                <x:expect label="it should remove @instr attribute">
+                        <multiRest></multiRest>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="... without instr attribute">
+                <x:context select="//mei:multiRest">
+                    <measure>
+                        <multiRest></multiRest>
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change multiRest element">
+                        <multiRest></multiRest>
+                </x:expect>
+            </x:scenario> 
+        </x:scenario>
+        <x:scenario label="... when processing rest">
+            <x:scenario label="with instr attribute">
+                <x:context select="//mei:rest">
+                    <measure>
+                        <rest instr="violin"></rest>
+                    </measure>
+                </x:context>
+                <x:expect label="it should remove @instr attribute">
+                        <rest></rest>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without instr attribute">
+                <x:context select="//mei:rest">
+                    <measure>
+                        <rest></rest>
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change rest element">
+                        <rest></rest>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="@visible removed from mRest">
+        <x:scenario label="... when processing mRest">
+            <x:scenario label="with visible attribute">
+                <x:context select="//mei:mRest">
+                    <measure>
+                        <mRest visible="true"></mRest>
+                    </measure>
+                </x:context>
+                <x:expect label="it should remove @visible attribute">
+                        <mRest></mRest>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without visible attribute">
+                <x:context select="//mei:mRest">
+                    <measure>
+                        <mRest></mRest>
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change mRest element">
+                        <mRest></mRest>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="@key.sig replaced with @keysig">
+        <x:scenario label="... when processing scoreDef">
+            <x:scenario label="with key.sig attribute">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" key.sig="1s"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should rename @key.sig attribute to @keysig">
+                    <scoreDef meter.count="6" meter.unit="8" keysig="1s"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without key.sig attribute">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should not change scoreDef element">
+                    <scoreDef meter.count="6" meter.unit="8"/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="... when processing staffDef">
+            <x:scenario label="with key.sig attribute">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" keysig="4f"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @key.sig attribute to @keysig">
+                    <staffDef clef.line="2" clef.shape="G" keysig="4f"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without key.sig attribute">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should not change staffDef element">
+                    <staffDef clef.line="2" clef.shape="G"></staffDef>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="@keysig.show replaced with @keysig.visible">
+        <x:scenario label="... when processing scoreDef">
+            <x:scenario label="with keysig.show attribute equals true">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" keysig.show="true"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should rename @keysig.show attribute to @keysig.visible with value true">
+                    <scoreDef meter.count="6" meter.unit="8" keysig.visible="true"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with keysig.show attribute equals false">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" keysig.show="false"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should rename @keysig.show attribute to @keysig.visible with value false">
+                    <scoreDef meter.count="6" meter.unit="8" keysig.visible="false"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without keysig.show attribute">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should not change scoreDef element">
+                    <scoreDef meter.count="6" meter.unit="8"/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="... when processing staffDef">
+            <x:scenario label="with keysig.show attribute equals true">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" keysig.show="true"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @keysig.show attribute to @keysig.visible with value true">
+                    <staffDef clef.line="2" clef.shape="G" keysig.visible="true"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with keysig.show attribute equals false">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" keysig.show="false"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @keysig.show attribute to @keysig.visible with value false">
+                    <staffDef clef.line="2" clef.shape="G" keysig.visible="false"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without keysig.show attribute">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should not change staffDef element">
+                    <staffDef clef.line="2" clef.shape="G"></staffDef>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="@keysig.showchange replaced with @keysig.cancelaccid">
+        <x:scenario label="... when processing scoreDef">
+            <x:scenario label="with keysig.showchange attribute equals true">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" keysig.showchange="true"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should rename @keysig.showchange attribute to @keysig.cancelaccid with value 'before'">
+                    <scoreDef meter.count="6" meter.unit="8" keysig.cancelaccid="before"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with keysig.showchange attribute equals false">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" keysig.showchange="false"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should rename @keysig.showchange attribute to @keysig.cancelaccid with value 'none'">
+                    <scoreDef meter.count="6" meter.unit="8" keysig.cancelaccid="none"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without keysig.showchange attribute">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should not change scoreDef element">
+                    <scoreDef meter.count="6" meter.unit="8"/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="... when processing staffDef">
+            <x:scenario label="with keysig.showchange attribute equals true">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" keysig.showchange="true"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @keysig.showchange attribute to @keysig.cancelaccid with value before">
+                    <staffDef clef.line="2" clef.shape="G" keysig.cancelaccid="before"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with keysig.showchange attribute equals false">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" keysig.showchange="false"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @keysig.showchange attribute to @keysig.cancelaccid with value none">
+                    <staffDef clef.line="2" clef.shape="G" keysig.cancelaccid="none"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without keysig.showchange attribute">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should not change staffDef element">
+                    <staffDef clef.line="2" clef.shape="G"></staffDef>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="@sig.showchange replaced with @cancelaccid">
+        <x:scenario label="... when processing keySig">
+            <x:scenario label="with sig.showchange attribute equals true">
+                <x:context select="//mei:keySig">
+                        <scoreDef meter.count="6" meter.unit="8">
+                            <keySig sig.showchange="true"/>
+                        </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @sig.showchange attribute to @cancelaccid with value 'before'">
+                        <keySig cancelaccid="before"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with keysig.showchange attribute equals false">
+                <x:context select="//mei:keySig">
+                        <scoreDef meter.count="6" meter.unit="8">
+                            <keySig sig.showchange="false"/>
+                        </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @keysig.showchange attribute to @keysig.cancelaccid with value 'none'">
+                        <keySig cancelaccid="none"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without keysig.showchange attribute">
+                <x:context select="//mei:keySig">
+                        <scoreDef meter.count="6" meter.unit="8">
+                            <keySig/>
+                        </scoreDef>
+                </x:context>
+                <x:expect label="it should not change scoreDef element">
+                        <keySig/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="@text.dist resolved to @dir.dist">
+        <x:scenario label="... when processing scoreDef">
+            <x:scenario label="with text.dist attribute with default value (positive vu)">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" text.dist="10"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should replace @text.dist with @dir.dist with correct value">
+                    <scoreDef meter.count="6" meter.unit="8" dir.dist="10"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with text.dist attribute with non-default value (negative cm)">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" text.dist="-6cm"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should replace @text.dist with @dir.dist with correct value">
+                    <scoreDef meter.count="6" meter.unit="8" dir.dist="-6cm"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without text.dist attribute">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should not change scoreDef element">
+                    <scoreDef meter.count="6" meter.unit="8"/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="... when processing staffDef">
+            <x:scenario label="with text.dist attribute with default value (positive vu)">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" text.dist="8"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should replace @text.dist with @dir.dist with correct value">
+                    <staffDef clef.line="2" clef.shape="G" dir.dist="8"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with text.dist attribute with non-default value (negative cm)">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" text.dist="-6cm"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @keysig.showchange attribute to @keysig.cancelaccid with value none">
+                    <staffDef clef.line="2" clef.shape="G" dir.dist="-6cm"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without text.dist attribute">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should not change staffDef element">
+                    <staffDef clef.line="2" clef.shape="G"></staffDef>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+ 
+    <x:scenario label="@line.form and @line.width replaced with @lform and @lwidth">
+        <x:scenario label="... when processing arpeg">
+            <x:scenario label="with @line.form attribute">
+                <x:context select="//mei:arpeg">
+                    <measure>
+                        <arpeg label="Test arpeggio" line.form="dashed" />
+                    </measure>
+                </x:context>
+                <x:expect label="it should rename @line.form attribute to @lform">
+                    <arpeg label="Test arpeggio" lform="dashed" />
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with @line.width attribute">
+                <x:context select="//mei:arpeg">
+                    <measure>
+                        <arpeg label="Test arpeggio" line.width="medium" />
+                    </measure>
+                </x:context>
+                <x:expect label="it should rename @line.width attribute to @lwidth">
+                    <arpeg label="Test arpeggio" lwidth="medium" />
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with @line.form and @line.width attributes">
+                <x:context select="//mei:arpeg">
+                    <measure>
+                        <arpeg label="Test arpeggio" line.form="dashed" line.width="medium" />
+                    </measure>
+                </x:context>
+                <x:expect label="it should rename @line.form and @line.width attributes to @lform and @lwidth">
+                    <arpeg label="Test arpeggio" lform="dashed" lwidth="medium" />
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without @line.form and @line.width attributes">
+                <x:context select="//mei:arpeg">
+                    <measure>
+                        <arpeg label="Test arpeggio" />
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change arpeg element">
+                    <arpeg label="Test arpeggio" />
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="... when processing multiple arpegs">
+            <x:scenario label="with @line.form and @line.width attributes">
+                <x:context select="//mei:arpeg">
+                    <measure>
+                        <arpeg label="Test arpeggio" line.form="dashed" line.width="medium" />
+                        <arpeg label="Test arpeggio" line.form="wavy" line.width="wide" />
+                    </measure>
+                </x:context>
+                <x:expect label="it should replace all instances">
+                    <arpeg label="Test arpeggio" lform="dashed" lwidth="medium" />
+                    <arpeg label="Test arpeggio" lform="wavy" lwidth="wide" />
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="@meter.form='invis' changed to @meter.visible='false'">
+        <x:scenario label="... when processing scoreDef">
+            <x:scenario label="with meter.form attribute equals 'invis'">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" meter.form="invis"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should rename @meter.form attribute to @meter.visible with value false">
+                    <scoreDef meter.count="6" meter.unit="8" meter.visible="false"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with meter.form attribute not equals 'invis'">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8" meter.form="num"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should not change meter.form attribute">
+                    <scoreDef meter.count="6" meter.unit="8" meter.form="num"></scoreDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without meter.form attribute">
+                <x:context select="//mei:scoreDef">
+                    <score>
+                        <scoreDef meter.count="6" meter.unit="8"/>
+                    </score>
+                </x:context>
+                <x:expect label="it should not change scoreDef element">
+                    <scoreDef meter.count="6" meter.unit="8"/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="... when processsing staffDef">
+            <x:scenario label="with meter.form attribute equals 'invis'">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" meter.form="invis"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @meter.form attribute to @meter.visible with value false">
+                    <staffDef clef.line="2" clef.shape="G" meter.visible="false"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with meter.form attribute not equals 'invis'">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G" meter.form="num"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should not change meter.form attribute">
+                    <staffDef clef.line="2" clef.shape="G" meter.form="num"></staffDef>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without meter.form attribute">
+                <x:context select="//mei:staffDef">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <staffGrp>
+                            <staffDef clef.line="2" clef.shape="G"/>
+                        </staffGrp>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should not change staffDef element">
+                    <staffDef clef.line="2" clef.shape="G"></staffDef>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="meterSig/@form='invis' changed to @visible='false'">
+        <x:scenario label="... when processing meterSig">
+            <x:scenario label="with form attribute equals 'invis'">
+                <x:context select="//mei:meterSig">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <meterSig label="Test meterSig" form="invis"/>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should rename @form attribute to @visible with value false">
+                    <meterSig label="Test meterSig" visible="false"></meterSig>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with form attribute not equals 'invis'">
+                <x:context select="//mei:meterSig">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <meterSig label="Test meterSig" form="num"/>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should not change form attribute">
+                    <meterSig label="Test meterSig" form="num"></meterSig>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without form attribute">
+                <x:context select="//mei:meterSig">
+                    <scoreDef meter.count="6" meter.unit="8">
+                        <meterSig label="Test meterSig"/>
+                    </scoreDef>
+                </x:context>
+                <x:expect label="it should not change meterSig element">
+                    <meterSig label="Test meterSig"></meterSig>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="A value of 'letter-spacing' or 'line-height' on @rend moved to separate attributes">
+        <x:scenario label="when processing @rend">
+            <x:scenario label="with a value of letter-spacing">
+                <x:context select="//mei:title">
+                    <titleStmt>
+                        <title rend="letter-spacing(0.25)">Test title</title>
+                    </titleStmt>
+                </x:context>
+                <x:expect label="it should move letter-spacing value to @letterspacing attribute with correct value">
+                    <title letterspacing="0.25">Test title</title>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with a value of line-height">
+                <x:context select="//mei:title">
+                    <titleStmt>
+                        <title rend="line-height(120%)">Test title</title>
+                    </titleStmt>
+                </x:context>
+                <x:expect label="it should move line-height value to @lineheight attribute with correct value">
+                    <title lineheight="120%">Test title</title>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with a value of letter-spacing and line-height">
+                <x:context select="//mei:title">
+                    <titleStmt>
+                        <title rend="letter-spacing(0.25) line-height(120%)">Test title</title>
+                    </titleStmt>
+                </x:context>
+                <x:expect label="it should move both values to separate attributes with correct values">
+                    <title letterspacing="0.25" lineheight="120%">Test title</title>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with a value of letter-spacing and line-height and other values">
+                <x:context select="//mei:title">
+                    <titleStmt>
+                        <title rend="letter-spacing(0.25) line-height(120%) underline(2)">Test title</title>
+                    </titleStmt>
+                </x:context>
+                <x:expect label="it should move both values to separate attributes with correct values and keep remaining rend values">
+                    <title letterspacing="0.25" lineheight="120%" rend="underline(2)">Test title</title>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with no value of letter-spacing and line-height, but other values">
+                <x:context select="//mei:title">
+                    <titleStmt>
+                        <title rend="underline(2)">Test title</title>
+                    </titleStmt>
+                </x:context>
+                <x:expect label="it should not change rend values">
+                    <title rend="underline(2)">Test title</title>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="A value of 'dblwhole' on @head.mod replaced with 'fences'">
+        <x:scenario label="... when processing note">
+            <x:scenario label="with head.mod attribute equals 'dblwhole'">
+                <x:context select="//mei:note">
+                    <measure>
+                        <note dur="16" oct="1" pname="a" head.mod="dblwhole"/>
+                    </measure>
+                </x:context>
+                <x:expect label="it should replace value 'dblwhole' with 'fences'">
+                    <note dur="16" oct="1" pname="a" head.mod="fences"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with head.mod attribute not equals 'dblwhole'">
+                <x:context select="//mei:note">
+                    <measure>
+                        <note dur="16" oct="1" pname="a" head.mod="box"/>
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change head.mod attribute">
+                    <note dur="16" oct="1" pname="a" head.mod="box"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with head.mod attribute equals 'fences'">
+                <x:context select="//mei:note">
+                    <measure>
+                        <note dur="16" oct="1" pname="a" head.mod="fences"/>
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change head.mod attribute">
+                    <note dur="16" oct="1" pname="a" head.mod="fences"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without head.mod attribute">
+                <x:context select="//mei:note">
+                    <measure>
+                        <note dur="16" oct="1" pname="a"/>
+                    </measure>
+                </x:context>
+                <x:expect label="it should not change note element">
+                    <note dur="16" oct="1" pname="a"/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="A value of 'Bagpipe' on @midi.instrname replaced with 'Bag_pipe'">
+        <x:scenario label="when processing instrDef">
+            <x:scenario label="with instrname attribute equals 'Bagpipe'">
+                <x:context select="//mei:instrDef">
+                    <staffDef clef.line="2" clef.shape="G" lines="5" n="1" xml:id="midi.P5">
+                        <instrDef midi.instrname="Bagpipe"/>
+                    </staffDef>
+                </x:context>
+                <x:expect label="it should replace value 'Bagpipe' with 'Bag_pipe'">
+                    <instrDef midi.instrname="Bag_pipe"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with instrname attribute not equals 'Bagpipe'">
+                <x:context select="//mei:instrDef">
+                    <staffDef clef.line="2" clef.shape="G" lines="5" n="1" xml:id="midi.P5">
+                        <instrDef midi.instrname="Violin"/>
+                    </staffDef>
+                </x:context>
+                <x:expect label="it should not change instrname attribute">
+                    <instrDef midi.instrname="Violin"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with instrname attribute equals 'Bag_pipe'">
+                <x:context select="//mei:instrDef">
+                    <staffDef clef.line="2" clef.shape="G" lines="5" n="1" xml:id="midi.P5">
+                        <instrDef midi.instrname="Bag_pipe"/>
+                    </staffDef>
+                </x:context>
+                <x:expect label="it should not change instrname attribute">
+                    <instrDef midi.instrname="Bag_pipe"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without instrname attribute">
+                <x:context select="//mei:instrDef">
+                    <staffDef clef.line="2" clef.shape="G" lines="5" n="1" xml:id="midi.P5">
+                        <instrDef/>
+                    </staffDef>
+                </x:context>
+                <x:expect label="it should not change instrDef element">
+                    <instrDef/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="A non-numeric value on instrDef/@n  moved to instrDef/@label">
+        <x:scenario label="when processing instrDef">
+            <x:scenario label="with n attribute containing a numeric value">
+                <x:context select="//mei:instrDef">
+                    <staffDef clef.line="2" clef.shape="G" lines="5" n="1" xml:id="midi.P5">
+                        <instrDef n="3"/>
+                    </staffDef>
+                </x:context>
+                <x:expect label="it should not change n attribute">
+                    <instrDef n="3"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="with n attribute containing a non-numeric value">
+                <x:context select="//mei:instrDef">
+                    <staffDef clef.line="2" clef.shape="G" lines="5" n="1" xml:id="midi.P5">
+                        <instrDef n="Violin"/>
+                    </staffDef>
+                </x:context>
+                <x:expect label="it should move value of n attribute to label attribute">
+                    <instrDef label="Violin"/>
+                </x:expect>
+            </x:scenario>
+            <x:scenario label="without n attribute">
+                <x:context select="//mei:instrDef">
+                    <staffDef clef.line="2" clef.shape="G" lines="5" n="1" xml:id="midi.P5">
+                        <instrDef/>
+                    </staffDef>
+                </x:context>
+                <x:expect label="it should not change instrDef element">
+                    <instrDef/>
+                </x:expect>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+</x:description>

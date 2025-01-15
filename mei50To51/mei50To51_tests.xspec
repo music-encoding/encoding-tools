@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+               xmlns:mei="http://www.music-encoding.org/ns/mei"
+               xmlns="http://www.music-encoding.org/ns/mei"
+               stylesheet="mei50To51.xsl">
+    
+    <x:scenario label="mei root element...">
+        <x:scenario label="... without @meiversion attribute">
+            <x:context>
+                <mei xmlns="http://www.music-encoding.org/ns/mei"></mei>
+            </x:context>
+            <x:expect label="it should insert @meiversion attribute with value '5.1'">
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... with existing @meiversion attribute equal to '5.0'"> 
+            <x:context>
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0"></mei>
+            </x:context>
+            <x:expect label="it should update @meiversion attribute to '5.1'">
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... with existing @meiversion attribute lower than '5.0'"> 
+            <x:context>
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="4.0.1"></mei>
+            </x:context>
+            <x:expect label="it should update @meiversion attribute to '5.1'">
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="... with existing @meiversion attribute equal to '5.1'">
+            <x:context>
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:context>
+            <x:expect label="it should not change @meiversion attribute">
+                <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1"></mei>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+</x:description>
