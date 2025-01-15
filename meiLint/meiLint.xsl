@@ -83,7 +83,7 @@
   <xd:doc scope="component">
     <xd:desc>Version of this XSLT</xd:desc>
   </xd:doc>
-  <xsl:variable name="linter-version" as="xs:string">v0.0.1-alpha</xsl:variable>
+  <xsl:variable name="linter-version" as="xs:string">v1.0.0</xsl:variable>
 
 
   <xd:doc scope="component">
