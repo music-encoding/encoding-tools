@@ -250,7 +250,7 @@
   </xd:doc>
   <xsl:template name="documentation-change">
 
-    <xsl:param name="n" required="true"/>
+    <xsl:param name="n" required="true" as="xs:NMTOKEN"/>
 
     <xsl:element name="change">
 
@@ -312,7 +312,7 @@
 
       <xsl:call-template name="documentation-change">
 
-        <xsl:with-param name="n" select="1"/>
+        <xsl:with-param name="n" select="xs:NMTOKEN(1)"/>
 
       </xsl:call-template>
 
@@ -391,7 +391,7 @@
 
         <xsl:call-template name="documentation-change">
 
-          <xsl:with-param name="n" select="$count-change + 1"/>
+          <xsl:with-param name="n" select="xs:NMTOKEN($count-change + 1)"/>
 
         </xsl:call-template>
 
