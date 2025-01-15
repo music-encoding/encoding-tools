@@ -438,6 +438,7 @@
         <xsl:if test="$current-element/descendant::*[(namespace-uri() = current() and substring-before(name(), ':') = $prefix) or @*[substring-before(name(), ':') = $prefix]]">
 
           <xsl:copy-of select="."/>
+
         </xsl:if>
 
       </xsl:for-each>
