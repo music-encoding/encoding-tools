@@ -433,7 +433,7 @@
 
       <xsl:for-each select="namespace::*">
 
-        <xsl:variable name="prefix" select="name()"/>
+        <xsl:variable name="prefix" select="name()" as="xs:string"/>
 
         <xsl:if test="$current-element/descendant::*[(namespace-uri() = current() and substring-before(name(), ':') = $prefix) or @*[substring-before(name(), ':') = $prefix]]">
 
