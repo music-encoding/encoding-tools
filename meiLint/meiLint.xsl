@@ -89,7 +89,7 @@
   <xd:doc scope="component">
     <xd:desc>Linter ID</xd:desc>
   </xd:doc>
-  <xsl:variable name="linter-id" select="'meiLint_' || $linter-version" as="xs:ID"/>
+  <xsl:variable name="linter-id" select="xs:ID('meiLint_' || $linter-version)" as="xs:ID"/>
 
 
   <xd:doc scope="component">
@@ -360,7 +360,7 @@
 
       <xsl:element name="revisionDesc">
 
-        <xsl:variable name="count-change" select="count(mei:revisionDesc/mei:change)" as="xs:nonNegativeInteger"/>
+        <xsl:variable name="count-change" select="xs:nonNegativeInteger(count(mei:revisionDesc/mei:change))" as="xs:nonNegativeInteger"/>
 
         <xsl:apply-templates select="mei:revisionDesc/@* | mei:revisionDesc/node()" mode="documentation"/>
 
@@ -432,9 +432,9 @@
   </xd:doc>
   <xsl:template match="text()" mode="clean">
 
-    <xsl:variable name="number-of-nodes-in-parent" select="count(parent::mei:*/node())" as="xs:nonNegativeInteger"/>
+    <xsl:variable name="number-of-nodes-in-parent" select="xs:nonNegativeInteger(count(parent::mei:*/node()))" as="xs:nonNegativeInteger"/>
 
-    <xsl:variable name="index-in-parent" select="position()" as="xs:nonNegativeInteger"/>
+    <xsl:variable name="index-in-parent" select="xs:nonNegativeInteger(position())" as="xs:nonNegativeInteger"/>
 
     <xsl:message>Info: <xsl:text>node number: </xsl:text><xsl:value-of select="$index-in-parent"/> of <xsl:value-of select="$number-of-nodes-in-parent"/> nodes in parent.</xsl:message>
 
@@ -556,7 +556,7 @@
 
     </xsl:variable>
 
-    <xsl:variable name="nesting-depth" select="count(ancestor::*)" as="xs:nonNegativeInteger"/>
+    <xsl:variable name="nesting-depth" select="xs:nonNegativeInteger(count(ancestor::*))" as="xs:nonNegativeInteger"/>
 
     <xsl:variable name="indentation-start" select="
         string-join(for $i in 1 to $nesting-depth
@@ -610,7 +610,7 @@
 
     <xsl:if test="(self::* and not(local-name(.) = $elements.no-break)) or self::comment()">
 
-      <xsl:variable name="nesting-depth" select="count(ancestor::*)" as="xs:nonNegativeInteger"/>
+      <xsl:variable name="nesting-depth" select="xs:nonNegativeInteger(count(ancestor::*))" as="xs:nonNegativeInteger"/>
 
       <xsl:variable name="indentation" select="
           string-join(for $i in 1 to $nesting-depth
