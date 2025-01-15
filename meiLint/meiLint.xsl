@@ -546,7 +546,7 @@
         else
           xs:boolean('false')" as="xs:boolean"/>
 
-    <xsl:variable name="node-type">
+    <xsl:variable name="node-type" as="xs:string">
 
       <xsl:choose>
 
