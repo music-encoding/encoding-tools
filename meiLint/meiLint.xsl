@@ -97,7 +97,7 @@
       <xd:p>Variable with new line character.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:variable name="nl" as="xs:string">
+  <xsl:variable name="nl" as="item()">
     <xsl:text>&#xa;</xsl:text>
   </xsl:variable>
 
