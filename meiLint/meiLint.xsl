@@ -109,7 +109,7 @@
 
   <xd:doc scope="component">
     <xd:desc>
-      <xd:p>The root template. Creates clean and optional lint variables. Switches to the desired output.</xd:p>
+      <xd:p>The root template. Creates documentation, clean, and lint variables. Returnes on of these, depending on the value of the 'output-mode' parameter.</xd:p>
     </xd:desc>
   </xd:doc>
   <xsl:template match="/">
@@ -122,7 +122,7 @@
       <xsl:apply-templates select="$documentation" mode="clean"/>
     </xsl:variable>
 
-    <xsl:variable name="lint" use-when="$output-mode = 'lint'" as="node()+">
+    <xsl:variable name="lint" use-when="$output-mode = 'lint'">
       <xsl:apply-templates select="$clean" mode="lint"/>
     </xsl:variable>
 
@@ -200,6 +200,7 @@
     <xd:desc>
       <xd:p>Application documentation template.</xd:p>
     </xd:desc>
+    <xd:return>An mei:application element describing this XSLT.</xd:return>
   </xd:doc>
   <xsl:template name="documentation-application">
 
@@ -243,6 +244,8 @@
     <xd:desc>
       <xd:p>Change documentation template.</xd:p>
     </xd:desc>
+    <xd:param name="n">The value for the n attribute of the generate mei:change element.</xd:param>
+    <xd:return>An mei:change element.</xd:return>
     <xd:param name="n">The desired value for change/@n.</xd:param>
   </xd:doc>
   <xsl:template name="documentation-change">
@@ -278,7 +281,12 @@
 
 
   <xd:doc scope="component">
-    <xd:desc>documentation: root-element pre-ckeck for meiHead.</xd:desc>
+    <xd:desc>
+      <xd:p>
+        <xd:b>documentation: root-element pre-ckeck for meiHead.</xd:b>
+      </xd:p>
+      <xd:p>Matches root elements that either are mei:meiHead or have a direct child mei:meiHead.</xd:p>
+    </xd:desc>
   </xd:doc>
   <xsl:template match="/mei:*[self::mei:meiHead or mei:meiHead]" mode="documentation">
 
@@ -292,7 +300,11 @@
 
 
   <xd:doc scope="component">
-    <xd:desc>documentation</xd:desc>
+    <xd:desc>
+      <xd:p>Documentation for files without top-level mei:meiHead.</xd:p>
+      <xd:p>Matches root elements that are not mei:meiHead and do not contain an mei:meiHead element as direct child.</xd:p>
+    </xd:desc>
+    <xd:return>Inserts XML-comments for documentation then processes the XML-tree.</xd:return>
   </xd:doc>
   <xsl:template match="/mei:*[not(mei:meiHead) and not(self::mei:meiHead)]" mode="documentation">
 
@@ -326,7 +338,7 @@
 
   <xd:doc scope="component">
     <xd:desc>
-      <xd:p>Insert documentation into top meiHead.</xd:p>
+      <xd:p>documentation: Insert documentation into top mei:meiHead.</xd:p>
     </xd:desc>
   </xd:doc>
   <xsl:template match="/mei:*/mei:meiHead" mode="documentation">
@@ -550,7 +562,7 @@
 
     </xsl:variable>
 
-    <xsl:message>PROCESSING <xsl:value-of select="$node-type"/> NODE: <xsl:value-of select="local-name()"/> at: <xsl:value-of select="
+    <xsl:message>LINT-MODE PROCESSING <xsl:value-of select="$node-type"/> NODE: <xsl:value-of select="local-name()"/> at: <xsl:value-of select="
         string-join((for $e in ancestor-or-self::*
         return
           local-name($e)), '/')"/></xsl:message>
