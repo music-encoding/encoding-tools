@@ -109,7 +109,7 @@
 
   <xd:doc scope="component">
     <xd:desc>
-      <xd:p>The root template. Creates documentation, clean, and lint variables. Returnes on of these, depending on the value of the 'output-mode' parameter.</xd:p>
+      <xd:p>The root template. Creates documentation, clean, and lint variables. Returns one of these, depending on the value of the 'output-mode' parameter.</xd:p>
     </xd:desc>
   </xd:doc>
   <xsl:template match="/">
