@@ -326,11 +326,11 @@
 
     <xsl:comment>
 
-      <xsl:value-of select="$documentation-change//mei:date/@isodate, $documentation-change//mei:changeDesc/mei:p" separator=" – "/>
+      <xsl:value-of select="$documentation-change/mei:date/@isodate, $documentation-change/mei:changeDesc/mei:p" separator=" – "/>
 
       <xsl:text> Agent: </xsl:text>
 
-      <xsl:value-of select="$documentation-application//mei:application/mei:ptr/@target, $documentation-application//mei:application/@version" separator=" – "/>
+      <xsl:value-of select="$documentation-application/mei:ptr/@target, $documentation-application/@version" separator=" – "/>
     
     </xsl:comment>
 
@@ -343,7 +343,7 @@
       <xd:p>documentation: Insert documentation into top mei:meiHead.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:template match="/mei:*/mei:meiHead" mode="documentation">
+  <xsl:template match="mei:meiHead[count(ancestor::*) le 1]" mode="documentation">
 
     <xsl:variable name="exists-appInfo" select="exists(mei:encodingDesc/mei:appInfo)" as="xs:boolean"/>
 

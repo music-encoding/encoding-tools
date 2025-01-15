@@ -43,6 +43,15 @@
     <xsl:variable name="progId" as="xs:string">
         <xsl:text>mei50To51</xsl:text>
     </xsl:variable>
+  
+    <xd:doc>
+        <xd:desc>
+            <xd:p>program version</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="progVersion" as="xs:string">
+        <xsl:text>1.0</xsl:text>
+    </xsl:variable>
     
     <xd:doc>
         <xd:desc>

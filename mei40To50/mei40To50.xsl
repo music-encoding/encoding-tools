@@ -587,10 +587,32 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>Documentation for files without top-level mei:meiHead.</xd:p>
+            <xd:p>Matches root elements that are not mei:meiHead and do not contain an mei:meiHead element as direct child.</xd:p>
+        </xd:desc>
+        <xd:return>Inserts XML-comments for documentation then processes the XML-tree.</xd:return>
+    </xd:doc>
+    <xsl:template match="/mei:*[not(mei:meiHead) and not(self::mei:meiHead)]">
+        <xsl:variable name="documentation-change" as="element()">
+            <xsl:call-template name="revisionDesc-insert-change"/>
+        </xsl:variable>
+        <xsl:variable name="documentation-application" as="element()">
+            <xsl:call-template name="appInfo-insert-current-application"/>
+        </xsl:variable>
+        <xsl:comment>
+            <xsl:value-of select="$documentation-change/mei:date/@isodate, $documentation-change/mei:changeDesc/mei:p" separator=" – "/>
+            <xsl:text> Agent: </xsl:text>
+            <xsl:value-of select="$documentation-application/mei:ptr/@target, $documentation-application/@version" separator=" – "/>
+        </xsl:comment>
+    <xsl:next-match/>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>Add a change element for the conversion.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:template match="mei:revisionDesc">
+    <xsl:template match="mei:meiHead[count(ancestor::*) le 1]/mei:revisionDesc">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*"/>
             <xsl:call-template name="revisionDesc-insert-change"/>
@@ -626,7 +648,7 @@
     <xd:doc>
         <xd:desc>Insert mei:revisionDesc if not present.</xd:desc>
     </xd:doc>
-    <xsl:template match="mei:meiHead[not(mei:revisionDesc)]">
+    <xsl:template match="mei:meiHead[count(ancestor::*) le 1][not(mei:revisionDesc)]">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
             <xsl:element name="revisionDesc" namespace="http://www.music-encoding.org/ns/mei">
@@ -641,7 +663,7 @@
             <xd:p>Insert mei:application with info about the XSLT to an exisiting mei:appInfo.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:template match="mei:appInfo">
+    <xsl:template match="mei:meiHead[count(ancestor::*) le 1]/mei:encodingDesc/mei:appInfo">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*"/>
             <xsl:call-template name="appInfo-insert-current-application"/>
@@ -687,7 +709,7 @@
             <xd:p>Copy mei:encodingDesc and, if not present, insert mei:appInfo as first child  with self-documentation.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:template match="mei:encodingDesc">
+    <xsl:template match="mei:meiHead[count(ancestor::*) le 1]/mei:encodingDesc">
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
             <xsl:if test="not(mei:appInfo)">
@@ -702,7 +724,7 @@
             <xd:p>Copy mei:fileDesc and, if not present, insert mei:encodingDesc/mei:appInfo after it with self-documentation.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:template match="mei:fileDesc">
+    <xsl:template match="mei:meiHead[count(ancestor::*) le 1]/mei:fileDesc">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*"/>
         </xsl:copy>
