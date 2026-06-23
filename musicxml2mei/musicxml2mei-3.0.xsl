@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE xsl:stylesheet [
+<!--<!DOCTYPE xsl:stylesheet [
 <!ENTITY beamstart   "&#xE501;">
 <!ENTITY beamend     "&#xE502;">
 <!ENTITY tupletstart "&#xE503;">
 <!ENTITY tupletend   "&#xE504;">
-]>
+]>-->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
   xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -85,10 +85,10 @@
   <xsl:param name="keepRights" select="'false'"/>
 
   <xsl:character-map name="delimiters">
-    <xsl:output-character character="&beamstart;" string="&lt;beam&gt;"/>
-    <xsl:output-character character="&beamend;" string="&lt;/beam&gt;"/>
-    <xsl:output-character character="&tupletstart;" string="&lt;tuplet&gt;"/>
-    <xsl:output-character character="&tupletend;" string="&lt;/tuplet&gt;"/>
+    <xsl:output-character character="&#xE501;" string="&lt;beam&gt;"/>
+    <xsl:output-character character="&#xE502;" string="&lt;/beam&gt;"/>
+    <xsl:output-character character="&#xE503;" string="&lt;tuplet&gt;"/>
+    <xsl:output-character character="&#xE504;" string="&lt;/tuplet&gt;"/>
   </xsl:character-map>
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8" omit-xml-declaration="no" standalone="no"
